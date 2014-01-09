@@ -1,8 +1,23 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/readerMain"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0099cc"
-    tools:context=".ReaderActivity" >
+    android:layout_height="match_parent" >
 
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/readerHeadMain"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_alignParentTop="true"
+        android:alpha="95"
+        android:background="@color/display_page_header" >
+    </RelativeLayout>
+
+    <interactive.view.pagereader.PageReader
+        android:id="@+id/readerPageReader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" >
+    </interactive.view.pagereader.PageReader>
+
+</RelativeLayout>
