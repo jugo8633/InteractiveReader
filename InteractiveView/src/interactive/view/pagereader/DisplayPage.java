@@ -106,9 +106,7 @@ public class DisplayPage extends RelativeLayout
 
 		pageData.extWebView = exdWebView;
 
-		exdWebView.setHorizontalScrollBarEnabled(false);
-		exdWebView.setVerticalScrollBarEnabled(false);
-
+		addView(exdWebView);
 	}
 
 	public InteractiveWebView getWebView()

@@ -85,9 +85,43 @@ public class ScrollableView extends RelativeLayout
 		horizontalScrollView.setHorizontalScrollBarEnabled(false);
 		horizontalScrollView.setVerticalFadingEdgeEnabled(false);
 		horizontalScrollView.setVerticalScrollBarEnabled(false);
-		horizontalScrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+		//		horizontalScrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 
 		this.addView(horizontalScrollView);
+
+		verticalScrollView.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					mnVScrollX = verticalScrollView.getScrollX();
+					mnVScrollY = verticalScrollView.getScrollY();
+					break;
+				}
+				gestureDetector.onTouchEvent(event);
+				return false;
+			}
+		});
+
+		horizontalScrollView.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					mnHScrollX = horizontalScrollView.getScrollX();
+					mnHScrollY = horizontalScrollView.getScrollY();
+					break;
+				}
+				gestureDetector.onTouchEvent(event);
+				return false;
+			}
+		});
 
 	}
 
@@ -96,6 +130,11 @@ public class ScrollableView extends RelativeLayout
 		verticalScrollView = new ScrollView(getContext());
 		verticalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		verticalScrollView.addView(imageView);
+		verticalScrollView.setSmoothScrollingEnabled(true);
+		verticalScrollView.setVerticalScrollBarEnabled(false);
+		verticalScrollView.setHorizontalScrollBarEnabled(false);
+		verticalScrollView.setVerticalFadingEdgeEnabled(false);
+		verticalScrollView.setHorizontalFadingEdgeEnabled(false);
 		this.addView(verticalScrollView);
 
 		verticalScrollView.setOnTouchListener(new OnTouchListener()
@@ -121,6 +160,11 @@ public class ScrollableView extends RelativeLayout
 		horizontalScrollView = new HorizontalScrollView(getContext());
 		horizontalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		horizontalScrollView.addView(imageView);
+		horizontalScrollView.setSmoothScrollingEnabled(true);
+		horizontalScrollView.setHorizontalFadingEdgeEnabled(false);
+		horizontalScrollView.setHorizontalScrollBarEnabled(false);
+		horizontalScrollView.setVerticalFadingEdgeEnabled(false);
+		horizontalScrollView.setVerticalScrollBarEnabled(false);
 		this.addView(horizontalScrollView);
 
 		horizontalScrollView.setOnTouchListener(new OnTouchListener()
@@ -285,7 +329,7 @@ public class ScrollableView extends RelativeLayout
 														public boolean onFling(MotionEvent e1, MotionEvent e2,
 																float velocityX, float velocityY)
 														{
-															float sensitvity = 100;
+															float sensitvity = 50;
 															int nHScrollEnd = 0;
 															int nVScrollEnd = 0;
 
@@ -337,6 +381,11 @@ public class ScrollableView extends RelativeLayout
 															else if ((e2.getY() - e1.getY()) > sensitvity)
 															{
 																// down
+																if (null != verticalScrollView)
+																{
+																	verticalScrollView.smoothScrollBy(0,
+																			(int) e2.getY());
+																}
 																if ((null != horizontalScrollView && mnHScrollY == nVScrollEnd)
 																		|| (null != verticalScrollView && mnVScrollY == nVScrollEnd))
 																{

@@ -266,8 +266,7 @@ public class FileHandler
 			strFilePath = searchFilePath(strSdPath + "Download" + File.separator + strBookFolder, strFindFile);
 			if (null != strFilePath)
 			{
-				Logs.showTrace("get sd path file: " + strFilePath);
-				return strFilePath + File.separator;
+				return strFilePath;
 			}
 		}
 

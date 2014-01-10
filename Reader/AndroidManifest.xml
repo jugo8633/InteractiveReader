@@ -75,6 +75,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="interactive.view.slideshow.SlideshowViewActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:launchMode="singleInstance"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:taskAffinity=":activity" >
+        </activity>
+        
     </application>
 
 </manifest>

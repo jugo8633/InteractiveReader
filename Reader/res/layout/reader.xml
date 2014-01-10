@@ -4,12 +4,93 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/readerHeadMain"
+        android:id="@+id/readerHeaderMain"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:layout_alignParentTop="true"
         android:alpha="95"
         android:background="@color/display_page_header" >
+
+        <View
+            android:id="@+id/viewReaderHeaderLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/border_line" />
+
+        <ImageView
+            android:id="@+id/imageViewFavorite"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="19dp"
+            android:contentDescription="@string/content_descript"
+            android:paddingBottom="10dp"
+            android:paddingTop="7dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/love_normal" />
+
+        <ImageView
+            android:id="@+id/imageViewShare"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_toLeftOf="@id/imageViewFavorite"
+            android:contentDescription="@string/content_descript"
+            android:paddingBottom="10dp"
+            android:paddingTop="7dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/share_normal" />
+
+        <ImageView
+            android:id="@+id/imageViewChap"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_toLeftOf="@id/imageViewShare"
+            android:contentDescription="@string/content_descript"
+            android:paddingBottom="10dp"
+            android:paddingTop="7dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/chap_normal" />
+
+        <ImageView
+            android:id="@+id/imageViewBack"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="19dp"
+            android:layout_marginRight="24dp"
+            android:contentDescription="@string/content_descript"
+            android:paddingBottom="10dp"
+            android:paddingTop="7dp"
+            android:src="@drawable/backpage_normal" />
+
+        <ImageView
+            android:id="@+id/imageViewCategory"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="24dp"
+            android:layout_toRightOf="@id/imageViewBack"
+            android:contentDescription="@string/content_descript"
+            android:paddingBottom="10dp"
+            android:paddingTop="7dp"
+            android:src="@drawable/category_normal" />
+
+        <TextView
+            android:id="@+id/textViewBookName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="66dp"
+            android:gravity="center"
+            android:hint="@string/book_name"
+            android:text="@string/book_name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/header_book_name"
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <interactive.view.pagereader.PageReader

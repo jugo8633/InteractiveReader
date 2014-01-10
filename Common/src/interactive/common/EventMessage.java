@@ -23,6 +23,8 @@ public class EventMessage
 	public static final int	MSG_IMAGE_CLICK		= MSG_CUSTOM + 13;
 	public static final int	MSG_SHOW_ITEM		= MSG_CUSTOM + 14;
 	public static final int	MSG_DOUBLE_CLICK	= MSG_CUSTOM + 15;
+	public static final int	MSG_START_UNEXPRESS	= MSG_CUSTOM + 16;
+	public static final int	MSG_CHECKED_BOOK	= MSG_CUSTOM + 17;
 
 	/**
 	 * @author jugo
