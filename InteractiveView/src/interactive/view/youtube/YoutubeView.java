@@ -128,6 +128,7 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 				player.pause();
 			}
 			player.loadVideo(mstrVideoId);
+			Logs.showTrace("Youtube play video: " + strVideoId);
 		}
 		else
 		{
@@ -283,7 +284,8 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 			}
 			if (errorReason == YouTubePlayer.ErrorReason.UNEXPECTED_SERVICE_DISCONNECTION)
 			{
-
+				player.release();
+				player = null;
 			}
 		}
 

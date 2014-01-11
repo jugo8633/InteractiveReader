@@ -1094,7 +1094,9 @@ public class SlideshowView extends RelativeLayout
 			Device device = new Device(theActivity);
 			int nOrientation = device.getOrientation();
 			device = null;
-			Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
+
+			Intent intent = new Intent("interactive.view.slideshow.SlideshowViewActivity.LAUNCH");
+			//		Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
 			intent.putExtra(EXTRA_CURRENT_ITEM, mnCurrentItem);
 			intent.putExtra(EXTRA_GALLERY_ITEM, listGalleryItem);
 			intent.putExtra(EXTRA_ORIENTATION, nOrientation);

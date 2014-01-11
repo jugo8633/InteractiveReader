@@ -41,7 +41,6 @@ public class ReaderActivity extends Activity
 
 		/** init global*/
 		Global.theActivity = this;
-		Global.interactiveHandler.initMediaView(this);
 
 		/** load reader layout */
 		int nResId = getResourceId("reader", "layout");

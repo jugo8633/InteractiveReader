@@ -23,10 +23,10 @@ import android.widget.RelativeLayout;
 
 public class InteractiveHandler
 {
-	private Runnable					runRemoveImage;
-	private String						mstrRemoveImage		= null;
-	private static YoutubeView			youtubeView			= null;
-	private static VideoPlayer			videoView			= null;
+	private Runnable			runRemoveImage;
+	private String				mstrRemoveImage	= null;
+	private static YoutubeView	youtubeView		= null;
+	private static VideoPlayer	videoView		= null;
 
 	public class GoogleMap
 	{
@@ -159,6 +159,8 @@ public class InteractiveHandler
 
 	public void initMediaView(Activity activity)
 	{
+		removeAllMedia();
+
 		if (null != videoView)
 		{
 			videoView = null;
@@ -301,7 +303,8 @@ public class InteractiveHandler
 		GoogleMap googleMap = findGoogleMap(strTag);
 		if (null != googleMap)
 		{
-			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
+			//	Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
+			Intent intent = new Intent("interactive.view.map.GoogleMapActivity.LAUNCH");
 			intent.putExtra(GoogleMapActivity.EXTRA_TAG, googleMap.mstrTag);
 			intent.putExtra(GoogleMapActivity.EXTRA_MAP_TYPE, googleMap.mnMapType);
 			intent.putExtra(GoogleMapActivity.EXTRA_LATITUDE, googleMap.mdLatitude);

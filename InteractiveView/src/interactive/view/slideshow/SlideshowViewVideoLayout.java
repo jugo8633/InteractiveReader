@@ -53,6 +53,7 @@ public class SlideshowViewVideoLayout extends RelativeLayout
 		this.setLayoutParams(new LayoutParams(nWidth, nHeight));
 	}
 
+	@SuppressWarnings("deprecation")
 	private void init(Context context)
 	{
 		int nResId = context.getResources().getIdentifier("video_play", "drawable", context.getPackageName());
@@ -65,7 +66,7 @@ public class SlideshowViewVideoLayout extends RelativeLayout
 		imgPlay.setImageResource(nResId);
 		imgPlay.setScaleType(ScaleType.CENTER_CROP);
 		imgPlay.setLayoutParams(layoutParams);
-		imgPlay.setImageAlpha(90);
+		imgPlay.setAlpha(90);
 		imgBackground = new ImageView(context);
 		imgBackground.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		addView(imgBackground);
