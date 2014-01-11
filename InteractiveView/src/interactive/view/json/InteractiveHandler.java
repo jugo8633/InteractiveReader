@@ -424,6 +424,10 @@ public class InteractiveHandler
 
 	private void removeYoutube()
 	{
+		if (null == youtubeView)
+		{
+			return;
+		}
 		youtubeView.pause();
 		for (int i = 0; i < listYoutube.size(); ++i)
 		{
@@ -434,6 +438,10 @@ public class InteractiveHandler
 
 	private void removeVideo()
 	{
+		if (null == videoView)
+		{
+			return;
+		}
 		videoView.stop();
 		for (int i = 0; i < listLocalVideo.size(); ++i)
 		{
