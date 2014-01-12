@@ -16,11 +16,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,6 +35,7 @@ public class ReaderActivity extends Activity
 	private ProgressDialog				progressDialog		= null;
 	private BookHandler					bookHandler			= null;
 	private SparseArray<FavoriteData>	listFavoriteData	= null;
+	private boolean						mbIsShowOption		= false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +44,7 @@ public class ReaderActivity extends Activity
 
 		/** init global*/
 		Global.theActivity = this;
+		Global.handlerActivity = activityHandler;
 
 		/** load reader layout */
 		int nResId = getResourceId("reader", "layout");
@@ -80,12 +84,44 @@ public class ReaderActivity extends Activity
 	{
 		int nResId = getResourceId("readerPageReader", "id");
 		pageReader = (PageReader) findViewById(nResId);
+		if (null != pageReader)
+		{
+			pageReader.setOnTouchListener(new OnTouchListener()
+			{
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event)
+				{
+					Logs.showTrace("pagereader touch: " + event.getAction());
+					return false;
+				}
+			});
+		}
 	}
 
 	private void initHeader()
 	{
 		int nResId = getResourceId("readerHeaderMain", "id");
 		rlLayoutHeader = (RelativeLayout) findViewById(nResId);
+		if (null != rlLayoutHeader)
+		{
+			rlLayoutHeader.setVisibility(View.GONE);
+			mbIsShowOption = false;
+		}
+	}
+
+	private void showOption()
+	{
+		mbIsShowOption = mbIsShowOption ? false : true;
+		if (mbIsShowOption)
+		{
+			rlLayoutHeader.setVisibility(View.VISIBLE);
+			rlLayoutHeader.bringToFront();
+		}
+		else
+		{
+			rlLayoutHeader.setVisibility(View.GONE);
+		}
 	}
 
 	private void showProgreeDialog(final String strMsg)
@@ -194,6 +230,7 @@ public class ReaderActivity extends Activity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 		}
+
 		SparseArray<PageData.Data> listPageData = null;
 		PageData pageData = null;
 		for (int nChapter = 0; nChapter < configData.thePackage.flow.chaptersSize(); ++nChapter)
@@ -307,6 +344,10 @@ public class ReaderActivity extends Activity
 											case EventMessage.MSG_CHECKED_BOOK:
 												String strBookPath = bookHandler.getBookPath();
 												initBook(strBookPath);
+												break;
+											case EventMessage.MSG_DOUBLE_CLICK:
+												showOption();
+												Logs.showTrace("Activity receive double click");
 												break;
 											}
 											super.handleMessage(msg);

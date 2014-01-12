@@ -69,9 +69,7 @@ public class PageReader extends RelativeLayout
 
 	public void initPageReader(Context context)
 	{
-		//	this.setBackgroundColor(Color.TRANSPARENT);
 		viewPager = new ViewPager(context);
-		//		viewPager.setId(AppCrossApplication.getActivity().getResourceId("view_pager", "id"));
 		viewPager.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		viewPager.setOnPageChangeListener(new ChapterChangeListener(readerHandler));
 		chaptersAdapter = new ChaptersAdapter(readerHandler);

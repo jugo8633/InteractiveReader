@@ -85,7 +85,6 @@ public class ScrollableView extends RelativeLayout
 		horizontalScrollView.setHorizontalScrollBarEnabled(false);
 		horizontalScrollView.setVerticalFadingEdgeEnabled(false);
 		horizontalScrollView.setVerticalScrollBarEnabled(false);
-		//		horizontalScrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 
 		this.addView(horizontalScrollView);
 

@@ -159,8 +159,6 @@ public class InteractiveHandler
 
 	public void initMediaView(Activity activity)
 	{
-		removeAllMedia();
-
 		if (null != videoView)
 		{
 			videoView = null;

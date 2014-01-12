@@ -4,6 +4,7 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.data.PageData;
+import interactive.view.global.Global;
 import interactive.view.scrollable.ScrollableView;
 import interactive.view.type.InteractiveType;
 
@@ -33,7 +34,7 @@ public class InteractiveWebView extends WebView
 	private SparseArray<InteractiveImage>	listInteractiveImage	= null;		// webview clicked then hide
 	// items
 	private Handler							pageReaderHandler		= null;		//send message to PageReader
-	private Handler							displayPageHandler		= null;		// send message to displaypage
+//	private Handler							displayPageHandler		= null;		// send message to displaypage
 	private boolean							mbOverLoadUrl			= false;
 	private int								mnJumpChapter			= Type.INVALID;
 	private int								mnJumpPage				= Type.INVALID;
@@ -108,7 +109,7 @@ public class InteractiveWebView extends WebView
 		this.setFocusable(true);
 		this.setFocusableInTouchMode(true);
 		this.setBackgroundColor(Color.TRANSPARENT);
-		this.setClickable(false);
+		//		this.setClickable(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -129,15 +130,15 @@ public class InteractiveWebView extends WebView
 		pageReaderHandler = handler;
 	}
 
-	public void initDisplayPageHandler(Handler handler)
-	{
-		displayPageHandler = handler;
-	}
-
-	public Handler getDisplayPageHandler()
-	{
-		return displayPageHandler;
-	}
+	//	public void initDisplayPageHandler(Handler handler)
+	//	{
+	//		displayPageHandler = handler;
+	//	}
+	//
+	//	public Handler getDisplayPageHandler()
+	//	{
+	//		return displayPageHandler;
+	//	}
 
 	public void addObjectHandle(Handler handler, int nObjType, boolean bAutoPlay)
 	{
@@ -396,10 +397,13 @@ public class InteractiveWebView extends WebView
 															@Override
 															public boolean onDoubleTap(MotionEvent e)
 															{
-																EventHandler.notify(displayPageHandler,
-																		EventMessage.MSG_WEB,
-																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
-																		null);
+//																EventHandler.notify(displayPageHandler,
+//																		EventMessage.MSG_WEB,
+//																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
+//																		null);
+																EventHandler.notify(Global.handlerActivity,
+																		EventMessage.MSG_DOUBLE_CLICK,
+																		Type.INVALID, Type.INVALID, null);
 																return super.onDoubleTap(e);
 															}
 
@@ -437,10 +441,13 @@ public class InteractiveWebView extends WebView
 																			mnPage - 1);
 																	break;
 																case ScrollableView.DOUBLE_CLICK:
-																	EventHandler.notify(displayPageHandler,
-																			EventMessage.MSG_WEB,
+																	//																	EventHandler.notify(displayPageHandler,
+																	//																			EventMessage.MSG_WEB,
+																	//																			EventMessage.MSG_DOUBLE_CLICK,
+																	//																			Type.INVALID, null);
+																	EventHandler.notify(Global.handlerActivity,
 																			EventMessage.MSG_DOUBLE_CLICK,
-																			Type.INVALID, null);
+																			Type.INVALID, Type.INVALID, null);
 																	break;
 																case EventMessage.MSG_SHOW_ITEM: // button click and show item
 																	hideItem((String) msg.obj);

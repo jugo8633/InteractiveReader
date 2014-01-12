@@ -1,7 +1,6 @@
 package interactive.view.pagereader;
 
 import interactive.common.Device;
-import interactive.common.EventMessage;
 import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
@@ -22,9 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -37,7 +34,7 @@ public class DisplayPage extends RelativeLayout
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
 	private DisplayMetrics		metrics			= null;
-	private static boolean		mbIsShowOption	= false;
+//	private static boolean		mbIsShowOption	= false;
 
 	public DisplayPage(Context context)
 	{
@@ -61,7 +58,7 @@ public class DisplayPage extends RelativeLayout
 	{
 		theContext = context;
 		metrics = context.getResources().getDisplayMetrics();
-		this.setBackgroundColor(Color.TRANSPARENT);
+		//		this.setBackgroundColor(Color.TRANSPARENT);
 		this.setGravity(Gravity.CENTER);
 	}
 
@@ -99,7 +96,7 @@ public class DisplayPage extends RelativeLayout
 		exdWebView.setDisplaySize(getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
-		exdWebView.initDisplayPageHandler(displayPageHandler);
+//		exdWebView.initDisplayPageHandler(displayPageHandler);
 		exdWebView.setBackgroundImage(pageData.strShapLarge);
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
 		setJson(jsonData);
@@ -218,38 +215,38 @@ public class DisplayPage extends RelativeLayout
 		}
 	}
 
-	public Handler getHandler()
-	{
-		return displayPageHandler;
-	}
+	//	public Handler getHandler()
+	//	{
+	//		return displayPageHandler;
+	//	}
 
-	private void handleWebEvent(int nEvent, int nPosition)
-	{
-		switch (nEvent)
-		{
-		case EventMessage.MSG_DOUBLE_CLICK:
-			mbIsShowOption = mbIsShowOption ? false : true;
-			//	AppCrossApplication.getActivity().showHeaderView(mbIsShowOption);
-
-			break;
-		//		case EventMessage.WND_STOP:
-		//			mbIsShowOption = false;
-		//			
-		//			break;
-		}
-	}
-
-	private Handler	displayPageHandler	= new Handler()
-										{
-											@Override
-											public void handleMessage(Message msg)
-											{
-												switch (msg.what)
-												{
-												case EventMessage.MSG_WEB:
-													handleWebEvent(msg.arg1, msg.arg2);
-													break;
-												}
-											}
-										};
+	//	private void handleWebEvent(int nEvent, int nPosition)
+	//	{
+	//		switch (nEvent)
+	//		{
+	//		case EventMessage.MSG_DOUBLE_CLICK:
+	//			mbIsShowOption = mbIsShowOption ? false : true;
+	//			//	AppCrossApplication.getActivity().showHeaderView(mbIsShowOption);
+	//
+	//			break;
+	//		//		case EventMessage.WND_STOP:
+	//		//			mbIsShowOption = false;
+	//		//			
+	//		//			break;
+	//		}
+	//	}
+	//
+	//	private Handler	displayPageHandler	= new Handler()
+	//										{
+	//											@Override
+	//											public void handleMessage(Message msg)
+	//											{
+	//												switch (msg.what)
+	//												{
+	//												case EventMessage.MSG_WEB:
+	//													handleWebEvent(msg.arg1, msg.arg2);
+	//													break;
+	//												}
+	//											}
+	//										};
 }
