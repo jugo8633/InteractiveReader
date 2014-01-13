@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayoutCategoryListMain"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/imageViewCategoryItem"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="18dp"
+        android:adjustViewBounds="false"
+        android:contentDescription="@string/content_descript"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ebook" />
+
+    <TextView
+        android:id="@+id/textViewCategoryTitle"
+        style="@style/PageInfoTitle"
+        android:layout_alignTop="@+id/imageViewCategoryItem"
+        android:layout_toRightOf="@+id/imageViewCategoryItem" />
+
+    <TextView
+        android:id="@+id/textViewCategoryDescript"
+        style="@style/PageInfoDescript"
+        android:layout_below="@id/textViewCategoryTitle"
+        android:layout_toRightOf="@+id/imageViewCategoryItem" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1px"
+        android:layout_below="@id/imageViewCategoryItem"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:background="@color/border_line" />
+
+</RelativeLayout>
