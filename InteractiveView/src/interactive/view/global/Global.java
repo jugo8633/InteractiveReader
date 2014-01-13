@@ -2,6 +2,7 @@ package interactive.view.global;
 
 import interactive.view.json.InteractiveHandler;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 
 public class Global
@@ -13,5 +14,10 @@ public class Global
 	public static void setActivity(Activity activity)
 	{
 		theActivity = activity;
+	}
+
+	public static int getResourceId(Context context, String name, String defType)
+	{
+		return context.getResources().getIdentifier(name, defType, context.getPackageName());
 	}
 }

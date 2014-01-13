@@ -101,4 +101,12 @@
         android:layout_centerVertical="true" >
     </interactive.view.pagereader.PageReader>
 
+    <interactive.view.flip.FlipperView
+        android:id="@+id/fliperViewReaderOption"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:background="@color/Trans_Black" >
+    </interactive.view.flip.FlipperView>
+
 </RelativeLayout>

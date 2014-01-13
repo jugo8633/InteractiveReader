@@ -8,6 +8,7 @@ import interactive.common.SqliteHandler;
 import interactive.common.Type;
 import interactive.common.SqliteHandler.FavoriteData;
 import interactive.view.data.PageData;
+import interactive.view.gallery.GalleryView;
 import interactive.view.global.Global;
 import interactive.view.pagereader.DisplayPage;
 import interactive.view.pagereader.PageReader;
@@ -30,12 +31,13 @@ import android.widget.TextView;
 public class ReaderActivity extends Activity
 {
 
-	private PageReader					pageReader			= null;
+	public static PageReader			pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
 	private BookHandler					bookHandler			= null;
 	private SparseArray<FavoriteData>	listFavoriteData	= null;
 	private boolean						mbIsShowOption		= false;
+	private OptionHandler				optionHandler		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -56,6 +58,9 @@ public class ReaderActivity extends Activity
 		/** initialize page reader from reader layout*/
 		initPageReader();
 
+		/** init option handler */
+		optionHandler = new OptionHandler(this);
+
 		/** get book information and path */
 		nResId = getResourceId("loading_book", "string");
 		String strTmp = getString(nResId);
@@ -72,6 +77,7 @@ public class ReaderActivity extends Activity
 	{
 		Logs.showTrace("Reader activity resume");
 		Global.interactiveHandler.initMediaView(this);
+		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
 		super.onResume();
 	}
 
@@ -117,10 +123,13 @@ public class ReaderActivity extends Activity
 		{
 			rlLayoutHeader.setVisibility(View.VISIBLE);
 			rlLayoutHeader.bringToFront();
+			optionHandler.updateFavoriteHeaderIcon(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
 		}
 		else
 		{
 			rlLayoutHeader.setVisibility(View.GONE);
+			optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+			optionHandler.closeFlipView();
 		}
 	}
 
@@ -162,6 +171,12 @@ public class ReaderActivity extends Activity
 			// TODO show parse fail dialog 
 		}
 		closeProgressDialog();
+	}
+
+	private void initOption()
+	{
+		optionHandler.initCategory(this);
+		optionHandler.initChapOption(this);
 	}
 
 	private void getFavoriteData(Context context)
@@ -344,10 +359,29 @@ public class ReaderActivity extends Activity
 											case EventMessage.MSG_CHECKED_BOOK:
 												String strBookPath = bookHandler.getBookPath();
 												initBook(strBookPath);
+												initOption();
 												break;
 											case EventMessage.MSG_DOUBLE_CLICK:
 												showOption();
 												Logs.showTrace("Activity receive double click");
+												break;
+											case EventMessage.MSG_FLIPPER_CLOSE:
+												optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(),
+														pageReader.getCurrentPage());
+												break;
+											case EventMessage.MSG_GO_FORWARD:
+												pageReader.goForward();
+												break;
+											case EventMessage.MSG_OPTION_ITEM_SELECTED:
+												showOption();
+												pageReader.jumpPage(msg.arg1, 0);
+												break;
+											case GalleryView.MSG_WND_CLICK:
+												optionHandler.closeFlipView();
+												break;
+											case GalleryView.MSG_IMAGE_CLICK:
+												showOption();
+												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
 											}
 											super.handleMessage(msg);

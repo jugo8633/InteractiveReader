@@ -34,7 +34,6 @@ public class DisplayPage extends RelativeLayout
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
 	private DisplayMetrics		metrics			= null;
-//	private static boolean		mbIsShowOption	= false;
 
 	public DisplayPage(Context context)
 	{
@@ -58,7 +57,6 @@ public class DisplayPage extends RelativeLayout
 	{
 		theContext = context;
 		metrics = context.getResources().getDisplayMetrics();
-		//		this.setBackgroundColor(Color.TRANSPARENT);
 		this.setGravity(Gravity.CENTER);
 	}
 
@@ -87,8 +85,6 @@ public class DisplayPage extends RelativeLayout
 			nWebHeight = nDisplayHeight;
 		}
 
-		//		exdWebView = (InteractiveWebView) this.findViewById(AppCrossApplication.getActivity().getResourceId(
-		//				"extendedWebViewMain", "id"));
 		exdWebView = new InteractiveWebView(theContext);
 		exdWebView.setPosition(pageData.nChapter, pageData.nPage);
 		exdWebView.setTag(pageData.strName);
@@ -96,7 +92,6 @@ public class DisplayPage extends RelativeLayout
 		exdWebView.setDisplaySize(getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
-//		exdWebView.initDisplayPageHandler(displayPageHandler);
 		exdWebView.setBackgroundImage(pageData.strShapLarge);
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
 		setJson(jsonData);
@@ -214,39 +209,4 @@ public class DisplayPage extends RelativeLayout
 			return original;
 		}
 	}
-
-	//	public Handler getHandler()
-	//	{
-	//		return displayPageHandler;
-	//	}
-
-	//	private void handleWebEvent(int nEvent, int nPosition)
-	//	{
-	//		switch (nEvent)
-	//		{
-	//		case EventMessage.MSG_DOUBLE_CLICK:
-	//			mbIsShowOption = mbIsShowOption ? false : true;
-	//			//	AppCrossApplication.getActivity().showHeaderView(mbIsShowOption);
-	//
-	//			break;
-	//		//		case EventMessage.WND_STOP:
-	//		//			mbIsShowOption = false;
-	//		//			
-	//		//			break;
-	//		}
-	//	}
-	//
-	//	private Handler	displayPageHandler	= new Handler()
-	//										{
-	//											@Override
-	//											public void handleMessage(Message msg)
-	//											{
-	//												switch (msg.what)
-	//												{
-	//												case EventMessage.MSG_WEB:
-	//													handleWebEvent(msg.arg1, msg.arg2);
-	//													break;
-	//												}
-	//											}
-	//										};
 }

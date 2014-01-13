@@ -6,7 +6,6 @@ import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
