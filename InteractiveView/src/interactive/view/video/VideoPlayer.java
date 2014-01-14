@@ -1,6 +1,9 @@
 package interactive.view.video;
 
+import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.Type;
+import interactive.view.global.Global;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -8,8 +11,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
@@ -19,6 +24,7 @@ public class VideoPlayer extends RelativeLayout
 	private boolean			mbIsLoop			= false;
 	private boolean			mbShowController	= false;
 	private MediaController	videoController		= null;
+	private GestureDetector	gestureDetector		= null;
 
 	public VideoPlayer(Context context)
 	{
@@ -52,6 +58,7 @@ public class VideoPlayer extends RelativeLayout
 
 	private void init(Context context)
 	{
+		gestureDetector = new GestureDetector(context, simpleOnGestureListener);
 		this.setBackgroundResource(android.R.color.background_dark);
 		this.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.setOnTouchListener(new OnTouchListener()
@@ -184,6 +191,7 @@ public class VideoPlayer extends RelativeLayout
 														}
 														break;
 													}
+													gestureDetector.onTouchEvent(event);
 													return true;
 												}
 											};
@@ -209,17 +217,29 @@ public class VideoPlayer extends RelativeLayout
 		}
 	}
 
-	private Handler	playerHandler	= new Handler()
-									{
-										@Override
-										public void handleMessage(Message msg)
-										{
-											switch (msg.what)
-											{
-											case EventMessage.MSG_WEB:
-												handleWebMsg(msg.arg1, msg.arg2);
-												break;
-											}
-										}
-									};
+	private Handler			playerHandler			= new Handler()
+													{
+														@Override
+														public void handleMessage(Message msg)
+														{
+															switch (msg.what)
+															{
+															case EventMessage.MSG_WEB:
+																handleWebMsg(msg.arg1, msg.arg2);
+																break;
+															}
+														}
+													};
+
+	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
+													{
+														@Override
+														public boolean onDoubleTap(MotionEvent e)
+														{
+															EventHandler.notify(Global.handlerActivity,
+																	EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
+																	Type.INVALID, null);
+															return super.onDoubleTap(e);
+														}
+													};
 }

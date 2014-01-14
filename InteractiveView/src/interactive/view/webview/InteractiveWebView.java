@@ -32,9 +32,7 @@ import android.widget.RelativeLayout;
 public class InteractiveWebView extends WebView
 {
 	private SparseArray<InteractiveImage>	listInteractiveImage	= null;		// webview clicked then hide
-	// items
 	private Handler							pageReaderHandler		= null;		//send message to PageReader
-//	private Handler							displayPageHandler		= null;		// send message to displaypage
 	private boolean							mbOverLoadUrl			= false;
 	private int								mnJumpChapter			= Type.INVALID;
 	private int								mnJumpPage				= Type.INVALID;
@@ -397,10 +395,6 @@ public class InteractiveWebView extends WebView
 															@Override
 															public boolean onDoubleTap(MotionEvent e)
 															{
-//																EventHandler.notify(displayPageHandler,
-//																		EventMessage.MSG_WEB,
-//																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
-//																		null);
 																EventHandler.notify(Global.handlerActivity,
 																		EventMessage.MSG_DOUBLE_CLICK,
 																		Type.INVALID, Type.INVALID, null);

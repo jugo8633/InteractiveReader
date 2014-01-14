@@ -1,8 +1,10 @@
 package interactive.view.scrollable;
 
 import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -98,10 +100,9 @@ public class ScrollableView extends RelativeLayout
 				case MotionEvent.ACTION_DOWN:
 					mnVScrollX = verticalScrollView.getScrollX();
 					mnVScrollY = verticalScrollView.getScrollY();
-					break;
+					return true;
 				}
-				gestureDetector.onTouchEvent(event);
-				return false;
+				return gestureDetector.onTouchEvent(event);
 			}
 		});
 
@@ -115,10 +116,9 @@ public class ScrollableView extends RelativeLayout
 				case MotionEvent.ACTION_DOWN:
 					mnHScrollX = horizontalScrollView.getScrollX();
 					mnHScrollY = horizontalScrollView.getScrollY();
-					break;
+					return true;
 				}
-				gestureDetector.onTouchEvent(event);
-				return false;
+				return gestureDetector.onTouchEvent(event);
 			}
 		});
 
@@ -141,6 +141,7 @@ public class ScrollableView extends RelativeLayout
 			@Override
 			public boolean onTouch(View v, MotionEvent event)
 			{
+
 				switch (event.getAction())
 				{
 				case MotionEvent.ACTION_DOWN:
@@ -148,8 +149,7 @@ public class ScrollableView extends RelativeLayout
 					mnVScrollY = verticalScrollView.getScrollY();
 					break;
 				}
-				gestureDetector.onTouchEvent(event);
-				return false;
+				return gestureDetector.onTouchEvent(event);
 			}
 		});
 	}
@@ -178,8 +178,7 @@ public class ScrollableView extends RelativeLayout
 					mnHScrollY = horizontalScrollView.getScrollY();
 					break;
 				}
-				gestureDetector.onTouchEvent(event);
-				return false;
+				return gestureDetector.onTouchEvent(event);
 			}
 		});
 	}
@@ -328,6 +327,10 @@ public class ScrollableView extends RelativeLayout
 														public boolean onFling(MotionEvent e1, MotionEvent e2,
 																float velocityX, float velocityY)
 														{
+															if (null == e1 || null == e2)
+															{
+																return false;
+															}
 															float sensitvity = 50;
 															int nHScrollEnd = 0;
 															int nVScrollEnd = 0;
@@ -350,8 +353,7 @@ public class ScrollableView extends RelativeLayout
 																		|| (null != verticalScrollView && mnVScrollX == nHScrollEnd))
 																{
 																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_LEFT_END, 0, 0,
-																			null);
+																			ScrollableView.SCROLL_LEFT_END, 0, 0, null);
 																}
 															}
 															else if ((e2.getX() - e1.getX()) > sensitvity)
@@ -360,9 +362,10 @@ public class ScrollableView extends RelativeLayout
 																if ((null != horizontalScrollView && mnHScrollX == nHScrollEnd)
 																		|| (null != verticalScrollView && mnVScrollX == nHScrollEnd))
 																{
-																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_RIGHT_END, 0, 0,
-																			null);
+																	EventHandler
+																			.notify(notifyHandler,
+																					ScrollableView.SCROLL_RIGHT_END, 0,
+																					0, null);
 																}
 															}
 
@@ -373,8 +376,7 @@ public class ScrollableView extends RelativeLayout
 																		|| (null != verticalScrollView && mnVScrollY == nVScrollEnd))
 																{
 																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_TOP_END, 0, 0,
-																			null);
+																			ScrollableView.SCROLL_TOP_END, 0, 0, null);
 																}
 															}
 															else if ((e2.getY() - e1.getY()) > sensitvity)
@@ -389,9 +391,9 @@ public class ScrollableView extends RelativeLayout
 																		|| (null != verticalScrollView && mnVScrollY == nVScrollEnd))
 																{
 																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_DOWN_END, 0, 0,
-																			null);
+																			ScrollableView.SCROLL_DOWN_END, 0, 0, null);
 																}
+
 															}
 															return super.onFling(e1, e2, velocityX, velocityY);
 														}
@@ -399,8 +401,9 @@ public class ScrollableView extends RelativeLayout
 														@Override
 														public boolean onDoubleTap(MotionEvent e)
 														{
-															EventHandler.notify(notifyHandler,
-																	ScrollableView.DOUBLE_CLICK, 0, 0, null);
+															EventHandler.notify(Global.handlerActivity,
+																	EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
+																	Type.INVALID, null);
 															return super.onDoubleTap(e);
 														}
 

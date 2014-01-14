@@ -1,6 +1,8 @@
 package interactive.view.slideshow;
 
 import interactive.common.Device;
+import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
@@ -801,6 +803,15 @@ public class SlideshowView extends RelativeLayout
 			}
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
+
+		@Override
+		public boolean onDoubleTap(MotionEvent e)
+		{
+			EventHandler
+					.notify(Global.handlerActivity, EventMessage.MSG_DOUBLE_CLICK, Type.INVALID, Type.INVALID, null);
+			return super.onDoubleTap(e);
+		}
+
 	}
 
 	public void setFlingOnePage(boolean bOnePage)
@@ -821,13 +832,11 @@ public class SlideshowView extends RelativeLayout
 		{
 			// left
 			setCurrentItem(mnCurrentItem + 1);
-			Logs.showTrace("go next page #########################");
 		}
 		else if ((e2.getX() - e1.getX()) > sensitvity)
 		{
 			// right
 			setCurrentItem(mnCurrentItem - 1);
-			Logs.showTrace("go pre page #########################");
 		}
 
 		if ((e1.getY() - e2.getY()) > sensitvity)
