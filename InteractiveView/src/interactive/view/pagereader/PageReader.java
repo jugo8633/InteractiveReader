@@ -15,14 +15,20 @@ import android.widget.RelativeLayout;
 public class PageReader extends RelativeLayout
 {
 
-	private Context						theContext			= null;
-	private ViewPager					viewPager			= null;
-	private ChaptersAdapter				chaptersAdapter		= null;
-	private int							mnTotalPage			= Type.INVALID;
-	private int							mnCurrentChapter	= 0;
-	private int							mnCurrentPage		= 0;
-	private SparseArray<ViewHistory>	listViewHistory		= null;
-	private boolean						mbIsGoHistory		= false;
+	private Context								theContext					= null;
+	private ViewPager							viewPager					= null;
+	private ChaptersAdapter						chaptersAdapter				= null;
+	private int									mnTotalPage					= Type.INVALID;
+	private int									mnCurrentChapter			= 0;
+	private int									mnCurrentPage				= 0;
+	private SparseArray<ViewHistory>			listViewHistory				= null;
+	private boolean								mbIsGoHistory				= false;
+	private SparseArray<OnPageSwitchedListener>	listOnPageSwitchedListener	= null;
+
+	public interface OnPageSwitchedListener
+	{
+		public void onPageSwitched();
+	}
 
 	class ViewHistory
 	{
@@ -75,6 +81,26 @@ public class PageReader extends RelativeLayout
 		listViewHistory = new SparseArray<ViewHistory>();
 		addHistory(0, 0);
 		this.addView(viewPager);
+		listOnPageSwitchedListener = new SparseArray<OnPageSwitchedListener>();
+	}
+
+	public void setOnPageSwitchedListener(PageReader.OnPageSwitchedListener listener)
+	{
+		if (null != listOnPageSwitchedListener)
+		{
+			listOnPageSwitchedListener.put(listOnPageSwitchedListener.size(), listener);
+		}
+	}
+
+	private void notifyPageSwitched()
+	{
+		if (null != listOnPageSwitchedListener)
+		{
+			for (int i = 0; i < listOnPageSwitchedListener.size(); ++i)
+			{
+				listOnPageSwitchedListener.get(i).onPageSwitched();
+			}
+		}
 	}
 
 	public void updatePageReader()
@@ -232,6 +258,7 @@ public class PageReader extends RelativeLayout
 			PageData.listPageData.get(nOldChapter).get(nOldPage).extWebView.setCurrentView(false);
 		}
 		Global.interactiveHandler.removeAllMedia();
+		notifyPageSwitched();
 	}
 
 	public int getTotalPage()

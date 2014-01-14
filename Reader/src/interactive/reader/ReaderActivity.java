@@ -92,14 +92,15 @@ public class ReaderActivity extends Activity
 		pageReader = (PageReader) findViewById(nResId);
 		if (null != pageReader)
 		{
-			pageReader.setOnTouchListener(new OnTouchListener()
+			pageReader.setOnPageSwitchedListener(new PageReader.OnPageSwitchedListener()
 			{
-
 				@Override
-				public boolean onTouch(View v, MotionEvent event)
+				public void onPageSwitched()
 				{
-					Logs.showTrace("pagereader touch: " + event.getAction());
-					return false;
+					if (mbIsShowOption)
+					{
+						hideOption();
+					}
 				}
 			});
 		}
@@ -127,10 +128,16 @@ public class ReaderActivity extends Activity
 		}
 		else
 		{
-			rlLayoutHeader.setVisibility(View.GONE);
-			optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
-			optionHandler.closeFlipView();
+			hideOption();
 		}
+	}
+
+	private void hideOption()
+	{
+		mbIsShowOption = false;
+		rlLayoutHeader.setVisibility(View.GONE);
+		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+		optionHandler.closeFlipView();
 	}
 
 	private void showProgreeDialog(final String strMsg)
@@ -374,7 +381,7 @@ public class ReaderActivity extends Activity
 												break;
 											case EventMessage.MSG_OPTION_ITEM_SELECTED:
 												showOption();
-												pageReader.jumpPage(msg.arg1, 0);
+												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
 											case GalleryView.MSG_WND_CLICK:
 												optionHandler.closeFlipView();

@@ -5,6 +5,7 @@ import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.ObjectFactory;
 import interactive.common.Share;
+import interactive.common.SqliteHandler;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.flip.FlipperView;
@@ -32,8 +33,14 @@ public class OptionHandler
 	private ObjectFactory		objectFactory			= null;
 	private int					mnHeaderCurrentSelected	= Type.INVALID;
 	private CategoryListAdapter	theCategoryAdapter		= null;
+	private FavoriteListAdapter	theFavoriteAdapter		= null;
 	private ListView			listViewCategory		= null;
+	private ListView			listViewFavorite		= null;
+	private int					mnFavoriteItemId		= Type.INVALID;
+	private int					mnCategoryItemId		= Type.INVALID;
 	private Share				share					= null;
+	private int					mnFavoriteAddId			= Type.INVALID;
+	private int					mnFavoriteDeleteId		= Type.INVALID;
 
 	public class Header
 	{
@@ -111,8 +118,7 @@ public class OptionHandler
 		flipperView.setNotifyHandler(Global.handlerActivity);
 
 		initShare(activity);
-
-		theHeader.mnFavoriteIndex = flipperView.addChild(Global.getResourceId(activity, "reader_favorite", "layout"));
+		initFavorite(activity);
 	}
 
 	public void initCategory(Activity activity)
@@ -120,7 +126,9 @@ public class OptionHandler
 		theHeader.mnCategoryIndex = flipperView.addChild(Global.getResourceId(activity, "reader_category", "layout"));
 		theCategoryAdapter = new CategoryListAdapter(activity);
 		listViewCategory = (ListView) activity.findViewById(Global.getResourceId(activity, "listViewCategory", "id"));
-		listViewCategory.setOnItemClickListener(CategoryItemClickListener);
+		listViewCategory.setOnItemClickListener(onItemClickListener);
+
+		mnCategoryItemId = Global.getResourceId(activity, "relativeLayoutCategoryListMain", "id");
 	}
 
 	public void initChapOption(final Activity activity)
@@ -139,7 +147,7 @@ public class OptionHandler
 			{
 				ImageView img = new ImageView(activity);
 
-				//				Bitmap bmp = AppCrossFileHandler.decodeScaledBitmap(allWebPage.get(nChapter).get(nPage).strShapTiny,
+				//				Bitmap bmp = FileHandler.decodeScaledBitmap(allWebPage.get(nChapter).get(nPage).strShapTiny,
 				//						145, 194);
 				//				img.setImageBitmap(bmp);
 				//		img.setLayoutParams(new LayoutParams(145, 194));
@@ -177,6 +185,87 @@ public class OptionHandler
 	private void initShare(Activity activity)
 	{
 		share = new Share(activity);
+	}
+
+	private void initFavorite(final Activity activity)
+	{
+		theHeader.mnFavoriteIndex = flipperView.addChild(Global.getResourceId(activity, "reader_favorite", "layout"));
+		listViewFavorite = (ListView) activity.findViewById(Global.getResourceId(activity, "listViewFavorite", "id"));
+		theFavoriteAdapter = new FavoriteListAdapter(activity);
+		mnFavoriteAddId = Global.getResourceId(activity, "add_normal", "drawable");
+		mnFavoriteDeleteId = Global.getResourceId(activity, "delete_normal", "drawable");
+		mnFavoriteItemId = Global.getResourceId(activity, "relativeLayoutFavoriteItem", "id");
+		int nResId = Global.getResourceId(activity, "imageViewModifyFavorite", "id");
+		ImageView imgNodify = (ImageView) activity.findViewById(nResId);
+		imgNodify.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				int nChapter = ReaderActivity.pageReader.getCurrentChapter();
+				int nPage = ReaderActivity.pageReader.getCurrentPage();
+				PageData.Data pageData = PageData.listPageData.get(nChapter).get(nPage);
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					pageData.bIsFavorite = pageData.bIsFavorite ? false : true;
+					updateFavoriteDB(activity, pageData.bIsFavorite, nChapter, nPage);
+					showFavorite(activity, nChapter, nPage);
+					break;
+				}
+				return true;
+			}
+		});
+		listViewFavorite.setOnItemClickListener(onItemClickListener);
+	}
+
+	private void updateFavoriteDB(Activity activity, boolean bIsAdd, int nChapter, int nPage)
+	{
+		SqliteHandler sqliteHandler = new SqliteHandler(activity);
+		if (bIsAdd)
+		{
+			sqliteHandler.addFavorite(nChapter, nPage);
+		}
+		else
+		{
+			sqliteHandler.deleteFavorite(nChapter, nPage);
+		}
+		sqliteHandler.close();
+		sqliteHandler = null;
+	}
+
+	private void showFavorite(Activity activity, int nCurrentChapter, int nCurrentPage)
+	{
+		theFavoriteAdapter.clear();
+
+		int nResId = Global.getResourceId(activity, "imageViewModifyFavorite", "id");
+		ImageView imgNodify = (ImageView) activity.findViewById(nResId);
+
+		PageData.Data pageData = PageData.listPageData.get(nCurrentChapter).get(nCurrentPage);
+		if (pageData.bIsFavorite)
+		{
+			imgNodify.setImageResource(mnFavoriteDeleteId);
+		}
+		else
+		{
+			imgNodify.setImageResource(mnFavoriteAddId);
+		}
+
+		for (int nChapter = 0; nChapter < PageData.listPageData.size(); ++nChapter)
+		{
+			for (int nPage = 0; nPage < PageData.listPageData.get(nChapter).size(); ++nPage)
+			{
+				pageData = PageData.listPageData.get(nChapter).get(nPage);
+				if (pageData.bIsFavorite)
+				{
+					theFavoriteAdapter.addItemData(pageData.strShapTiny, nChapter, nPage, pageData.strChapterName,
+							pageData.strDescript);
+				}
+			}
+		}
+
+		listViewFavorite.removeAllViewsInLayout();
+		listViewFavorite.setAdapter(theFavoriteAdapter);
 	}
 
 	private void setOptionTouch(Activity activity, int nResId)
@@ -221,6 +310,9 @@ public class OptionHandler
 		}
 		else if (theHeader.mnFavoriteId == nResId)
 		{
+			showFavorite(Global.theActivity, ReaderActivity.pageReader.getCurrentChapter(),
+					ReaderActivity.pageReader.getCurrentPage());
+			flipperView.showView(theHeader.mnFavoriteIndex);
 			Logs.showTrace("Option run favorite");
 		}
 	}
@@ -269,37 +361,48 @@ public class OptionHandler
 		}
 	}
 
-	OnTouchListener		optionTouchListener			= new OnTouchListener()
+	OnTouchListener		optionTouchListener	= new OnTouchListener()
+											{
+
+												@Override
+												public boolean onTouch(View v, MotionEvent event)
+												{
+													int nResId = v.getId();
+
+													switch (event.getAction())
 													{
+													case MotionEvent.ACTION_DOWN:
+														objectFactory.setImgBtnTouchDown(nResId);
+														break;
+													case MotionEvent.ACTION_UP:
+														lunchOption(nResId);
+														break;
+													}
+													return true;
+												}
+											};
 
-														@Override
-														public boolean onTouch(View v, MotionEvent event)
-														{
-															int nResId = v.getId();
+	OnItemClickListener	onItemClickListener	= new OnItemClickListener()
+											{
+												@Override
+												public void onItemClick(AdapterView<?> arg0, View view, int arg2,
+														long arg3)
+												{
+													int nId = view.getId();
 
-															switch (event.getAction())
-															{
-															case MotionEvent.ACTION_DOWN:
-																objectFactory.setImgBtnTouchDown(nResId);
-																break;
-															case MotionEvent.ACTION_UP:
-																lunchOption(nResId);
-																break;
-															}
-															return true;
-														}
-													};
-
-	OnItemClickListener	CategoryItemClickListener	= new OnItemClickListener()
+													if (mnCategoryItemId == nId)
 													{
-														@Override
-														public void onItemClick(AdapterView<?> arg0, View arg1,
-																int arg2, long arg3)
-														{
-															EventHandler.notify(Global.handlerActivity,
-																	EventMessage.MSG_OPTION_ITEM_SELECTED, arg2, 0,
-																	null);
-														}
-													};
+														EventHandler.notify(Global.handlerActivity,
+																EventMessage.MSG_OPTION_ITEM_SELECTED, arg2, 0, null);
+													}
+													if (mnFavoriteItemId == nId)
+													{
+														EventHandler.notify(Global.handlerActivity,
+																EventMessage.MSG_OPTION_ITEM_SELECTED,
+																theFavoriteAdapter.getChapter(arg2),
+																theFavoriteAdapter.getPage(arg2), null);
+													}
+												}
+											};
 
 }

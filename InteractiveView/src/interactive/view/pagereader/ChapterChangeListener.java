@@ -50,8 +50,8 @@ public class ChapterChangeListener implements OnPageChangeListener
 		if (null != theHandler)
 		{
 			Message msg = new Message();
-			msg.what = EventMessage.MSG_CHAPTER; // message type
-			msg.arg1 = nEvent; // event
+			msg.what = EventMessage.MSG_CHAPTER;
+			msg.arg1 = nEvent;
 			msg.arg2 = nPosition;
 			msg.obj = null;
 			theHandler.sendMessage(msg);

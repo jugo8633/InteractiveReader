@@ -50,8 +50,8 @@ public class PageChangeListener implements OnPageChangeListener
 		if (null != theHandler)
 		{
 			Message msg = new Message();
-			msg.what = EventMessage.MSG_PAGE; // message type
-			msg.arg1 = nEvent; // event
+			msg.what = EventMessage.MSG_PAGE;
+			msg.arg1 = nEvent;
 			msg.arg2 = nPosition;
 			msg.obj = null;
 			theHandler.sendMessage(msg);
