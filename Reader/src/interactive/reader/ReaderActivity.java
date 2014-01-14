@@ -36,6 +36,9 @@ public class ReaderActivity extends Activity
 	private SparseArray<FavoriteData>	listFavoriteData	= null;
 	private boolean						mbIsShowOption		= false;
 	private OptionHandler				optionHandler		= null;
+	private int							mnOrientation		= Type.INVALID;
+	private ConfigData					configData			= null;
+	private String						mstrBookPath		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -77,6 +80,19 @@ public class ReaderActivity extends Activity
 		Global.interactiveHandler.initMediaView(this);
 		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
 		super.onResume();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		if (newConfig.orientation != mnOrientation)
+		{
+			mnOrientation = newConfig.orientation;
+			loadDisplayPage(configData, mstrBookPath);
+			pageReader.jumpPage(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+			Logs.showTrace("Orientation change: " + newConfig.orientation);
+		}
+		super.onConfigurationChanged(newConfig);
 	}
 
 	public int getResourceId(String name, String defType)
@@ -162,20 +178,61 @@ public class ReaderActivity extends Activity
 			closeProgressDialog();
 			return;
 		}
-
-		Logs.showTrace("Start init book: " + strBookPath);
-		ConfigData configData = new ConfigData();
-		if (bookHandler.parseBook(strBookPath, configData))
+		mstrBookPath = strBookPath;
+		Logs.showTrace("Start init book: " + mstrBookPath);
+		configData = new ConfigData();
+		if (bookHandler.parseBook(mstrBookPath, configData))
 		{
 			setHeaderBookName(configData.thePackage.metaData.strAppName);
 			getFavoriteData(this);
-			loadDisplayPage(configData, strBookPath);
+			if (checkOrientation(configData))
+			{
+				loadDisplayPage(configData, mstrBookPath);
+			}
 		}
 		else
 		{
 			// TODO show parse fail dialog 
 		}
 		closeProgressDialog();
+	}
+
+	private boolean checkOrientation(ConfigData configData)
+	{
+		Device device = new Device(this);
+		int nOrientation = device.getOrientation();
+		device = null;
+
+		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		{
+			if (Configuration.ORIENTATION_PORTRAIT == nOrientation)
+			{
+				return true;
+			}
+			else
+			{
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		}
+
+		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		{
+			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
+			{
+				return true;
+			}
+			else
+			{
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+		}
+
+		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private void initOption()
@@ -201,17 +258,21 @@ public class ReaderActivity extends Activity
 
 	private void loadDisplayPage(ConfigData configData, String strBookPath)
 	{
+		if (null == configData || null == strBookPath)
+		{
+			return;
+		}
 		PageData.listPageData.clear();
 		SparseArray<SparseArray<DisplayPage>> book = new SparseArray<SparseArray<DisplayPage>>();
 		int nBookOrientation = createDisplayPage(book, configData, strBookPath);
 		pageReader.createBook(book);
 		book.clear();
 		book = null;
-		// TODO		initOption();
 		if (Configuration.ORIENTATION_UNDEFINED == nBookOrientation)
 		{
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		}
+		initOption();
 	}
 
 	private int createDisplayPage(SparseArray<SparseArray<DisplayPage>> book, ConfigData configData, String strBookPath)
@@ -364,7 +425,6 @@ public class ReaderActivity extends Activity
 											case EventMessage.MSG_CHECKED_BOOK:
 												String strBookPath = bookHandler.getBookPath();
 												initBook(strBookPath);
-												initOption();
 												break;
 											case EventMessage.MSG_DOUBLE_CLICK:
 												showOption();
