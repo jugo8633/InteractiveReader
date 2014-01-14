@@ -19,8 +19,8 @@ public class PageReader extends RelativeLayout
 	private ViewPager							viewPager					= null;
 	private ChaptersAdapter						chaptersAdapter				= null;
 	private int									mnTotalPage					= Type.INVALID;
-	private int									mnCurrentChapter			= 0;
-	private int									mnCurrentPage				= 0;
+	//	private int									mnCurrentChapter			= 0;
+	//	private int									mnCurrentPage				= 0;
 	private SparseArray<ViewHistory>			listViewHistory				= null;
 	private boolean								mbIsGoHistory				= false;
 	private SparseArray<OnPageSwitchedListener>	listOnPageSwitchedListener	= null;
@@ -244,17 +244,17 @@ public class PageReader extends RelativeLayout
 
 	private void setCurrentPosition()
 	{
-		int nOldChapter = mnCurrentChapter;
-		int nOldPage = mnCurrentPage;
-		mnCurrentChapter = viewPager.getCurrentItem();
-		VerticalViewPager vvp = (VerticalViewPager) chaptersAdapter.getChildView(mnCurrentChapter);
-		mnCurrentPage = vvp.getCurrentItem();
-		addHistory(mnCurrentChapter, mnCurrentPage);
-		Logs.showTrace("Current position: " + mnCurrentChapter + " " + mnCurrentPage);
+		int nOldChapter = Global.currentChapter;
+		int nOldPage = Global.currentPage;
+		Global.currentChapter = viewPager.getCurrentItem();
+		VerticalViewPager vvp = (VerticalViewPager) chaptersAdapter.getChildView(Global.currentChapter);
+		Global.currentPage = vvp.getCurrentItem();
+		addHistory(Global.currentChapter, Global.currentPage);
+		Logs.showTrace("Current position: " + Global.currentChapter + " " + Global.currentPage);
 
 		if (null != PageData.listPageData)
 		{
-			PageData.listPageData.get(mnCurrentChapter).get(mnCurrentPage).extWebView.setCurrentView(true);
+			PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).extWebView.setCurrentView(true);
 			PageData.listPageData.get(nOldChapter).get(nOldPage).extWebView.setCurrentView(false);
 		}
 		Global.interactiveHandler.removeAllMedia();
@@ -268,11 +268,11 @@ public class PageReader extends RelativeLayout
 
 	public int getCurrentChapter()
 	{
-		return mnCurrentChapter;
+		return Global.currentChapter;
 	}
 
 	public int getCurrentPage()
 	{
-		return mnCurrentPage;
+		return Global.currentPage;
 	}
 }

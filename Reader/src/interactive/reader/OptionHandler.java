@@ -202,15 +202,13 @@ public class OptionHandler
 			@Override
 			public boolean onTouch(View v, MotionEvent event)
 			{
-				int nChapter = ReaderActivity.pageReader.getCurrentChapter();
-				int nPage = ReaderActivity.pageReader.getCurrentPage();
-				PageData.Data pageData = PageData.listPageData.get(nChapter).get(nPage);
+				PageData.Data pageData = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage);
 				switch (event.getAction())
 				{
 				case MotionEvent.ACTION_DOWN:
 					pageData.bIsFavorite = pageData.bIsFavorite ? false : true;
-					updateFavoriteDB(activity, pageData.bIsFavorite, nChapter, nPage);
-					showFavorite(activity, nChapter, nPage);
+					updateFavoriteDB(activity, pageData.bIsFavorite, Global.currentChapter, Global.currentPage);
+					showFavorite(activity, Global.currentChapter, Global.currentPage);
 					break;
 				}
 				return true;
@@ -301,8 +299,7 @@ public class OptionHandler
 		}
 		else if (theHeader.mnShareId == nResId)
 		{
-			PageData.Data pageData = PageData.listPageData.get(ReaderActivity.pageReader.getCurrentChapter()).get(
-					ReaderActivity.pageReader.getCurrentPage());
+			PageData.Data pageData = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage);
 			SparseArray<String> listImage = new SparseArray<String>();
 			listImage.put(listImage.size(), pageData.strShapTiny);
 			share.shareAll(pageData.strChapterName, pageData.strChapterName, null, listImage);
@@ -310,8 +307,7 @@ public class OptionHandler
 		}
 		else if (theHeader.mnFavoriteId == nResId)
 		{
-			showFavorite(Global.theActivity, ReaderActivity.pageReader.getCurrentChapter(),
-					ReaderActivity.pageReader.getCurrentPage());
+			showFavorite(Global.theActivity, Global.currentChapter, Global.currentPage);
 			flipperView.showView(theHeader.mnFavoriteIndex);
 			Logs.showTrace("Option run favorite");
 		}

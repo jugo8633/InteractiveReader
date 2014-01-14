@@ -29,7 +29,7 @@ import android.widget.TextView;
 public class ReaderActivity extends Activity
 {
 
-	public static PageReader			pageReader			= null;
+	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
 	private BookHandler					bookHandler			= null;

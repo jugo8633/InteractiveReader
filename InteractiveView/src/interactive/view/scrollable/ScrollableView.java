@@ -35,7 +35,7 @@ public class ScrollableView extends RelativeLayout
 	public static final int			SCROLL_TYPE_HORIZONTAL	= 2;
 	private ImageView				imageView				= null;
 	private HorizontalScrollView	horizontalScrollView	= null;
-	private VerticalScrollView		verticalScrollView		= null;
+	private ScrollView				verticalScrollView		= null;
 	private int						mnDisplayWidth			= Type.INVALID;
 	private int						mnDisplayHeight			= Type.INVALID;
 	private int						mnScrollX				= 0;
@@ -137,55 +137,41 @@ public class ScrollableView extends RelativeLayout
 		verticalScrollView.setHorizontalFadingEdgeEnabled(false);
 		this.addView(verticalScrollView);
 
-		verticalScrollView.setOnScrollBottomListener(new VerticalScrollView.OnScrollBottomListener()
-		{
-			@Override
-			public void onScrollBottom()
-			{
-				EventHandler.notify(notifyHandler, ScrollableView.SCROLL_TOP_END, 0, 0, null);
-			}
-		});
-
-		verticalScrollView.setOnScrollTopListener(new VerticalScrollView.OnScrollTopListener()
-		{
-			@Override
-			public void onScrollTop()
-			{
-				EventHandler.notify(notifyHandler, ScrollableView.SCROLL_DOWN_END, 0, 0, null);
-			}
-		});
-
-		//		verticalScrollView.setOnTouchListener(new OnTouchListener()
+		//		verticalScrollView.setOnScrollBottomListener(new VerticalScrollView.OnScrollBottomListener()
 		//		{
 		//			@Override
-		//			public boolean onTouch(View v, MotionEvent event)
+		//			public void onScrollBottom()
 		//			{
-		//				gestureDetector.onTouchEvent(event);
-		//				switch (event.getAction())
-		//				{
-		//				case MotionEvent.ACTION_DOWN:
-		//					//	mnVScrollX = verticalScrollView.getScrollX();
-		//					mnVScrollY = verticalScrollView.getScrollY();
-		//
-		//					return true;
-		//				case MotionEvent.ACTION_MOVE:
-		//					return false;
-		//				case MotionEvent.ACTION_UP:
-		//					int nVScrollY = verticalScrollView.getScrollY();
-		//					if (mnScrollEnd == 0)
-		//					{
-		//						EventHandler.notify(notifyHandler, ScrollableView.SCROLL_TOP_END, 0, 0, null);
-		//					}
-		//					if (mnScrollEnd == 1)
-		//					{
-		//						EventHandler.notify(notifyHandler, ScrollableView.SCROLL_DOWN_END, 0, 0, null);
-		//					}
-		//					return true;
-		//				}
-		//				return false;
-		//				//	return gestureDetector.onTouchEvent(event);
+		//				EventHandler.notify(notifyHandler, ScrollableView.SCROLL_TOP_END, 0, 0, null);
 		//			}
 		//		});
+		//
+		//		verticalScrollView.setOnScrollTopListener(new VerticalScrollView.OnScrollTopListener()
+		//		{
+		//			@Override
+		//			public void onScrollTop()
+		//			{
+		//				EventHandler.notify(notifyHandler, ScrollableView.SCROLL_DOWN_END, 0, 0, null);
+		//			}
+		//		});
+
+		verticalScrollView.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					mnHScrollX = verticalScrollView.getScrollX();
+					mnHScrollY = verticalScrollView.getScrollY();
+					break;
+				}
+				return gestureDetector.onTouchEvent(event);
+
+			}
+		});
 	}
 
 	private void initHorizontal()
