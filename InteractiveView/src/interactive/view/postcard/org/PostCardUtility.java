@@ -1,4 +1,4 @@
-package interactive.view.postcard;
+package interactive.view.postcard.org;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

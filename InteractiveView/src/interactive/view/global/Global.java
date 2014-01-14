@@ -1,6 +1,6 @@
 package interactive.view.global;
 
-import interactive.view.json.InteractiveHandler;
+import interactive.view.handler.InteractiveHandler;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;

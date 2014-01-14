@@ -3,6 +3,7 @@ package interactive.view.json;
 import interactive.common.Device;
 import interactive.common.Logs;
 import interactive.view.global.Global;
+import interactive.view.handler.InteractiveEvent;
 import interactive.view.video.VideoPlayer;
 import interactive.view.webview.InteractiveWebView;
 import interactive.view.youtube.YoutubeFrameLayout;

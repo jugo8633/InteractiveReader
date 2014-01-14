@@ -2,6 +2,7 @@ package interactive.view.json;
 
 import interactive.common.Type;
 import interactive.view.global.Global;
+import interactive.view.handler.InteractiveEvent;
 import interactive.view.slideshow.SlideshowView;
 import interactive.view.slideshow.SlideshowViewItem;
 import interactive.view.webview.InteractiveWebView;

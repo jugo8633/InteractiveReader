@@ -1,7 +1,7 @@
 package interactive.view.json;
 
 import interactive.common.Device;
-import interactive.view.postcard.PostCardUtility;
+import interactive.view.postcard.org.PostCardUtility;
 import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
