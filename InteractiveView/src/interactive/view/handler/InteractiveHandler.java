@@ -7,6 +7,7 @@ import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.image.InteractiveImageView;
 import interactive.view.map.GoogleMapActivity;
+import interactive.view.postcard.Postcard;
 import interactive.view.slideshow.SlideshowViewVideoLayout;
 import interactive.view.video.VideoPlayer;
 import interactive.view.webview.InteractiveWebView;
@@ -23,10 +24,11 @@ import android.widget.RelativeLayout;
 
 public class InteractiveHandler
 {
-	private Runnable			runRemoveImage;
-	private String				mstrRemoveImage	= null;
-	private static YoutubeView	youtubeView		= null;
-	private static VideoPlayer	videoView		= null;
+	private Runnable				runRemoveImage;
+	private String					mstrRemoveImage	= null;
+	private static YoutubeView		youtubeView		= null;
+	private static VideoPlayer		videoView		= null;
+	private SparseArray<Postcard>	listPostcard	= null;
 
 	public class GoogleMap
 	{
@@ -147,6 +149,7 @@ public class InteractiveHandler
 		listImage = new SparseArray<InteractiveImage>();
 		listYoutube = new SparseArray<YoutubeVideo>();
 		listLocalVideo = new SparseArray<LocalVideo>();
+		listPostcard = new SparseArray<Postcard>();
 		runRemoveImage = new Runnable()
 		{
 			@Override
@@ -155,6 +158,11 @@ public class InteractiveHandler
 				removeInteractiveImageView(mstrRemoveImage);
 			}
 		};
+	}
+
+	public void addPostcard(Postcard postcard)
+	{
+		listPostcard.put(listPostcard.size(), postcard);
 	}
 
 	public void initMediaView(Activity activity)

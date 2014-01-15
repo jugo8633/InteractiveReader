@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package interactive.view.postcard.org;
+package interactive.view.postcardorg;
 
 import android.app.Dialog;
 import android.content.Context;

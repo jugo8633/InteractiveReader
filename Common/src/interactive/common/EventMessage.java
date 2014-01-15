@@ -28,6 +28,7 @@ public class EventMessage
 	public static final int	MSG_GO_FORWARD				= MSG_CUSTOM + 18;
 	public static final int	MSG_OPTION_ITEM_SELECTED	= MSG_CUSTOM + 19;
 	public static final int	MSG_LOCK_PAGE				= MSG_CUSTOM + 20;
+	public static final int	MSG_UNLOCK_PAGE				= MSG_CUSTOM + 21;
 
 	/**
 	 * @author jugo

@@ -448,6 +448,12 @@ public class ReaderActivity extends Activity
 												showOption();
 												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
+											case EventMessage.MSG_LOCK_PAGE:
+											//	pageReader.requestDisallowInterceptTouchEvent(true);
+												break;
+											case EventMessage.MSG_UNLOCK_PAGE:
+											//	pageReader.requestDisallowInterceptTouchEvent(false);
+												break;
 											}
 											super.handleMessage(msg);
 										}

@@ -1,4 +1,4 @@
-package interactive.view.postcard.org;
+package interactive.view.postcardorg;
 
 import android.content.Context;
 import android.graphics.Bitmap;
