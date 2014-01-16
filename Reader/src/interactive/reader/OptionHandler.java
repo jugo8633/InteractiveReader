@@ -1,7 +1,9 @@
 package interactive.reader;
 
+import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.ObjectFactory;
 import interactive.common.Share;
@@ -13,11 +15,13 @@ import interactive.view.gallery.GalleryView;
 import interactive.view.gallery.GalleryView.onScrollStopListner;
 import interactive.view.global.Global;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -133,6 +137,13 @@ public class OptionHandler
 
 	public void initChapOption(final Activity activity)
 	{
+
+		Device device = new Device(activity);
+		float nScale = device.getScaleSize();
+		device = null;
+		int nChapItemWidth = (int) Math.floor(145 * nScale);
+		int nChapItemHeight = (int) Math.floor(194 * nScale);
+
 		theHeader.mnChapIndex = flipperView.addChild(Global.getResourceId(activity, "reader_chap", "layout"));
 		final GalleryView galleryView = (GalleryView) flipperView.findViewById(Global.getResourceId(activity,
 				"galleryViewChap", "id"));
@@ -147,12 +158,11 @@ public class OptionHandler
 			{
 				ImageView img = new ImageView(activity);
 
-				//				Bitmap bmp = FileHandler.decodeScaledBitmap(allWebPage.get(nChapter).get(nPage).strShapTiny,
-				//						145, 194);
-				//				img.setImageBitmap(bmp);
-				//		img.setLayoutParams(new LayoutParams(145, 194));
-				img.setBackgroundResource(android.R.color.transparent);
-				img.setImageURI(Uri.parse(PageData.listPageData.get(nChapter).get(nPage).strShapTiny));
+				Bitmap bmp = FileHandler.decodeScaledBitmap(PageData.listPageData.get(nChapter).get(nPage).strShapTiny,
+						nChapItemWidth, nChapItemHeight);
+				img.setImageBitmap(bmp);
+				img.setLayoutParams(new LayoutParams(nChapItemWidth, nChapItemHeight));
+				//	img.setImageURI(Uri.parse(PageData.listPageData.get(nChapter).get(nPage).strShapTiny));
 				img.setScaleType(ScaleType.FIT_XY);
 				img.setAdjustViewBounds(true);
 				imgs.put(nPage, img);
@@ -161,7 +171,7 @@ public class OptionHandler
 			listImage.put(nChapter, imgs);
 			imgs = null;
 		}
-		galleryView.addChild(listImage, 145, 194);
+		galleryView.addChild(listImage, nChapItemWidth, nChapItemHeight);
 		listImage = null;
 		galleryView.setOnScrollStopListner(new onScrollStopListner()
 		{

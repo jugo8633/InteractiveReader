@@ -45,6 +45,9 @@ public class ReaderActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 
+		/** show device information */
+		getDeviceInfo(this);
+
 		/** init global*/
 		Global.theActivity = this;
 		Global.handlerActivity = activityHandler;
@@ -410,6 +413,19 @@ public class ReaderActivity extends Activity
 		return false;
 	}
 
+	private void getDeviceInfo(Activity activity)
+	{
+		Device device = new Device(activity);
+		Logs.showTrace("==== Device Information ====");
+		Logs.showTrace("Display width = " + device.getDisplayWidth() + " Display height = " + device.getDisplayHeight());
+		Logs.showTrace("Device width = " + device.getDeviceWidth() + " Device height = " + device.getDeviceHeight());
+		Logs.showTrace("Display scale size = " + device.getScaleSize());
+		Logs.showTrace("Device orientation = " + device.getOrientation());
+		Logs.showTrace("Device inches = " + device.getDisplayIncheSize());
+		Logs.showTrace("Device type = " + device.getDeviceType()); // 0:phone 1:tablet
+		device = null;
+	}
+
 	private Handler	activityHandler	= new Handler()
 									{
 										@Override
@@ -449,10 +465,10 @@ public class ReaderActivity extends Activity
 												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
 											case EventMessage.MSG_LOCK_PAGE:
-											//	pageReader.requestDisallowInterceptTouchEvent(true);
+												//	pageReader.requestDisallowInterceptTouchEvent(true);
 												break;
 											case EventMessage.MSG_UNLOCK_PAGE:
-											//	pageReader.requestDisallowInterceptTouchEvent(false);
+												//	pageReader.requestDisallowInterceptTouchEvent(false);
 												break;
 											}
 											super.handleMessage(msg);

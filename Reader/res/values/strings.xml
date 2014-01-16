@@ -26,6 +26,6 @@
     <string name="favorite_title">我的最愛收藏</string>
     <string name="share_title">社群分享</string>
     <string name="share_Hint_word">留言...</string>
-    <string name="start_unexpress">開始解壓縮書籍...></string>
+    <string name="start_unexpress">開始解壓縮書籍...</string>
 
 </resources>

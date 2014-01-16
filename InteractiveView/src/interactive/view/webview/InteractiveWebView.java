@@ -107,7 +107,7 @@ public class InteractiveWebView extends WebView
 		this.setFocusable(true);
 		this.setFocusableInTouchMode(true);
 		this.setBackgroundColor(Color.TRANSPARENT);
-		//		this.setClickable(false);
+		this.setClickable(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -396,8 +396,8 @@ public class InteractiveWebView extends WebView
 															public boolean onDoubleTap(MotionEvent e)
 															{
 																EventHandler.notify(Global.handlerActivity,
-																		EventMessage.MSG_DOUBLE_CLICK,
-																		Type.INVALID, Type.INVALID, null);
+																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
+																		Type.INVALID, null);
 																return super.onDoubleTap(e);
 															}
 

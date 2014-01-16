@@ -143,6 +143,7 @@ public class SlideshowView extends RelativeLayout
 				.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 		horizontalScrollView.addView(linearLayout);
+		linearLayout.setBackgroundColor(Color.WHITE);
 		addView(horizontalScrollView);
 
 		listOnScrollstopListner = new SparseArray<onScrollStopListner>();

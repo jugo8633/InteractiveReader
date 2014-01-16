@@ -18,7 +18,7 @@ import android.util.SparseArray;
 public class InteractiveVideo extends InteractiveObject
 {
 
-	private int	mnScaleSize	= 1;
+	private float	mnScaleSize	= 1;
 
 	public InteractiveVideo(Context context)
 	{
@@ -88,8 +88,9 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay(jsonHeader.mnX * mnScaleSize, jsonHeader.mnY * mnScaleSize, jsonHeader.mnWidth * mnScaleSize,
-				jsonHeader.mnHeight * mnScaleSize);
+		player.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
 		player.setVideo(strBookPath + jsonBody.mstrVideoSrc);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);
@@ -106,8 +107,9 @@ public class InteractiveVideo extends InteractiveObject
 			String strBookPath)
 	{
 		YoutubeFrameLayout youtubeLayout = new YoutubeFrameLayout(getContext());
-		youtubeLayout.setDisplay(jsonHeader.mnX * mnScaleSize, jsonHeader.mnY * mnScaleSize, jsonHeader.mnWidth
-				* mnScaleSize, jsonHeader.mnHeight * mnScaleSize);
+		youtubeLayout.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
 		youtubeLayout.setBackground(strBookPath + jsonHeader.mstrSrc);
 		youtubeLayout.setTag(jsonHeader.mstrName);
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
@@ -120,8 +122,9 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay(jsonHeader.mnX * mnScaleSize, jsonHeader.mnY * mnScaleSize, jsonHeader.mnWidth * mnScaleSize,
-				jsonHeader.mnHeight * mnScaleSize);
+		player.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
+				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
 		player.setVideo(jsonBody.mstrUrl);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);

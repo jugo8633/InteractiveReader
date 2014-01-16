@@ -17,7 +17,7 @@ import android.content.Context;
 public class InteractiveMap extends InteractiveObject
 {
 
-	private int	mnScaleSize	= 1;
+	private float	mnScaleSize	= 1;
 
 	public InteractiveMap(Context context)
 	{
@@ -70,15 +70,19 @@ public class InteractiveMap extends InteractiveObject
 					// 等待被呼叫 顯示方式為 activity
 					Global.interactiveHandler.addGoogleMap(jsonHeader.mstrName, nType, jsonBody.mdLongitude,
 							jsonBody.mdlatitude, jsonBody.appearance.mnZoomLevel, jsonBody.appearance.mstrMarkAs,
-							jsonHeader.mnX * mnScaleSize, jsonHeader.mnY * mnScaleSize, jsonHeader.mnWidth
-									* mnScaleSize, jsonHeader.mnHeight * mnScaleSize, webView.getBackgroundImage());
+							(int) Math.floor(jsonHeader.mnX * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnY * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnHeight * mnScaleSize), webView.getBackgroundImage());
 				}
 				else
 				{
 					// 顯示方式為 parent view 的 child view
 					GoogleMapView googleMapView = new GoogleMapView(getContext());
-					googleMapView.setDisplay(jsonHeader.mnX * mnScaleSize, jsonHeader.mnY * mnScaleSize,
-							jsonHeader.mnWidth * mnScaleSize, jsonHeader.mnHeight * mnScaleSize);
+					googleMapView.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnY * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
+							(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
 
 					googleMapView.init(jsonHeader.mstrName, Global.theActivity, nType, jsonBody.mdLongitude,
 							jsonBody.mdlatitude, jsonBody.appearance.mnZoomLevel, jsonBody.appearance.mstrMarkAs);

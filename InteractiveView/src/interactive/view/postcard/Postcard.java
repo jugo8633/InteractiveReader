@@ -22,7 +22,8 @@ public class Postcard
 		postcardFrame = new FrameLayout(context);
 	}
 
-	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight)
+	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
+			String strBack)
 	{
 		postcardFrame.setTag(strName);
 		postcardFrame.setX(nX);
@@ -30,13 +31,27 @@ public class Postcard
 		postcardFrame.setLayoutParams(new LayoutParams(nWidth, nHeight));
 		container.removeView(postcardFrame);
 		container.addView(postcardFrame);
+
+		initPostcard(strFront, strBack);
 	}
 
-	public void addPostcard(String strPath)
+	/** set postcard front image and back image */
+	private void initPostcard(String strFront, String strBack)
 	{
-		ImageView image = new ImageView(theContext);
-		image.setImageURI(Uri.parse(strPath));
-		image.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		postcardFrame.addView(image);
+		postcardFrame.removeAllViewsInLayout();
+
+		if (null != strFront)
+		{
+			ImageView image = new ImageView(theContext);
+			image.setImageURI(Uri.parse(strFront));
+			image.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			postcardFrame.addView(image);
+		}
+
+		if (null != strBack)
+		{
+
+		}
 	}
+
 }

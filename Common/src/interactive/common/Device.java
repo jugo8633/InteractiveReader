@@ -67,11 +67,11 @@ public class Device
 		return dpHeight;
 	}
 
-	public int getScaleSize()
+	public float getScaleSize()
 	{
-		int nDeviceWidth = getDeviceWidth();
-		int nDisplayWidth = getDisplayWidth();
-		int nScale = nDisplayWidth / nDeviceWidth;
+		float nDeviceWidth = (float) getDeviceWidth();
+		float nDisplayWidth = (float) getDisplayWidth();
+		float nScale = nDisplayWidth / nDeviceWidth;
 		if (0 >= nScale)
 		{
 			nScale = 1;

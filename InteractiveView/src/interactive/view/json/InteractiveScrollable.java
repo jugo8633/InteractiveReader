@@ -33,7 +33,7 @@ public class InteractiveScrollable extends InteractiveObject
 			return false;
 		}
 		Device device = new Device(getContext());
-		int nScaleSize = device.getScaleSize();
+		float nScaleSize = device.getScaleSize();
 		device = null;
 
 		JSONArray jsonArrayScrollable = jsonAll.getJSONArray(JSON_SCROLLABLE);
@@ -47,11 +47,15 @@ public class InteractiveScrollable extends InteractiveObject
 				if (jsonHeader.mbIsVisible)
 				{
 					ScrollableView scrollableImageView = new ScrollableView(getContext());
-					scrollableImageView.setDisplay(jsonHeader.mnX * nScaleSize, jsonHeader.mnY * nScaleSize,
-							jsonHeader.mnWidth * nScaleSize, jsonHeader.mnHeight * nScaleSize);
-					scrollableImageView.setImage(strBookPath + jsonHeader.mstrSrc, jsonBody.imgBBox.mnWidth
-							* nScaleSize, jsonBody.imgBBox.mnHeight * nScaleSize, jsonBody.mnOverflow,
-							jsonBody.offSet.mnX * nScaleSize, jsonBody.offSet.mnY * nScaleSize);
+					scrollableImageView.setDisplay((int) Math.floor(jsonHeader.mnX * nScaleSize),
+							(int) Math.floor(jsonHeader.mnY * nScaleSize),
+							(int) Math.floor(jsonHeader.mnWidth * nScaleSize),
+							(int) Math.floor(jsonHeader.mnHeight * nScaleSize));
+					scrollableImageView.setImage(strBookPath + jsonHeader.mstrSrc,
+							(int) Math.floor(jsonBody.imgBBox.mnWidth * nScaleSize),
+							(int) Math.floor(jsonBody.imgBBox.mnHeight * nScaleSize), jsonBody.mnOverflow,
+							(int) Math.floor(jsonBody.offSet.mnX * nScaleSize),
+							(int) Math.floor(jsonBody.offSet.mnY * nScaleSize));
 					scrollableImageView.initNotifyHandler(webView.getWebHandler());
 					webView.addView(scrollableImageView);
 				}
