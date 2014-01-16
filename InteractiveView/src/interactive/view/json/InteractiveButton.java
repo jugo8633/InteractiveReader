@@ -45,8 +45,8 @@ public class InteractiveButton extends InteractiveObject
 					acButton.setTag(jsonHeader.mstrName);
 					acButton.setImageSrc(strBookPath + jsonHeader.mstrSrc, strBookPath + jsonBody.mstrTouchDown,
 							strBookPath + jsonBody.mstrTouchUp);
-					acButton.setDisplay(getScaleUnit(jsonHeader.mnX), getScaleUnit(jsonHeader.mnY),
-							getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight));
+					acButton.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 					acButton.setGroupId(jsonHeader.mstrGroupId);
 					acButton.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
 					for (int j = 0; j < jsonBody.listEvent.size(); ++j)

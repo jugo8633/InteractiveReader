@@ -75,8 +75,6 @@ public class SlideshowViewVideoLayout extends RelativeLayout
 		imgPlay.setOnClickListener(playClickListener);
 
 		listOnVideoPlayListner = new SparseArray<OnVideoPlayListner>();
-
-		this.setPadding(3, 3, 3, 3);
 	}
 
 	public void setBackground(String strImage)

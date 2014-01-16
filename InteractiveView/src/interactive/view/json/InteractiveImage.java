@@ -57,9 +57,9 @@ public class InteractiveImage extends InteractiveObject
 					ScalableImageView imgView = new ScalableImageView(getContext());
 					imgView.setTag(jsonHeader.mstrName);
 					imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
-					imgView.setImageSize(getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight));
-					imgView.setDisplay(getScaleUnit(jsonHeader.mnX), getScaleUnit(jsonHeader.mnY),
-							getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight));
+					imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+					imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 					JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
 					for (int j = 0; j < jsonArrayGesture.length(); ++j)
 					{
@@ -83,9 +83,9 @@ public class InteractiveImage extends InteractiveObject
 					if (!jsonHeader.mbIsVisible)
 					{
 						Global.interactiveHandler.addInteractiveImage(webView, jsonHeader.mstrName,
-								(strBookPath + jsonHeader.mstrSrc), getScaleUnit(jsonHeader.mnX),
-								getScaleUnit(jsonHeader.mnY), getScaleUnit(jsonHeader.mnWidth),
-								getScaleUnit(jsonHeader.mnHeight), jsonHeader.mstrGroupId);
+								(strBookPath + jsonHeader.mstrSrc), ScaleSize(jsonHeader.mnX),
+								ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
+								ScaleSize(jsonHeader.mnHeight), jsonHeader.mstrGroupId);
 
 					}
 					else
@@ -93,8 +93,8 @@ public class InteractiveImage extends InteractiveObject
 						InteractiveImageView imgView = new InteractiveImageView(getContext());
 						imgView.setTag(jsonHeader.mstrName);
 						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
-						imgView.setDisplay(getScaleUnit(jsonHeader.mnX), getScaleUnit(jsonHeader.mnY),
-								getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight));
+						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 						imgView.setGroupId(jsonHeader.mstrGroupId);
 						webView.addView(imgView);
 						imgView = null;
@@ -129,8 +129,8 @@ public class InteractiveImage extends InteractiveObject
 			if (parseJsonHeader(jsonImage, jsonHeader))
 			{
 				listImageData.put(listImageData.size(), new InteractiveImageData(jsonHeader.mstrName,
-						getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight),
-						getScaleUnit(jsonHeader.mnX), getScaleUnit(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc,
+						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight),
+						ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc,
 						jsonHeader.mstrGroupId));
 			}
 		}

@@ -94,9 +94,9 @@ public class InteractiveSlideshow extends InteractiveObject
 						listViewItem.put(listViewItem.size(), viewItem);
 					}
 
-					SlideshowView slideshow = createSlideshow(jsonHeader.mstrName, getScaleUnit(jsonHeader.mnWidth),
-							getScaleUnit(jsonHeader.mnHeight), getScaleUnit(jsonHeader.mnX),
-							getScaleUnit(jsonHeader.mnY), jsonBody.mstrBackground, jsonBody.mnStyle,
+					SlideshowView slideshow = createSlideshow(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
+							ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX),
+							ScaleSize(jsonHeader.mnY), jsonBody.mstrBackground, jsonBody.mnStyle,
 							jsonBody.mbFullScreen, jsonBody.mnItemCount, listViewItem);
 
 					webView.addView(slideshow);

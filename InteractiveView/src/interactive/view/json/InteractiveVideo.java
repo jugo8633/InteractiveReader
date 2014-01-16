@@ -1,6 +1,5 @@
 package interactive.view.json;
 
-import interactive.common.Device;
 import interactive.common.Logs;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveEvent;
@@ -17,9 +16,6 @@ import android.util.SparseArray;
 
 public class InteractiveVideo extends InteractiveObject
 {
-
-	private float	mnScaleSize	= 1;
-
 	public InteractiveVideo(Context context)
 	{
 		super(context);
@@ -39,10 +35,6 @@ public class InteractiveVideo extends InteractiveObject
 		{
 			return false;
 		}
-
-		Device device = new Device(getContext());
-		mnScaleSize = device.getScaleSize();
-		device = null;
 
 		String strKey = getValidKey(jsonAll, JSON_VIDEO);
 		if (null == strKey)
@@ -88,9 +80,8 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
+		player.setDisplay(ScaleSize(jsonHeader.mnX),ScaleSize(jsonHeader.mnY),
+				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 		player.setVideo(strBookPath + jsonBody.mstrVideoSrc);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);
@@ -107,9 +98,8 @@ public class InteractiveVideo extends InteractiveObject
 			String strBookPath)
 	{
 		YoutubeFrameLayout youtubeLayout = new YoutubeFrameLayout(getContext());
-		youtubeLayout.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
+		youtubeLayout.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 		youtubeLayout.setBackground(strBookPath + jsonHeader.mstrSrc);
 		youtubeLayout.setTag(jsonHeader.mstrName);
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
@@ -122,9 +112,8 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay((int) Math.floor(jsonHeader.mnX * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnY * mnScaleSize), (int) Math.floor(jsonHeader.mnWidth * mnScaleSize),
-				(int) Math.floor(jsonHeader.mnHeight * mnScaleSize));
+		player.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 		player.setVideo(jsonBody.mstrUrl);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);
@@ -174,11 +163,14 @@ public class InteractiveVideo extends InteractiveObject
 					break;
 				}
 
-				listVideoData.put(listVideoData.size(), new InteractiveVideoData(jsonHeader.mstrName,
-						getScaleUnit(jsonHeader.mnWidth), getScaleUnit(jsonHeader.mnHeight),
-						getScaleUnit(jsonHeader.mnX), getScaleUnit(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc,
-						jsonBody.mnVideoType, strMediaSrc, jsonBody.options.mnStart, jsonBody.options.mnEnd,
-						jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls));
+				listVideoData.put(
+						listVideoData.size(),
+						new InteractiveVideoData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth), 
+								ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), 
+								ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonBody.mnVideoType,
+								strMediaSrc, jsonBody.options.mnStart, jsonBody.options.mnEnd,
+								jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop,
+								jsonBody.appearance.mbPlayerControls));
 			}
 		}
 		return true;

@@ -1,5 +1,6 @@
 package interactive.view.slideshow;
 
+import interactive.common.Device;
 import interactive.common.Logs;
 import interactive.view.global.Global;
 
@@ -79,7 +80,9 @@ public class SlideshowViewActivity extends Activity
 		Global.interactiveHandler.initMediaView(this);
 		if (0 < slist.size())
 		{
-			gallery.setItem(slist, LayoutParams.MATCH_PARENT, 600, true);
+			Device device = new Device(this);
+			int nDisplayWidth = device.getDeviceWidth();
+			gallery.setItem(slist, Global.ScaleSize(nDisplayWidth), Global.ScaleSize(600), true);
 			gallery.setCurrentItem(nCurrentItem);
 		}
 	}

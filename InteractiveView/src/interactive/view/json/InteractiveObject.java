@@ -1,6 +1,7 @@
 package interactive.view.json;
 
 import interactive.common.Type;
+import interactive.view.global.Global;
 import interactive.view.webview.InteractiveWebView;
 
 import java.util.HashMap;
@@ -805,16 +806,21 @@ public abstract class InteractiveObject
 		return true;
 	}
 
-	public int getScaleUnit(int original)
+	//	public int getScaleUnit(int original)
+	//	{
+	//		if (null != metrics && metrics.densityDpi > 160)
+	//		{
+	//			return (int) (original * metrics.densityDpi / 160);// metrics.density
+	//		}
+	//		else
+	//		{
+	//			return original;
+	//		}
+	//	}
+
+	public int ScaleSize(int nSize)
 	{
-		if (null != metrics && metrics.densityDpi > 160)
-		{
-			return (int) (original * metrics.densityDpi / 160);// metrics.density
-		}
-		else
-		{
-			return original;
-		}
+		return Global.ScaleSize(nSize);
 	}
 
 	public boolean isCreateValid(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, String strJsonKey)

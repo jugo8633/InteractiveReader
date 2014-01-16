@@ -3,8 +3,10 @@ package interactive.view.slideshow;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import interactive.view.type.InteractiveType;
 
@@ -60,6 +62,7 @@ public class SlideshowView extends RelativeLayout
 	private int										mnCurrentItem			= 0;
 	private Activity								theActivity				= null;
 	private int										mnDisplayWidth			= LayoutParams.MATCH_PARENT;
+	private int										mnDisplayHeight			= LayoutParams.MATCH_PARENT;
 	private SparseArray<ImageView>					listIndicator			= null;
 	private GestureDetector							gestureDetector			= null;
 	private ScaleGestureDetector					scaleGestureDetector	= null;
@@ -129,6 +132,7 @@ public class SlideshowView extends RelativeLayout
 
 	private void init(Context context)
 	{
+		this.setBackgroundColor(Color.TRANSPARENT);
 		/** init slide */
 		scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
 		horizontalScrollView = new HorizontalScrollView(context);
@@ -138,12 +142,13 @@ public class SlideshowView extends RelativeLayout
 				LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		horizontalScrollView.setLayoutParams(layoutParams);
+		horizontalScrollView.setBackgroundColor(Color.TRANSPARENT);
 
 		linearLayout
 				.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 		horizontalScrollView.addView(linearLayout);
-		linearLayout.setBackgroundColor(Color.WHITE);
+		linearLayout.setBackgroundColor(Color.TRANSPARENT);
 		addView(horizontalScrollView);
 
 		listOnScrollstopListner = new SparseArray<onScrollStopListner>();
@@ -284,6 +289,7 @@ public class SlideshowView extends RelativeLayout
 		this.setY(nY);
 		this.setLayoutParams(new RelativeLayout.LayoutParams(nWidth, nHeight));
 		mnDisplayWidth = nWidth;
+		mnDisplayHeight = nHeight;
 		lLayoutThumbnail.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, nHeight / 4));
 	}
 
@@ -389,6 +395,7 @@ public class SlideshowView extends RelativeLayout
 		mnCurrentItem = nItem;
 		setIndicator(true, mnCurrentItem);
 		invalidate();
+		notifyItemSwitched();
 	}
 
 	public void setOnScrollStopListner(SlideshowView.onScrollStopListner listner)
@@ -511,7 +518,7 @@ public class SlideshowView extends RelativeLayout
 		ImageView imageview = new ImageView(getContext());
 		imageview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		imageview.setScaleType(ScaleType.CENTER_CROP);
-		imageview.setAdjustViewBounds(true);
+		imageview.setAdjustViewBounds(false);
 
 		if (0 < nResId)
 		{
@@ -519,7 +526,9 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			imageview.setImageURI(Uri.parse(strPath));
+			Bitmap bmp = FileHandler.decodeScaledBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
+			imageview.setImageBitmap(bmp);
+			//	imageview.setImageURI(Uri.parse(strPath));
 		}
 		else
 		{
@@ -590,7 +599,7 @@ public class SlideshowView extends RelativeLayout
 				}
 				if (null != imgView)
 				{
-					imgView.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nItemHeight));
+					imgView.setLayoutParams(new ViewGroup.LayoutParams(nItemWidth, nItemHeight));
 					linearLayout.addView(imgView);
 				}
 				break;
