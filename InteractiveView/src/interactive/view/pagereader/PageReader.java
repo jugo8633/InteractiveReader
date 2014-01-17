@@ -19,8 +19,6 @@ public class PageReader extends RelativeLayout
 	private ViewPager							viewPager					= null;
 	private ChaptersAdapter						chaptersAdapter				= null;
 	private int									mnTotalPage					= Type.INVALID;
-	//	private int									mnCurrentChapter			= 0;
-	//	private int									mnCurrentPage				= 0;
 	private SparseArray<ViewHistory>			listViewHistory				= null;
 	private boolean								mbIsGoHistory				= false;
 	private SparseArray<OnPageSwitchedListener>	listOnPageSwitchedListener	= null;
@@ -77,7 +75,7 @@ public class PageReader extends RelativeLayout
 		viewPager = new ViewPager(context);
 		viewPager.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		viewPager.setOnPageChangeListener(new ChapterChangeListener(readerHandler));
-		chaptersAdapter = new ChaptersAdapter(readerHandler);
+		chaptersAdapter = new ChaptersAdapter();
 		listViewHistory = new SparseArray<ViewHistory>();
 		addHistory(0, 0);
 		this.addView(viewPager);
@@ -116,7 +114,7 @@ public class PageReader extends RelativeLayout
 		for (int nChapter = 0; nChapter < book.size(); ++nChapter)
 		{
 			SparseArray<DisplayPage> listPage = book.get(nChapter);
-			PagesAdapter pagesAdapter = new PagesAdapter(readerHandler);
+			PagesAdapter pagesAdapter = new PagesAdapter();
 			for (int nPage = 0; nPage < listPage.size(); ++nPage)
 			{
 				pagesAdapter.addPageView(listPage.get(nPage));
@@ -274,5 +272,24 @@ public class PageReader extends RelativeLayout
 	public int getCurrentPage()
 	{
 		return Global.currentPage;
+	}
+
+	public void lockScroll(boolean bLock)
+	{
+		lockHorizonScroll(bLock);
+		lockVerticalScroll(bLock);
+	}
+
+	public void lockHorizonScroll(boolean bLock)
+	{
+		viewPager.requestDisallowInterceptTouchEvent(bLock);
+	}
+
+	public void lockVerticalScroll(boolean bLock)
+	{
+		for (int i = 0; i < chaptersAdapter.getCount(); ++i)
+		{
+			((VerticalViewPager) chaptersAdapter.getChildView(i)).requestDisallowInterceptTouchEvent(bLock);
+		}
 	}
 }

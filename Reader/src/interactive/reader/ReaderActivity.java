@@ -465,10 +465,22 @@ public class ReaderActivity extends Activity
 												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
 											case EventMessage.MSG_LOCK_PAGE:
-												//	pageReader.requestDisallowInterceptTouchEvent(true);
+												pageReader.lockScroll(true);
 												break;
 											case EventMessage.MSG_UNLOCK_PAGE:
-												//	pageReader.requestDisallowInterceptTouchEvent(false);
+												pageReader.lockScroll(false);
+												break;
+											case EventMessage.MSG_LOCK_HORIZON:
+												pageReader.lockHorizonScroll(true);
+												break;
+											case EventMessage.MSG_UNLOCK_HORIZON:
+												pageReader.lockHorizonScroll(false);
+												break;
+											case EventMessage.MSG_LOCK_VERTICAL:
+												pageReader.lockVerticalScroll(true);
+												break;
+											case EventMessage.MSG_UNLOCK_VERTICAL:
+												pageReader.lockVerticalScroll(false);
 												break;
 											}
 											super.handleMessage(msg);

@@ -1,12 +1,7 @@
 package interactive.view.pagereader;
 
-import interactive.common.EventMessage;
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,17 +9,10 @@ public class PagesAdapter extends VerticalPagerAdapter
 {
 
 	private SparseArray<DisplayPage>	listPage	= null;
-	private Handler								theHandler	= null;
 
 	public PagesAdapter()
 	{
 		initData();
-	}
-
-	public PagesAdapter(Handler handler)
-	{
-		initData();
-		theHandler = handler;
 	}
 
 	private void initData()
@@ -84,16 +72,4 @@ public class PagesAdapter extends VerticalPagerAdapter
 		return listPage.size();
 	}
 
-	private void notify(int nEvent, int nPosition)
-	{
-		if (null != theHandler)
-		{
-			Message msg = new Message();
-			msg.what = EventMessage.MSG_PAGE; // message type
-			msg.arg1 = nEvent; // event
-			msg.arg2 = nPosition;
-			msg.obj = null;
-			theHandler.sendMessage(msg);
-		}
-	}
 }

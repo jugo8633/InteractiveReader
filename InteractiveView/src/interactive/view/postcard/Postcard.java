@@ -1,7 +1,9 @@
 package interactive.view.postcard;
 
 import interactive.common.EventHandler;
-import interactive.view.scrollable.ScrollableView;
+import interactive.common.EventMessage;
+import interactive.view.animation.flipcard.Rotate3d;
+import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -22,6 +24,9 @@ public class Postcard
 	private ViewGroup		container		= null;
 	private Context			theContext		= null;
 	private GestureDetector	gestureDetector	= null;
+	private FingerPaintView	fingerPaintView	= null;
+	private ImageView		imgPostFront	= null;
+	private Rotate3d		rotate3d		= null;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -30,6 +35,7 @@ public class Postcard
 		container = viewGroup;
 		postcardFrame = new FrameLayout(context);
 		gestureDetector = new GestureDetector(context, simpleOnGestureListener);
+		rotate3d = new Rotate3d();
 	}
 
 	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
@@ -43,6 +49,34 @@ public class Postcard
 		container.addView(postcardFrame);
 
 		initPostcard(strFront, strBack);
+
+		postcardFrame.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_HORIZON, 0, 0, null);
+					break;
+				case MotionEvent.ACTION_UP:
+					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
+					break;
+				}
+				gestureDetector.onTouchEvent(event);
+				return true;
+			}
+		});
+
+		rotate3d.setlistOnRotateEndListener(new Rotate3d.OnRotateEndListener()
+		{
+			@Override
+			public void onRotateEnd()
+			{
+				switchCard();
+			}
+		});
 	}
 
 	/** set postcard front image and back image */
@@ -50,31 +84,37 @@ public class Postcard
 	{
 		postcardFrame.removeAllViewsInLayout();
 
-		if (null != strFront)
-		{
-			ImageView image = new ImageView(theContext);
-			image.setImageURI(Uri.parse(strFront));
-			image.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			postcardFrame.addView(image);
-		}
-
 		if (null != strBack)
 		{
-			FingerPaint fingerPaint = new FingerPaint(theContext);
-			fingerPaint.setBackground(Drawable.createFromPath(strBack));
-			fingerPaint.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			postcardFrame.addView(fingerPaint);
+			fingerPaintView = new FingerPaintView(theContext);
+			fingerPaintView.setBackground(Drawable.createFromPath(strBack));
+			fingerPaintView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			postcardFrame.addView(fingerPaintView);
+			fingerPaintView.setVisibility(View.GONE);
 		}
 
-		postcardFrame.setOnTouchListener(new OnTouchListener()
+		if (null != strFront)
 		{
-			@Override
-			public boolean onTouch(View v, MotionEvent event)
-			{
-				gestureDetector.onTouchEvent(event);
-				return false;
-			}
-		});
+			imgPostFront = new ImageView(theContext);
+			imgPostFront.setImageURI(Uri.parse(strFront));
+			imgPostFront.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			postcardFrame.addView(imgPostFront);
+		}
+
+	}
+
+	private void switchCard()
+	{
+		if (imgPostFront.getVisibility() == View.VISIBLE)
+		{
+			fingerPaintView.setVisibility(View.VISIBLE);
+			imgPostFront.setVisibility(View.GONE);
+		}
+		else
+		{
+			imgPostFront.setVisibility(View.VISIBLE);
+			fingerPaintView.setVisibility(View.GONE);
+		}
 	}
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
@@ -93,10 +133,16 @@ public class Postcard
 															if ((e1.getX() - e2.getX()) > sensitvity)
 															{
 																// left
+																rotate3d.applyRotation(postcardFrame, 0, -90,
+																		Rotate3d.ROTATE_LEFT);
+
 															}
 															else if ((e2.getX() - e1.getX()) > sensitvity)
 															{
 																// right
+																rotate3d.applyRotation(postcardFrame, 0, 90,
+																		Rotate3d.ROTATE_RIGHT);
+
 															}
 															return super.onFling(e1, e2, velocityX, velocityY);
 														}

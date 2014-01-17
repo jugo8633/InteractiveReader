@@ -29,6 +29,10 @@ public class EventMessage
 	public static final int	MSG_OPTION_ITEM_SELECTED	= MSG_CUSTOM + 19;
 	public static final int	MSG_LOCK_PAGE				= MSG_CUSTOM + 20;
 	public static final int	MSG_UNLOCK_PAGE				= MSG_CUSTOM + 21;
+	public static final int	MSG_LOCK_HORIZON			= MSG_CUSTOM + 22;
+	public static final int	MSG_UNLOCK_HORIZON			= MSG_CUSTOM + 23;
+	public static final int	MSG_LOCK_VERTICAL			= MSG_CUSTOM + 24;
+	public static final int	MSG_UNLOCK_VERTICAL			= MSG_CUSTOM + 25;
 
 	/**
 	 * @author jugo

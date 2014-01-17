@@ -1,8 +1,5 @@
 package interactive.view.pagereader;
 
-import interactive.common.EventMessage;
-import android.os.Handler;
-import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +7,11 @@ import android.view.ViewGroup;
 public class ChaptersAdapter extends PagerAdapter
 {
 	private SparseArray<View>	listChapter	= null;
-	private Handler				theHandler	= null;
 
 	public ChaptersAdapter()
 	{
 		super();
 		initData();
-	}
-
-	public ChaptersAdapter(Handler handler)
-	{
-		super();
-		initData();
-		theHandler = handler;
 	}
 
 	private void initData()
@@ -90,18 +79,5 @@ public class ChaptersAdapter extends PagerAdapter
 	public int size()
 	{
 		return listChapter.size();
-	}
-
-	private void notify(int nEvent, int nPosition)
-	{
-		if (null != theHandler)
-		{
-			Message msg = new Message();
-			msg.what = EventMessage.MSG_CHAPTER; // message type
-			msg.arg1 = nEvent; // event
-			msg.arg2 = nPosition;
-			msg.obj = null;
-			theHandler.sendMessage(msg);
-		}
 	}
 }

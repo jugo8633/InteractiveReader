@@ -4,20 +4,20 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class FingerPaint extends View
+public class FingerPaintView extends View
 {
 
-	public FingerPaint(Context context)
+	public FingerPaintView(Context context)
 	{
 		super(context);
 	}
 
-	public FingerPaint(Context context, AttributeSet attrs)
+	public FingerPaintView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 	}
 
-	public FingerPaint(Context context, AttributeSet attrs, int defStyleAttr)
+	public FingerPaintView(Context context, AttributeSet attrs, int defStyleAttr)
 	{
 		super(context, attrs, defStyleAttr);
 	}
