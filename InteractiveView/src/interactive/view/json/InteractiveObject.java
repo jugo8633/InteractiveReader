@@ -371,6 +371,19 @@ public abstract class InteractiveObject
 			}
 		}
 
+		class TextArea
+		{
+			public int		mnWidth		= Type.INVALID;
+			public int		mnHeight	= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+			public String	mstrSrc		= null;
+
+			public TextArea()
+			{
+			}
+		}
+
 		class Camera
 		{
 			public int		mnWidth		= Type.INVALID;
@@ -414,6 +427,7 @@ public abstract class InteractiveObject
 		public String		mstrSrcBack		= null;
 		public Pen			pen				= null;
 		public Eraser		eraser			= null;
+		public TextArea		textArea		= null;
 		public Camera		camera			= null;
 		public OpenButton	openButton		= null;
 		public MailBox		mailBox			= null;
@@ -422,6 +436,7 @@ public abstract class InteractiveObject
 		{
 			pen = new Pen();
 			eraser = new Eraser();
+			textArea = new TextArea();
 			camera = new Camera();
 			openButton = new OpenButton();
 			mailBox = new MailBox();
@@ -432,6 +447,7 @@ public abstract class InteractiveObject
 		{
 			pen = null;
 			eraser = null;
+			textArea = null;
 			camera = null;
 			openButton = null;
 			mailBox = null;
@@ -758,6 +774,10 @@ public abstract class InteractiveObject
 			jsonPostcard.eraser.mnY = getJsonInt(jsonEraser, JSON_Y);
 			jsonPostcard.eraser.mstrSrc = getJsonString(jsonEraser, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.eraser = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_PEN);
 		if (null != strKey)
@@ -768,6 +788,25 @@ public abstract class InteractiveObject
 			jsonPostcard.pen.mnX = getJsonInt(jsonPen, JSON_X);
 			jsonPostcard.pen.mnY = getJsonInt(jsonPen, JSON_Y);
 			jsonPostcard.pen.mstrSrc = getJsonString(jsonPen, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.pen = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_TEXT_AREA);
+		if (null != strKey)
+		{
+			JSONObject jsonTextArea = jsonObject.getJSONObject(strKey);
+			jsonPostcard.textArea.mnWidth = getJsonInt(jsonTextArea, JSON_WIDTH);
+			jsonPostcard.textArea.mnHeight = getJsonInt(jsonTextArea, JSON_HEIGHT);
+			jsonPostcard.textArea.mnX = getJsonInt(jsonTextArea, JSON_X);
+			jsonPostcard.textArea.mnY = getJsonInt(jsonTextArea, JSON_Y);
+			jsonPostcard.textArea.mstrSrc = getJsonString(jsonTextArea, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.textArea = null;
 		}
 
 		strKey = getValidKey(jsonObject, JSON_CAMERA);
@@ -780,6 +819,10 @@ public abstract class InteractiveObject
 			jsonPostcard.camera.mnY = getJsonInt(jsonCamera, JSON_Y);
 			jsonPostcard.camera.mstrSrc = getJsonString(jsonCamera, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.camera = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_OPEN_BUTTON);
 		if (null != strKey)
@@ -791,6 +834,10 @@ public abstract class InteractiveObject
 			jsonPostcard.openButton.mnY = getJsonInt(jsonOpenButton, JSON_Y);
 			jsonPostcard.openButton.mstrSrc = getJsonString(jsonOpenButton, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.openButton = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_MAILBOX);
 		if (null != strKey)
@@ -801,6 +848,10 @@ public abstract class InteractiveObject
 			jsonPostcard.mailBox.mnX = getJsonInt(jsonMailBox, JSON_X);
 			jsonPostcard.mailBox.mnY = getJsonInt(jsonMailBox, JSON_Y);
 			jsonPostcard.mailBox.mstrSrc = getJsonString(jsonMailBox, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.mailBox = null;
 		}
 
 		return true;

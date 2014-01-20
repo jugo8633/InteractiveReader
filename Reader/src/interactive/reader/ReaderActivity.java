@@ -109,6 +109,7 @@ public class ReaderActivity extends Activity
 		pageReader = (PageReader) findViewById(nResId);
 		if (null != pageReader)
 		{
+			Global.pageReader = pageReader;
 			pageReader.setOnPageSwitchedListener(new PageReader.OnPageSwitchedListener()
 			{
 				@Override

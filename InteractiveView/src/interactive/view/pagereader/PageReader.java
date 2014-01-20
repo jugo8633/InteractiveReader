@@ -16,7 +16,7 @@ public class PageReader extends RelativeLayout
 {
 
 	private Context								theContext					= null;
-	private ViewPager							viewPager					= null;
+	private HorizonPageView						viewPager					= null;
 	private ChaptersAdapter						chaptersAdapter				= null;
 	private int									mnTotalPage					= Type.INVALID;
 	private SparseArray<ViewHistory>			listViewHistory				= null;
@@ -72,7 +72,7 @@ public class PageReader extends RelativeLayout
 
 	public void initPageReader(Context context)
 	{
-		viewPager = new ViewPager(context);
+		viewPager = new HorizonPageView(context);
 		viewPager.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		viewPager.setOnPageChangeListener(new ChapterChangeListener(readerHandler));
 		chaptersAdapter = new ChaptersAdapter();
@@ -257,6 +257,8 @@ public class PageReader extends RelativeLayout
 		}
 		Global.interactiveHandler.removeAllMedia();
 		notifyPageSwitched();
+		lockHorizonScroll(false);
+		lockVerticalScroll(false);
 	}
 
 	public int getTotalPage()
@@ -282,14 +284,25 @@ public class PageReader extends RelativeLayout
 
 	public void lockHorizonScroll(boolean bLock)
 	{
-		viewPager.requestDisallowInterceptTouchEvent(bLock);
+		viewPager.setPagingEnabled(!bLock);
+		//		viewPager.getParent().requestDisallowInterceptTouchEvent(bLock);
+		//		viewPager.requestDisallowInterceptTouchEvent(bLock);
+		//		viewPager.setHorizontalScrollBarEnabled(!bLock);
+		Logs.showTrace("Page reader lock horizon page: " + bLock);
 	}
 
 	public void lockVerticalScroll(boolean bLock)
 	{
 		for (int i = 0; i < chaptersAdapter.getCount(); ++i)
 		{
+			if (null != ((VerticalViewPager) chaptersAdapter.getChildView(i)).getParent())
+			{
+				((VerticalViewPager) chaptersAdapter.getChildView(i)).getParent().requestDisallowInterceptTouchEvent(
+						bLock);
+			}
 			((VerticalViewPager) chaptersAdapter.getChildView(i)).requestDisallowInterceptTouchEvent(bLock);
+			((VerticalViewPager) chaptersAdapter.getChildView(i)).setVerticalScrollBarEnabled(!bLock);
 		}
+		Logs.showTrace("Page reader lock vertical page: " + bLock);
 	}
 }

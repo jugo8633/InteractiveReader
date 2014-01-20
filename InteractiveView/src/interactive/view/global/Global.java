@@ -2,6 +2,7 @@ package interactive.view.global;
 
 import interactive.common.Device;
 import interactive.view.handler.InteractiveHandler;
+import interactive.view.pagereader.PageReader;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -13,6 +14,7 @@ public class Global
 	public static Handler				handlerActivity		= null;
 	public static int					currentChapter		= 0;
 	public static int					currentPage			= 0;
+	public static PageReader			pageReader			= null;
 
 	public static int getResourceId(Context context, String name, String defType)
 	{
