@@ -40,6 +40,7 @@ public class Postcard
 		postcardFrame = new FrameLayout(context);
 		gestureDetector = new GestureDetector(context, simpleOnGestureListener);
 		rotate3d = new Rotate3d();
+		container.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
 	}
 
 	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
@@ -101,7 +102,7 @@ public class Postcard
 		if (null != strBack)
 		{
 			fingerPaintView = new FingerPaintView(theContext);
-			fingerPaintView.setBackground(Drawable.createFromPath(strBack));
+			fingerPaintView.setBackground(strBack);
 			fingerPaintView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			postcardFrame.addView(fingerPaintView);
 			fingerPaintView.setVisibility(View.GONE);
@@ -258,6 +259,7 @@ public class Postcard
 				}
 				view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
 				fingerPaintView.setIsCapturing(true);
+				fingerPaintView.setEraser(false);
 				container.requestDisallowInterceptTouchEvent(true);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
 			}
@@ -281,6 +283,7 @@ public class Postcard
 				}
 				view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
 				fingerPaintView.setIsCapturing(true);
+				fingerPaintView.setEraser(true);
 				container.requestDisallowInterceptTouchEvent(true);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
 			}
@@ -307,6 +310,11 @@ public class Postcard
 		{
 			penView.setBackground(null);
 		}
+	}
+
+	private void sendPostcard()
+	{
+
 	}
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()

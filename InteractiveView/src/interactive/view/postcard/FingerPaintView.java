@@ -1,45 +1,33 @@
 package interactive.view.postcard;
 
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
+import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 
 public class FingerPaintView extends View
 {
 
-	//定義繪圖的基本參數
-	private float					mfPaintWidth				= 8f;
-	private int						mnPaintColor				= Color.BLUE;
-	private boolean					mCapturing					= false;
-	private Bitmap					mBmpPaint					= null;
-
-	//定義防止線條有鋸齒的常數
-	private static final boolean	GESTURE_RENDERING_ANTIALIAS	= true;
-	private static final boolean	DITHER_FLAG					= true;
-
-	private Paint					mPaint						= new Paint();
-	private Path					mPath						= new Path();
-
-	//矩形
-	private final Rect				mInvalidRect				= new Rect();
-
-	private float					mX;
-	private float					mY;
-
-	private float					mCurveEndX;
-	private float					mCurveEndY;
-
-	private int						mInvalidateExtraBorder		= 10;
+	private Bitmap				mBitmap			= null;
+	private Canvas				mCanvas			= null;
+	private Paint				mPaint			= null;
+	private Path				mPath			= null;
+	private Paint				mBitmapPaint	= null;
+	private boolean				mbEraser		= false;
+	private float				mX, mY;
+	private static final float	TOUCH_TOLERANCE	= 4;
+	private boolean				mbCapturing		= false;
+	private Paint				mpaintEraser	= null;
 
 	public FingerPaintView(Context context)
 	{
@@ -61,24 +49,45 @@ public class FingerPaintView extends View
 
 	private void init()
 	{
-		setWillNotDraw(false);
-
-		mPaint.setAntiAlias(GESTURE_RENDERING_ANTIALIAS);
-		mPaint.setColor(mnPaintColor);
+		mPaint = new Paint();
+		mPaint.setAntiAlias(true);
+		mPaint.setDither(true);
+		mPaint.setColor(Color.BLUE);
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeJoin(Paint.Join.ROUND);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
-		mPaint.setStrokeWidth(mfPaintWidth);
-		mPaint.setDither(DITHER_FLAG);
-		mPath.reset();
+		mPaint.setStrokeWidth(8);
+
+		mpaintEraser = new Paint();
+		mpaintEraser.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.CLEAR));
+		mpaintEraser.setAntiAlias(true);
+		mpaintEraser.setDither(true);
+		mpaintEraser.setStyle(Paint.Style.STROKE);
+		mpaintEraser.setStrokeJoin(Paint.Join.ROUND);
+		mpaintEraser.setStrokeCap(Paint.Cap.ROUND);
+		mpaintEraser.setStrokeWidth(24);
+
+		mPath = new Path();
+		mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+	}
+
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh)
+	{
+		super.onSizeChanged(w, h, oldw, oldh);
+		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		mCanvas = new Canvas(mBitmap);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas)
 	{
-		if (mBmpPaint != null)
+		canvas.drawColor(Color.TRANSPARENT);
+		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+
+		if (mbEraser)
 		{
-			canvas.drawBitmap(mBmpPaint, null, new Rect(0, 0, getWidth(), getHeight()), null);
+			mCanvas.drawPath(mPath, mpaintEraser);
 		}
 		else
 		{
@@ -86,10 +95,42 @@ public class FingerPaintView extends View
 		}
 	}
 
+	private void touch_start(float x, float y)
+	{
+		mPath.reset();
+		mPath.moveTo(x, y);
+		mX = x;
+		mY = y;
+	}
+
+	private void touch_move(float x, float y)
+	{
+		float dx = Math.abs(x - mX);
+		float dy = Math.abs(y - mY);
+		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE)
+		{
+			mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+			mX = x;
+			mY = y;
+		}
+	}
+
+	private void touch_up()
+	{
+		if (!mbEraser)
+		{
+			mPath.lineTo(mX, mY);
+			// commit the path to our offscreen
+			mCanvas.drawPath(mPath, mPaint);
+		}
+		// kill this so we don't double draw
+		mPath.reset();
+	}
+
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
-		if (mCapturing)
+		if (mbCapturing)
 		{
 			processEvent(event);
 			return true;
@@ -100,186 +141,77 @@ public class FingerPaintView extends View
 		}
 	}
 
-	private boolean processEvent(MotionEvent event)
-	{
-		switch (event.getAction())
-		{
-		case MotionEvent.ACTION_DOWN:
-			touchDown(event);
-			invalidate();
-			return true;
-
-		case MotionEvent.ACTION_MOVE:
-			Rect rect = touchMove(event);
-			if (rect != null)
-			{
-				invalidate(rect);
-			}
-			return true;
-
-		case MotionEvent.ACTION_UP:
-			touchUp(event, false);
-			invalidate();
-			return true;
-
-		case MotionEvent.ACTION_CANCEL:
-			touchUp(event, true);
-			invalidate();
-			return true;
-		}
-		return false;
-	}
-
-	private void touchUp(MotionEvent event, boolean b)
-	{
-	}
-
-	private Rect touchMove(MotionEvent event)
-	{
-		Rect areaToRefresh = null;
-
-		final float x = event.getX();
-		final float y = event.getY();
-
-		final float previousX = mX;
-		final float previousY = mY;
-
-		areaToRefresh = mInvalidRect;
-
-		// start with the curve end 
-		final int border = mInvalidateExtraBorder;
-		areaToRefresh.set((int) mCurveEndX - border, (int) mCurveEndY - border, (int) mCurveEndX + border,
-				(int) mCurveEndY + border);
-
-		float cX = mCurveEndX = (x + previousX) / 2;
-		float cY = mCurveEndY = (y + previousY) / 2;
-
-		mPath.quadTo(previousX, previousY, cX, cY);
-
-		// union with the control point of the new curve 
-		areaToRefresh.union((int) previousX - border, (int) previousY - border, (int) previousX + border,
-				(int) previousY + border);
-
-		// union with the end point of the new curve 
-		areaToRefresh.union((int) cX - border, (int) cY - border, (int) cX + border, (int) cY + border);
-
-		mX = x;
-		mY = y;
-
-		return areaToRefresh;
-	}
-
-	private void touchDown(MotionEvent event)
+	private void processEvent(MotionEvent event)
 	{
 		float x = event.getX();
 		float y = event.getY();
 
-		mX = x;
-		mY = y;
-		mPath.moveTo(x, y);
-
-		final int border = mInvalidateExtraBorder;
-		mInvalidRect.set((int) x - border, (int) y - border, (int) x + border, (int) y + border);
-
-		mCurveEndX = x;
-		mCurveEndY = y;
+		switch (event.getAction())
+		{
+		case MotionEvent.ACTION_DOWN:
+			touch_start(x, y);
+			invalidate();
+			break;
+		case MotionEvent.ACTION_MOVE:
+			touch_move(x, y);
+			invalidate();
+			break;
+		case MotionEvent.ACTION_UP:
+			touch_up();
+			invalidate();
+			break;
+		}
 	}
 
-	/** 
-	 * Erases the signature. 
-	 */
 	public void clear()
 	{
-		mBmpPaint = null;
 		mPath.rewind();
-		// Repaints the entire view. 
 		invalidate();
 	}
 
 	public boolean isCapturing()
 	{
-		return mCapturing;
+		return mbCapturing;
 	}
 
 	public void setIsCapturing(boolean mCapturing)
 	{
-		this.mCapturing = mCapturing;
+		this.mbCapturing = mCapturing;
 	}
 
-	public void setBitmapPaint(Bitmap bmpPaint)
+	public void setEraser(boolean bEraser)
 	{
-		mBmpPaint = bmpPaint;
-		invalidate();
+		mbEraser = bEraser;
 	}
 
-	public Bitmap getBitmapPaint()
+	public void setBackground(String strImagePath)
 	{
-		if (mBmpPaint != null)
+		setBackground(Drawable.createFromPath(strImagePath));
+	}
+
+	public boolean exportBitmap(String strPath)
+	{
+		int nWidth = getLayoutParams().width;
+		int nHeight = getLayoutParams().height;
+
+		Bitmap bitmap = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bitmap);
+		measure(MeasureSpec.makeMeasureSpec(getLayoutParams().width, MeasureSpec.EXACTLY),
+				MeasureSpec.makeMeasureSpec(getLayoutParams().height, MeasureSpec.EXACTLY));
+		layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+		draw(c);
+
+		FileOutputStream out;
+		try
 		{
-			return mBmpPaint;
+			out = new FileOutputStream(strPath);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+			return true;
 		}
-		else if (mPath.isEmpty())
+		catch (Exception e)
 		{
-			return null;
+			e.printStackTrace();
 		}
-		else
-		{
-			Bitmap bmp = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-			Canvas c = new Canvas(bmp);
-			c.drawPath(mPath, mPaint);
-			return bmp;
-		}
-	}
-
-	public void setPaintWidth(float width)
-	{
-		mfPaintWidth = width;
-		mPaint.setStrokeWidth(mfPaintWidth);
-		invalidate();
-	}
-
-	public float getPaintWidth()
-	{
-		return mPaint.getStrokeWidth();
-	}
-
-	public void setPaintColor(int color)
-	{
-		mnPaintColor = color;
-	}
-
-	/** 
-	 * @return the byte array representing the paint as a PNG file format 
-	 */
-	public byte[] getSignaturePNG()
-	{
-		return getPaintBytes(CompressFormat.PNG, 0);
-	}
-
-	/** 
-	 * @param quality Hint to the compressor, 0-100. 0 meaning compress for small 
-	 *            size, 100 meaning compress for max quality. 
-	 * @return the byte array representing the paint as a JPEG file format 
-	 */
-	public byte[] getPaintJPEG(int quality)
-	{
-		return getPaintBytes(CompressFormat.JPEG, quality);
-	}
-
-	private byte[] getPaintBytes(CompressFormat format, int quality)
-	{
-		Bitmap bmp = getBitmapPaint();
-		if (bmp == null)
-		{
-			return null;
-		}
-		else
-		{
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-			getBitmapPaint().compress(format, quality, stream);
-
-			return stream.toByteArray();
-		}
+		return false;
 	}
 }
