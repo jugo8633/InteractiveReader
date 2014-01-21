@@ -16,7 +16,6 @@ import interactive.view.gallery.GalleryView.onScrollStopListner;
 import interactive.view.global.Global;
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;

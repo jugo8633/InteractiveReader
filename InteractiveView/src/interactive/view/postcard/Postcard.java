@@ -1,14 +1,26 @@
 package interactive.view.postcard;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
+import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
 import interactive.view.global.Global;
 import interactive.view.pagereader.PageReader;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,13 +36,16 @@ import android.widget.ImageView.ScaleType;
 public class Postcard
 {
 
-	private FrameLayout		postcardFrame	= null;
-	private ViewGroup		container		= null;
-	private Context			theContext		= null;
-	private GestureDetector	gestureDetector	= null;
-	private FingerPaintView	fingerPaintView	= null;
-	private ImageView		imgPostFront	= null;
-	private Rotate3d		rotate3d		= null;
+	public static int		POSTCARD_ACTIVITY_RESULT	= 777778;
+	private FrameLayout		postcardFrame				= null;
+	private ViewGroup		container					= null;
+	private Context			theContext					= null;
+	private GestureDetector	gestureDetector				= null;
+	private FingerPaintView	fingerPaintView				= null;
+	private ImageView		imgPostFront				= null;
+	private Rotate3d		rotate3d					= null;
+	private String			mstrPostcardFrontPath		= null;
+	private String			mstrPostcardBackPath		= null;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -41,6 +56,9 @@ public class Postcard
 		gestureDetector = new GestureDetector(context, simpleOnGestureListener);
 		rotate3d = new Rotate3d();
 		container.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+
+		mstrPostcardFrontPath = context.getExternalCacheDir().getPath() + File.separator + "front.png";
+		mstrPostcardBackPath = context.getExternalCacheDir().getPath() + File.separator + "back.png";
 	}
 
 	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
@@ -112,6 +130,7 @@ public class Postcard
 		{
 			imgPostFront = new ImageView(theContext);
 			imgPostFront.setImageURI(Uri.parse(strFront));
+			imgPostFront.setScaleType(ScaleType.CENTER_CROP);
 			imgPostFront.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			postcardFrame.addView(imgPostFront);
 		}
@@ -295,6 +314,16 @@ public class Postcard
 				view.setBackground(null);
 			}
 		}
+
+		if (strTag.equals("mailBox"))
+		{
+			sendPostcard();
+		}
+
+		if (strTag.equals("camera"))
+		{
+			cameraCapture();
+		}
 	}
 
 	private void clearSelected()
@@ -314,8 +343,81 @@ public class Postcard
 
 	private void sendPostcard()
 	{
+		if (fingerPaintView.exportBitmap(mstrPostcardBackPath) && exportBitmap(mstrPostcardFrontPath))
+		{
 
+			Share share = new Share(Global.theActivity);
+			SparseArray<String> listImage = new SparseArray<String>();
+			listImage.put(listImage.size(), mstrPostcardFrontPath);
+			listImage.put(listImage.size(), mstrPostcardBackPath);
+			share.shareAll("Postcard", "Postcard", null, listImage);
+			share = null;
+		}
 	}
+
+	private boolean exportBitmap(String strPath)
+	{
+		Bitmap bitmap = Bitmap.createBitmap(imgPostFront.getWidth(), imgPostFront.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bitmap);
+		imgPostFront.draw(c);
+
+		FileOutputStream out;
+		try
+		{
+			out = new FileOutputStream(strPath);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private void cameraCapture()
+	{
+		Global.handlerPostcard = postcardHandler;
+
+		/** 利用intent去開啟android本身的照相介面 */
+		Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+		/** 設定圖片的儲存位置，以及檔名 */
+		File tmpFile = new File(Environment.getExternalStorageDirectory(), "image.jpg");
+		Uri outputFileUri = Uri.fromFile(tmpFile);
+
+		/**
+		 * 把上述的設定put進去！然後startActivityForResult,
+		 * 記住，因為是有ForResult，所以在本身自己的acitivy裡面等等要複寫onActivityResult
+		 */
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+		Global.theActivity.startActivityForResult(intent, POSTCARD_ACTIVITY_RESULT);
+
+		//Global.theActivity.startActivityForResult(intent, 1122);
+	}
+
+	private void getCameraPicture()
+	{
+		File tmpFile = new File(Environment.getExternalStorageDirectory(), "image.jpg");
+		Uri outputFileUri = Uri.fromFile(tmpFile);
+		Bitmap bmp = BitmapFactory.decodeFile(outputFileUri.getPath()); //利用BitmapFactory去取得剛剛拍照的圖像
+		imgPostFront.setImageBitmap(bmp);
+	}
+
+	private Handler			postcardHandler			= new Handler()
+													{
+														@Override
+														public void handleMessage(Message msg)
+														{
+															switch (msg.what)
+															{
+															case EventMessage.MSG_ACTIVITY_RESULT:
+																getCameraPicture();
+																break;
+															}
+															super.handleMessage(msg);
+														}
+													};
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
 													{

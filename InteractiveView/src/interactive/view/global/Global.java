@@ -15,6 +15,7 @@ public class Global
 	public static int					currentChapter		= 0;
 	public static int					currentPage			= 0;
 	public static PageReader			pageReader			= null;
+	public static Handler				handlerPostcard		= null;
 
 	public static int getResourceId(Context context, String name, String defType)
 	{

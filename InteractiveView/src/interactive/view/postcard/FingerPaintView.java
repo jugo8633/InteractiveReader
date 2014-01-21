@@ -191,14 +191,8 @@ public class FingerPaintView extends View
 
 	public boolean exportBitmap(String strPath)
 	{
-		int nWidth = getLayoutParams().width;
-		int nHeight = getLayoutParams().height;
-
-		Bitmap bitmap = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bitmap);
-		measure(MeasureSpec.makeMeasureSpec(getLayoutParams().width, MeasureSpec.EXACTLY),
-				MeasureSpec.makeMeasureSpec(getLayoutParams().height, MeasureSpec.EXACTLY));
-		layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
 		draw(c);
 
 		FileOutputStream out;

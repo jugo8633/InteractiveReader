@@ -2,6 +2,7 @@ package interactive.reader;
 
 import interactive.common.ConfigData;
 import interactive.common.Device;
+import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.SqliteHandler;
@@ -12,17 +13,22 @@ import interactive.view.gallery.GalleryView;
 import interactive.view.global.Global;
 import interactive.view.pagereader.DisplayPage;
 import interactive.view.pagereader.PageReader;
+import interactive.view.postcard.Postcard;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -425,6 +431,20 @@ public class ReaderActivity extends Activity
 		Logs.showTrace("Device inches = " + device.getDisplayIncheSize());
 		Logs.showTrace("Device type = " + device.getDeviceType()); // 0:phone 1:tablet
 		device = null;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == 0)
+		{
+			if (requestCode == Postcard.POSTCARD_ACTIVITY_RESULT)
+			{
+				EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, null);
+			}
+		}
+
 	}
 
 	private Handler	activityHandler	= new Handler()

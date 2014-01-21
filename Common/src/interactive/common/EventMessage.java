@@ -33,6 +33,7 @@ public class EventMessage
 	public static final int	MSG_UNLOCK_HORIZON			= MSG_CUSTOM + 23;
 	public static final int	MSG_LOCK_VERTICAL			= MSG_CUSTOM + 24;
 	public static final int	MSG_UNLOCK_VERTICAL			= MSG_CUSTOM + 25;
+	public static final int	MSG_ACTIVITY_RESULT			= MSG_CUSTOM + 26;
 
 	/**
 	 * @author jugo
