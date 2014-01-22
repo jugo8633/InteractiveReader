@@ -1,2 +1,4 @@
+2014/01/22 : fix postcard camera get picture bug
+             add postcard picture select function
 2014/01/21 : add page lock
 2014/01/21 : add postcard camera
