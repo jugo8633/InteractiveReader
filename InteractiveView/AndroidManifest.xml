@@ -67,7 +67,6 @@
             android:alwaysRetainTaskState="false"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:launchMode="singleInstance"
             android:multiprocess="true"
             android:noHistory="false"
             android:taskAffinity=":activity" >

@@ -1,9 +1,13 @@
 package interactive.reader;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import interactive.common.ConfigData;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.IntentHandler;
 import interactive.common.Logs;
 import interactive.common.SqliteHandler;
 import interactive.common.Type;
@@ -16,15 +20,18 @@ import interactive.view.pagereader.PageReader;
 import interactive.view.postcard.Postcard;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -436,14 +443,39 @@ public class ReaderActivity extends Activity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		Logs.showTrace("onActivityResult : requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == 0)
+		IntentHandler intentHandler = new IntentHandler();
+		Bitmap bitmap = intentHandler.activityResult(this, requestCode, resultCode, data);
+		if (null != bitmap)
 		{
-			if (requestCode == Postcard.POSTCARD_ACTIVITY_RESULT)
-			{
-				EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, null);
-			}
+			EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, bitmap);
 		}
+		//		if (resultCode == Activity.RESULT_OK)
+		//		{
+		//			if (requestCode == Postcard.POSTCARD_ACTIVITY_RESULT && null != data)
+		//			{
+		//				ContentResolver resolver = getContentResolver();
+		//				//取得圖片位址
+		//				Uri uri = data.getData();
+		//				Bitmap bmp = null;
+		//				try
+		//				{
+		//					//取得圖片Bitmap
+		//					bmp = MediaStore.Images.Media.getBitmap(resolver, uri);
+		//					EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, bmp);
+		//				}
+		//				catch (FileNotFoundException e)
+		//				{
+		//					e.printStackTrace();
+		//				}
+		//				catch (IOException e)
+		//				{
+		//					e.printStackTrace();
+		//				}
+		//
+		//			}
+		//		}
 
 	}
 

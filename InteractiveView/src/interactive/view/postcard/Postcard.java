@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.IntentHandler;
 import interactive.common.Logs;
 import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
@@ -13,7 +14,6 @@ import interactive.view.pagereader.PageReader;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Environment;
@@ -323,6 +323,17 @@ public class Postcard
 		if (strTag.equals("camera"))
 		{
 			cameraCapture();
+			imgPostFront.setVisibility(View.VISIBLE);
+			fingerPaintView.setVisibility(View.GONE);
+			showEdit(false);
+		}
+
+		if (strTag.equals("openButton"))
+		{
+			pictureSelect();
+			imgPostFront.setVisibility(View.VISIBLE);
+			fingerPaintView.setVisibility(View.GONE);
+			showEdit(false);
 		}
 	}
 
@@ -345,7 +356,6 @@ public class Postcard
 	{
 		if (fingerPaintView.exportBitmap(mstrPostcardBackPath) && exportBitmap(mstrPostcardFrontPath))
 		{
-
 			Share share = new Share(Global.theActivity);
 			SparseArray<String> listImage = new SparseArray<String>();
 			listImage.put(listImage.size(), mstrPostcardFrontPath);
@@ -379,29 +389,37 @@ public class Postcard
 	{
 		Global.handlerPostcard = postcardHandler;
 
-		/** 利用intent去開啟android本身的照相介面 */
-		Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-		/** 設定圖片的儲存位置，以及檔名 */
-		File tmpFile = new File(Environment.getExternalStorageDirectory(), "image.jpg");
-		Uri outputFileUri = Uri.fromFile(tmpFile);
-
-		/**
-		 * 把上述的設定put進去！然後startActivityForResult,
-		 * 記住，因為是有ForResult，所以在本身自己的acitivy裡面等等要複寫onActivityResult
-		 */
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-		Global.theActivity.startActivityForResult(intent, POSTCARD_ACTIVITY_RESULT);
-
-		//Global.theActivity.startActivityForResult(intent, 1122);
+		IntentHandler intentHandler = new IntentHandler();
+		intentHandler.intent(Global.theActivity, IntentHandler.MODE_CAMERA_IMAGE);
+		intentHandler = null;
+		//		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		//		File file = new File(Environment.getExternalStorageDirectory(), "tmp_avatar_"
+		//				+ String.valueOf(System.currentTimeMillis()) + ".jpg");
+		//
+		//		try
+		//		{
+		//			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+		//			intent.putExtra("return-data", true);
+		//			Global.theActivity.startActivityForResult(intent, POSTCARD_ACTIVITY_RESULT);
+		//		}
+		//		catch (Exception e)
+		//		{
+		//			e.printStackTrace();
+		//		}
 	}
 
-	private void getCameraPicture()
+	private void getPicture(Bitmap bitmap)
 	{
-		File tmpFile = new File(Environment.getExternalStorageDirectory(), "image.jpg");
-		Uri outputFileUri = Uri.fromFile(tmpFile);
-		Bitmap bmp = BitmapFactory.decodeFile(outputFileUri.getPath()); //利用BitmapFactory去取得剛剛拍照的圖像
-		imgPostFront.setImageBitmap(bmp);
+		imgPostFront.setImageBitmap(bitmap);
+	}
+
+	private void pictureSelect()
+	{
+		Global.handlerPostcard = postcardHandler;
+
+		IntentHandler intentHandler = new IntentHandler();
+		intentHandler.intent(Global.theActivity, IntentHandler.MODE_IMAGE_GALLERY);
+		intentHandler = null;
 	}
 
 	private Handler			postcardHandler			= new Handler()
@@ -412,7 +430,7 @@ public class Postcard
 															switch (msg.what)
 															{
 															case EventMessage.MSG_ACTIVITY_RESULT:
-																getCameraPicture();
+																getPicture((Bitmap) msg.obj);
 																break;
 															}
 															super.handleMessage(msg);
