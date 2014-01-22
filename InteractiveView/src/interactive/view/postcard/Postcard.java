@@ -11,18 +11,17 @@ import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
 import interactive.view.global.Global;
 import interactive.view.pagereader.PageReader;
+import interactive.view.slideshow.SlideshowView.ScaleGestureListener;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -36,16 +35,17 @@ import android.widget.ImageView.ScaleType;
 public class Postcard
 {
 
-	public static int		POSTCARD_ACTIVITY_RESULT	= 777778;
-	private FrameLayout		postcardFrame				= null;
-	private ViewGroup		container					= null;
-	private Context			theContext					= null;
-	private GestureDetector	gestureDetector				= null;
-	private FingerPaintView	fingerPaintView				= null;
-	private ImageView		imgPostFront				= null;
-	private Rotate3d		rotate3d					= null;
-	private String			mstrPostcardFrontPath		= null;
-	private String			mstrPostcardBackPath		= null;
+	public static int				POSTCARD_ACTIVITY_RESULT	= 777778;
+	private FrameLayout				postcardFrame				= null;
+	private ViewGroup				container					= null;
+	private Context					theContext					= null;
+	private GestureDetector			gestureDetector				= null;
+	private FingerPaintView			fingerPaintView				= null;
+	private ImageView				imgPostFront				= null;
+	private Rotate3d				rotate3d					= null;
+	private String					mstrPostcardFrontPath		= null;
+	private String					mstrPostcardBackPath		= null;
+	private ScaleGestureDetector	scaleGestureDetector		= null;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -59,6 +59,8 @@ public class Postcard
 
 		mstrPostcardFrontPath = context.getExternalCacheDir().getPath() + File.separator + "front.png";
 		mstrPostcardBackPath = context.getExternalCacheDir().getPath() + File.separator + "back.png";
+
+		scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
 	}
 
 	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
@@ -88,6 +90,7 @@ public class Postcard
 					break;
 				}
 				gestureDetector.onTouchEvent(event);
+				scaleGestureDetector.onTouchEvent(event);
 				return true;
 			}
 		});
@@ -467,4 +470,32 @@ public class Postcard
 															return super.onFling(e1, e2, velocityX, velocityY);
 														}
 													};
+
+	public class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener
+	{
+
+		@Override
+		public boolean onScale(ScaleGestureDetector detector)
+		{
+			float factor = detector.getScaleFactor();
+			if (factor < 1.0f) // 縮小
+			{
+				Logs.showTrace("ScaleFactor= " + factor);
+			}
+			return false;
+		}
+
+		@Override
+		public boolean onScaleBegin(ScaleGestureDetector detector)
+		{
+			return true;
+		}
+
+		@Override
+		public void onScaleEnd(ScaleGestureDetector detector)
+		{
+
+		}
+
+	}
 }
