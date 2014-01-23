@@ -9,27 +9,37 @@ import interactive.common.IntentHandler;
 import interactive.common.Logs;
 import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
+import interactive.view.animation.zoom.ZoomHandler;
 import interactive.view.global.Global;
 import interactive.view.pagereader.PageReader;
 import interactive.view.slideshow.SlideshowView.ScaleGestureListener;
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
+import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.View.DragShadowBuilder;
 import android.view.View.OnClickListener;
+import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
 public class Postcard
@@ -46,6 +56,10 @@ public class Postcard
 	private String					mstrPostcardFrontPath		= null;
 	private String					mstrPostcardBackPath		= null;
 	private ScaleGestureDetector	scaleGestureDetector		= null;
+	private ImageView				imgThumb					= null;
+	private boolean					mbScaling					= false;
+	private boolean					mbFront						= true;
+	private ImageView				imgMailBox					= null;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -87,6 +101,13 @@ public class Postcard
 					break;
 				case MotionEvent.ACTION_UP:
 					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
+					break;
+				case MotionEvent.ACTION_MOVE:
+					if (mbScaling && null != imgThumb)
+					{
+						//	imgThumb.setX(event.getX() - (imgThumb.getWidth() / 4));
+						//	imgThumb.setY(event.getY() + (imgThumb.getHeight() / 4));
+					}
 					break;
 				}
 				gestureDetector.onTouchEvent(event);
@@ -145,12 +166,14 @@ public class Postcard
 
 		if (imgPostFront.getVisibility() == View.VISIBLE)
 		{
+			mbFront = false;
 			fingerPaintView.setVisibility(View.VISIBLE);
 			imgPostFront.setVisibility(View.GONE);
 			showEdit(true);
 		}
 		else
 		{
+			mbFront = true;
 			imgPostFront.setVisibility(View.VISIBLE);
 			fingerPaintView.setVisibility(View.GONE);
 			showEdit(false);
@@ -239,9 +262,10 @@ public class Postcard
 
 	public void initMailBox(int nWidth, int nHeight, int nX, int nY, String strImagePath)
 	{
-		ImageView imgMailBox = new ImageView(theContext);
+		imgMailBox = new ImageView(theContext);
 		imgMailBox.setTag("mailBox");
 		initOptionImage(imgMailBox, nWidth, nHeight, nX, nY, strImagePath);
+		imgMailBox.setOnDragListener(new PostcardDragListener());
 	}
 
 	private void initOptionImage(ImageView img, int nWidth, int nHeight, int nX, int nY, String strImagePath)
@@ -395,20 +419,6 @@ public class Postcard
 		IntentHandler intentHandler = new IntentHandler();
 		intentHandler.intent(Global.theActivity, IntentHandler.MODE_CAMERA_IMAGE);
 		intentHandler = null;
-		//		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		//		File file = new File(Environment.getExternalStorageDirectory(), "tmp_avatar_"
-		//				+ String.valueOf(System.currentTimeMillis()) + ".jpg");
-		//
-		//		try
-		//		{
-		//			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-		//			intent.putExtra("return-data", true);
-		//			Global.theActivity.startActivityForResult(intent, POSTCARD_ACTIVITY_RESULT);
-		//		}
-		//		catch (Exception e)
-		//		{
-		//			e.printStackTrace();
-		//		}
 	}
 
 	private void getPicture(Bitmap bitmap)
@@ -425,6 +435,69 @@ public class Postcard
 		intentHandler = null;
 	}
 
+	private void zoomPostcard()
+	{
+		imgThumb = new ImageView(theContext);
+		Bitmap bitmap = Bitmap.createBitmap(postcardFrame.getWidth(), postcardFrame.getHeight(),
+				Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bitmap);
+		postcardFrame.draw(c);
+		imgThumb.setTag("thumbImage");
+		imgThumb.setX(postcardFrame.getX());
+		imgThumb.setY(postcardFrame.getY());
+		imgThumb.setLayoutParams(new LayoutParams(postcardFrame.getWidth(), postcardFrame.getHeight()));
+		imgThumb.setImageBitmap(bitmap);
+		imgThumb.setScaleType(ScaleType.CENTER_CROP);
+		imgThumb.setPadding(2, 2, 2, 2);
+		imgThumb.setBackgroundColor(Color.GRAY);
+		container.addView(imgThumb);
+		imgThumb.bringToFront();
+		imgThumb.setVisibility(View.VISIBLE);
+		hidePostcard(true);
+		ZoomHandler zoomHandler = new ZoomHandler(theContext);
+		zoomHandler.zoomOut(imgThumb, 0.25f);
+		zoomHandler.setNotifyHandler(postcardHandler);
+		container.invalidate();
+	}
+
+	private void startDrag()
+	{// TODO ##################
+		Logs.showTrace("start drag#####################");
+		ClipData.Item item = new ClipData.Item((CharSequence) imgThumb.getTag());
+
+		String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
+		ClipData data = new ClipData(imgThumb.getTag().toString(), mimeTypes, item);
+		DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imgThumb);
+		imgThumb.setLayoutParams(new LayoutParams(postcardFrame.getWidth() / 4, postcardFrame.getHeight() / 4));
+		imgThumb.startDrag(data, //data to be dragged
+				shadowBuilder, //drag shadow
+				imgThumb, //local data about the drag and drop operation
+				0 //no needed flags
+		);
+	}
+
+	private void hidePostcard(boolean bhide)
+	{
+		if (bhide)
+		{
+			fingerPaintView.setVisibility(View.GONE);
+			imgPostFront.setVisibility(View.GONE);
+			postcardFrame.setVisibility(View.GONE);
+		}
+		else
+		{
+			if (mbFront)
+			{
+				imgPostFront.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				fingerPaintView.setVisibility(View.VISIBLE);
+			}
+			postcardFrame.setVisibility(View.VISIBLE);
+		}
+	}
+
 	private Handler			postcardHandler			= new Handler()
 													{
 														@Override
@@ -434,6 +507,9 @@ public class Postcard
 															{
 															case EventMessage.MSG_ACTIVITY_RESULT:
 																getPicture((Bitmap) msg.obj);
+																break;
+															case EventMessage.MSG_ANIMATION_END:
+																startDrag();
 																break;
 															}
 															super.handleMessage(msg);
@@ -447,7 +523,7 @@ public class Postcard
 														public boolean onFling(MotionEvent e1, MotionEvent e2,
 																float velocityX, float velocityY)
 														{
-															if (null == e1 || null == e2)
+															if (null == e1 || null == e2 || mbScaling)
 															{
 																return super.onFling(e1, e2, velocityX, velocityY);
 															}
@@ -473,14 +549,15 @@ public class Postcard
 
 	public class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener
 	{
-
 		@Override
 		public boolean onScale(ScaleGestureDetector detector)
 		{
 			float factor = detector.getScaleFactor();
-			if (factor < 1.0f) // 縮小
+			if (factor < 1.0f && !mbScaling) // 縮小
 			{
-				Logs.showTrace("ScaleFactor= " + factor);
+				mbScaling = true;
+				zoomPostcard();
+				return true;
 			}
 			return false;
 		}
@@ -488,14 +565,60 @@ public class Postcard
 		@Override
 		public boolean onScaleBegin(ScaleGestureDetector detector)
 		{
+			mbScaling = false;
 			return true;
 		}
 
 		@Override
 		public void onScaleEnd(ScaleGestureDetector detector)
 		{
+			mbScaling = false;
+			container.removeView(imgThumb);
+			hidePostcard(false);
+			imgThumb = null;
+		}
+	}
 
+	class PostcardDragListener implements OnDragListener
+	{
+		@Override
+		public boolean onDrag(View v, DragEvent event)
+		{
+			switch (event.getAction())
+			{
+			//signal for the start of a drag and drop operation.
+			case DragEvent.ACTION_DRAG_STARTED:
+				// do nothing
+				break;
+
+			//the drag point has entered the bounding box of the View
+			case DragEvent.ACTION_DRAG_ENTERED:
+				imgMailBox.setBackgroundColor(Color.YELLOW);
+				break;
+
+			//the user has moved the drag shadow outside the bounding box of the View
+			case DragEvent.ACTION_DRAG_EXITED:
+				imgMailBox.setBackgroundColor(Color.TRANSPARENT);
+				break;
+
+			//drag shadow has been released,the drag point is within the bounding box of the View
+			case DragEvent.ACTION_DROP:
+				// if the view is the bottomlinear, we accept the drag item
+				if (v == imgMailBox)
+				{
+					Logs.showTrace("send postcard");
+				}
+
+				break;
+
+			//the drag and drop operation has concluded.
+			case DragEvent.ACTION_DRAG_ENDED:
+				imgMailBox.setBackgroundColor(Color.TRANSPARENT);
+			default:
+				break;
+			}
+			return true;
 		}
 
-	}
+	};
 }
