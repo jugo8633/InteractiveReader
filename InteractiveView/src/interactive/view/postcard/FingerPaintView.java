@@ -13,10 +13,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
 
 public class FingerPaintView extends View
 {
@@ -32,6 +32,7 @@ public class FingerPaintView extends View
 	private boolean				mbCapturing		= false;
 	private Paint				mpaintEraser	= null;
 	private String				mstrBackground	= null;
+	private String				mstrText		= null;
 
 	public FingerPaintView(Context context)
 	{
@@ -212,6 +213,32 @@ public class FingerPaintView extends View
 			bitmap = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888);
 			Canvas canvas = new Canvas(bitmap);
 			draw(canvas);
+			if (null != mstrText)
+			{
+				//canvas.drawText(mstrText, 40, 40, mPaint);
+				// new antialised Paint
+				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+				// text color - #3D3D3D
+				paint.setColor(Color.rgb(61, 61, 61));
+				// text size in pixels
+				paint.setTextSize(24);
+				// text shadow
+				paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+
+				// draw text to the Canvas center
+				Rect bounds = new Rect();
+				paint.getTextBounds(mstrText, 0, mstrText.length(), bounds);
+				int x = (bitmap.getWidth() - bounds.width()) / 2;
+				int y = (bitmap.getHeight() + bounds.height()) / 2;
+
+				canvas.drawText(mstrText, x, y, paint);
+
+				for (String line : mstrText.split("\n"))
+				{
+					canvas.drawText(line, x, y, paint);
+					y += -paint.ascent() + paint.descent();
+				}
+			}
 		}
 
 		FileOutputStream out;
@@ -227,5 +254,10 @@ public class FingerPaintView extends View
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void setTextToDraw(String strText)
+	{
+		mstrText = strText;
 	}
 }

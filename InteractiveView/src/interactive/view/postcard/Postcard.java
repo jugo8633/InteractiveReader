@@ -21,6 +21,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -34,6 +36,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -59,6 +62,9 @@ public class Postcard
 	private ImageView				imgDrag						= null;
 	private int						mnPostcardWidth				= 0;
 	private int						mnPostcardHeight			= 0;
+	private EditText				editText					= null;
+	private String					mstrText					= null;
+	private int						mnTextMaxLine				= 1;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -68,7 +74,7 @@ public class Postcard
 		postcardFrame = new FrameLayout(context);
 		gestureDetector = new GestureDetector(context, simpleOnGestureListener);
 		rotate3d = new Rotate3d();
-		container.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+		//	container.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
 
 		mstrPostcardFrontPath = context.getExternalCacheDir().getPath() + File.separator + "front.png";
 		mstrPostcardBackPath = context.getExternalCacheDir().getPath() + File.separator + "back.png";
@@ -102,13 +108,6 @@ public class Postcard
 					break;
 				case MotionEvent.ACTION_UP:
 					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
-					break;
-				case MotionEvent.ACTION_MOVE:
-					if (mbScaling && null != imgThumb)
-					{
-						//	imgThumb.setX(event.getX() - (imgThumb.getWidth() / 4));
-						//	imgThumb.setY(event.getY() + (imgThumb.getHeight() / 4));
-					}
 					break;
 				}
 				gestureDetector.onTouchEvent(event);
@@ -198,7 +197,7 @@ public class Postcard
 		clearSelected();
 		showView(container.findViewWithTag("pen"), bShow);
 		showView(container.findViewWithTag("eraser"), bShow);
-		showView(container.findViewWithTag("textArea"), bShow);
+		showView(postcardFrame.findViewWithTag("textArea"), bShow);
 	}
 
 	private void showImageFrom(boolean bShow)
@@ -241,10 +240,51 @@ public class Postcard
 
 	public void initTextArea(int nWidth, int nHeight, int nX, int nY, String strImagePath)
 	{
-		ImageView imgTextArea = new ImageView(theContext);
-		imgTextArea.setTag("textArea");
-		imgTextArea.setVisibility(View.GONE);
-		initOptionImage(imgTextArea, nWidth, nHeight, nX, nY, strImagePath);
+		//		ImageView imgTextArea = new ImageView(theContext);
+		//		imgTextArea.setTag("textArea");
+		//		imgTextArea.setVisibility(View.GONE);
+		//		initOptionImage(imgTextArea, nWidth, nHeight, nX, nY, strImagePath);
+
+		mnTextMaxLine = nHeight / 24;
+		--mnTextMaxLine;
+		editText = new EditText(theContext);
+		editText.setTextColor(Color.BLUE);
+		editText.setHintTextColor(Color.GRAY);
+		editText.setHint("tap to type");
+		editText.setTag("textArea");
+		editText.setVisibility(View.GONE);
+		editText.setX(nX - postcardFrame.getX());
+		editText.setY(nY - postcardFrame.getY());
+
+		editText.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		editText.setTextSize(24f);
+		postcardFrame.addView(editText);
+
+		editText.addTextChangedListener(new TextWatcher()
+		{
+
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				int lineCount = editText.getLineCount();
+				if (lineCount > mnTextMaxLine)
+				{
+					editText.setText(mstrText);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+				mstrText = s.toString();
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+
+			}
+		});
 	}
 
 	public void initCamera(int nWidth, int nHeight, int nX, int nY, String strImagePath)
@@ -347,11 +387,6 @@ public class Postcard
 			}
 		}
 
-		//		if (strTag.equals("mailBox"))
-		//		{
-		//			sendPostcard();
-		//		}
-
 		if (strTag.equals("camera"))
 		{
 			cameraCapture();
@@ -386,13 +421,32 @@ public class Postcard
 
 	private void sendPostcard()
 	{
+		boolean bResult = true;
 		if (null == fingerPaintView || null == mstrPostcardBackPath || null == mstrPostcardFrontPath)
 		{
 			return;
 		}
 
-		if (fingerPaintView.exportBitmap(mstrPostcardBackPath, mnPostcardWidth, mnPostcardHeight)
-				&& exportBitmap(mstrPostcardFrontPath))
+		if (null != mstrText)
+		{
+			imgPostFront.setVisibility(View.INVISIBLE);
+			fingerPaintView.setVisibility(View.VISIBLE);
+			editText.setVisibility(View.VISIBLE);
+			postcardFrame.invalidate();
+			bResult = exportBitmap(postcardFrame, mstrPostcardBackPath);
+			if (this.mbFront)
+			{
+				imgPostFront.setVisibility(View.VISIBLE);
+				fingerPaintView.setVisibility(View.INVISIBLE);
+				editText.setVisibility(View.INVISIBLE);
+			}
+		}
+		else
+		{
+			bResult = fingerPaintView.exportBitmap(mstrPostcardBackPath, mnPostcardWidth, mnPostcardHeight);
+		}
+
+		if (bResult && exportBitmap(mstrPostcardFrontPath))
 		{
 			Share share = new Share(Global.theActivity);
 			SparseArray<String> listImage = new SparseArray<String>();
@@ -402,6 +456,26 @@ public class Postcard
 			share = null;
 		}
 		hidePostcard(false);
+	}
+
+	private boolean exportBitmap(View view, String strPath)
+	{
+		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bitmap);
+		view.draw(c);
+
+		FileOutputStream out;
+		try
+		{
+			out = new FileOutputStream(strPath);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	private boolean exportBitmap(String strPath)
@@ -475,7 +549,7 @@ public class Postcard
 		imgDrag.setY(postcardFrame.getY());
 		imgDrag.setVisibility(View.INVISIBLE);
 		imgDrag.setBackgroundColor(Color.DKGRAY);
-		imgDrag.setPadding(2, 2, 2, 2);
+		imgDrag.setPadding(2, 2, 2, 4);
 		container.addView(imgDrag);
 
 		hidePostcard(true);
@@ -507,9 +581,13 @@ public class Postcard
 	{
 		if (bhide)
 		{
-			fingerPaintView.setVisibility(View.GONE);
-			imgPostFront.setVisibility(View.GONE);
-			postcardFrame.setVisibility(View.GONE);
+			fingerPaintView.setVisibility(View.INVISIBLE);
+			imgPostFront.setVisibility(View.INVISIBLE);
+			postcardFrame.setVisibility(View.INVISIBLE);
+			if (null != editText)
+			{
+				editText.setVisibility(View.INVISIBLE);
+			}
 		}
 		else
 		{
@@ -520,6 +598,10 @@ public class Postcard
 			else
 			{
 				fingerPaintView.setVisibility(View.VISIBLE);
+				if (null != editText)
+				{
+					editText.setVisibility(View.VISIBLE);
+				}
 			}
 			postcardFrame.setVisibility(View.VISIBLE);
 		}
