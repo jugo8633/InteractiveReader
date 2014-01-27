@@ -474,6 +474,8 @@ public class Postcard
 		imgDrag.setX(postcardFrame.getX());
 		imgDrag.setY(postcardFrame.getY());
 		imgDrag.setVisibility(View.INVISIBLE);
+		imgDrag.setBackgroundColor(Color.DKGRAY);
+		imgDrag.setPadding(2, 2, 2, 2);
 		container.addView(imgDrag);
 
 		hidePostcard(true);
