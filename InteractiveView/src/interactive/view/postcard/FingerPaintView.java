@@ -1,10 +1,13 @@
 package interactive.view.postcard;
 
+import interactive.common.Logs;
+
 import java.io.FileOutputStream;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -28,6 +31,7 @@ public class FingerPaintView extends View
 	private static final float	TOUCH_TOLERANCE	= 4;
 	private boolean				mbCapturing		= false;
 	private Paint				mpaintEraser	= null;
+	private String				mstrBackground	= null;
 
 	public FingerPaintView(Context context)
 	{
@@ -82,6 +86,10 @@ public class FingerPaintView extends View
 	@Override
 	protected void onDraw(Canvas canvas)
 	{
+		if (null == mBitmap)
+		{
+			return;
+		}
 		canvas.drawColor(Color.TRANSPARENT);
 		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
 
@@ -186,20 +194,32 @@ public class FingerPaintView extends View
 
 	public void setBackground(String strImagePath)
 	{
-		setBackground(Drawable.createFromPath(strImagePath));
+		mstrBackground = strImagePath;
+		setBackground(Drawable.createFromPath(mstrBackground));
+		this.invalidate();
 	}
 
-	public boolean exportBitmap(String strPath)
+	public boolean exportBitmap(String strPath, int nWidth, int nHeight)
 	{
-		Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(bitmap);
-		draw(c);
+		Bitmap bitmap = null;
+
+		if (null == mBitmap)
+		{
+			bitmap = BitmapFactory.decodeFile(mstrBackground);
+		}
+		else
+		{
+			bitmap = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888);
+			Canvas canvas = new Canvas(bitmap);
+			draw(canvas);
+		}
 
 		FileOutputStream out;
 		try
 		{
 			out = new FileOutputStream(strPath);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+			bitmap.recycle();
 			return true;
 		}
 		catch (Exception e)

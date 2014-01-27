@@ -12,7 +12,6 @@ import interactive.view.animation.flipcard.Rotate3d;
 import interactive.view.animation.zoom.ZoomHandler;
 import interactive.view.global.Global;
 import interactive.view.pagereader.PageReader;
-import interactive.view.slideshow.SlideshowView.ScaleGestureListener;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
@@ -37,15 +36,12 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
 public class Postcard
 {
 
-	public static int				POSTCARD_ACTIVITY_RESULT	= 777778;
+	public static final int			POSTCARD_ACTIVITY_RESULT	= 777778;
 	private FrameLayout				postcardFrame				= null;
 	private ViewGroup				container					= null;
 	private Context					theContext					= null;
@@ -60,6 +56,9 @@ public class Postcard
 	private boolean					mbScaling					= false;
 	private boolean					mbFront						= true;
 	private ImageView				imgMailBox					= null;
+	private ImageView				imgDrag						= null;
+	private int						mnPostcardWidth				= 0;
+	private int						mnPostcardHeight			= 0;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -80,10 +79,12 @@ public class Postcard
 	public void initPostcardFrame(String strName, int nX, int nY, int nWidth, int nHeight, String strFront,
 			String strBack)
 	{
+		mnPostcardWidth = nWidth;
+		mnPostcardHeight = nHeight;
 		postcardFrame.setTag(strName);
 		postcardFrame.setX(nX);
 		postcardFrame.setY(nY);
-		postcardFrame.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		postcardFrame.setLayoutParams(new LayoutParams(mnPostcardWidth, mnPostcardHeight));
 		container.removeView(postcardFrame);
 		container.addView(postcardFrame);
 
@@ -166,59 +167,59 @@ public class Postcard
 
 		if (imgPostFront.getVisibility() == View.VISIBLE)
 		{
-			mbFront = false;
-			fingerPaintView.setVisibility(View.VISIBLE);
-			imgPostFront.setVisibility(View.GONE);
-			showEdit(true);
+			showBack();
 		}
 		else
 		{
-			mbFront = true;
-			imgPostFront.setVisibility(View.VISIBLE);
-			fingerPaintView.setVisibility(View.GONE);
-			showEdit(false);
+			showFront();
 		}
+	}
+
+	private void showFront()
+	{
+		mbFront = true;
+		imgPostFront.setVisibility(View.VISIBLE);
+		fingerPaintView.setVisibility(View.INVISIBLE);
+		showEdit(false);
+		showImageFrom(true);
+	}
+
+	private void showBack()
+	{
+		mbFront = false;
+		fingerPaintView.setVisibility(View.VISIBLE);
+		imgPostFront.setVisibility(View.INVISIBLE);
+		showEdit(true);
+		showImageFrom(false);
 	}
 
 	private void showEdit(boolean bShow)
 	{
 		clearSelected();
-		View view = null;
+		showView(container.findViewWithTag("pen"), bShow);
+		showView(container.findViewWithTag("eraser"), bShow);
+		showView(container.findViewWithTag("textArea"), bShow);
+	}
+
+	private void showImageFrom(boolean bShow)
+	{
+		showView(container.findViewWithTag("camera"), bShow);
+		showView(container.findViewWithTag("openButton"), bShow);
+	}
+
+	private void showView(View view, boolean bShow)
+	{
+		if (null == view)
+		{
+			return;
+		}
 		if (bShow)
 		{
-			view = container.findViewWithTag("pen");
-			if (null != view)
-			{
-				view.setVisibility(View.VISIBLE);
-			}
-			view = container.findViewWithTag("eraser");
-			if (null != view)
-			{
-				view.setVisibility(View.VISIBLE);
-			}
-			view = container.findViewWithTag("textArea");
-			if (null != view)
-			{
-				view.setVisibility(View.VISIBLE);
-			}
+			view.setVisibility(View.VISIBLE);
 		}
 		else
 		{
-			view = container.findViewWithTag("pen");
-			if (null != view)
-			{
-				view.setVisibility(View.GONE);
-			}
-			view = container.findViewWithTag("eraser");
-			if (null != view)
-			{
-				view.setVisibility(View.GONE);
-			}
-			view = container.findViewWithTag("textArea");
-			if (null != view)
-			{
-				view.setVisibility(View.GONE);
-			}
+			view.setVisibility(View.GONE);
 		}
 	}
 
@@ -303,7 +304,8 @@ public class Postcard
 				{
 					eraserView.setBackground(null);
 				}
-				view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
+				//view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
+				view.setBackgroundColor(Color.YELLOW);
 				fingerPaintView.setIsCapturing(true);
 				fingerPaintView.setEraser(false);
 				container.requestDisallowInterceptTouchEvent(true);
@@ -314,7 +316,8 @@ public class Postcard
 				container.requestDisallowInterceptTouchEvent(false);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 				fingerPaintView.setIsCapturing(false);
-				view.setBackground(null);
+				//view.setBackground(null);
+				view.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
 
@@ -327,7 +330,8 @@ public class Postcard
 				{
 					penView.setBackground(null);
 				}
-				view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
+				//view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
+				view.setBackgroundColor(Color.YELLOW);
 				fingerPaintView.setIsCapturing(true);
 				fingerPaintView.setEraser(true);
 				container.requestDisallowInterceptTouchEvent(true);
@@ -338,14 +342,15 @@ public class Postcard
 				container.requestDisallowInterceptTouchEvent(false);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 				fingerPaintView.setIsCapturing(false);
-				view.setBackground(null);
+				//view.setBackground(null);
+				view.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
 
-		if (strTag.equals("mailBox"))
-		{
-			sendPostcard();
-		}
+		//		if (strTag.equals("mailBox"))
+		//		{
+		//			sendPostcard();
+		//		}
 
 		if (strTag.equals("camera"))
 		{
@@ -381,7 +386,13 @@ public class Postcard
 
 	private void sendPostcard()
 	{
-		if (fingerPaintView.exportBitmap(mstrPostcardBackPath) && exportBitmap(mstrPostcardFrontPath))
+		if (null == fingerPaintView || null == mstrPostcardBackPath || null == mstrPostcardFrontPath)
+		{
+			return;
+		}
+
+		if (fingerPaintView.exportBitmap(mstrPostcardBackPath, mnPostcardWidth, mnPostcardHeight)
+				&& exportBitmap(mstrPostcardFrontPath))
 		{
 			Share share = new Share(Global.theActivity);
 			SparseArray<String> listImage = new SparseArray<String>();
@@ -390,6 +401,7 @@ public class Postcard
 			share.shareAll("Postcard", "Postcard", null, listImage);
 			share = null;
 		}
+		hidePostcard(false);
 	}
 
 	private boolean exportBitmap(String strPath)
@@ -453,6 +465,17 @@ public class Postcard
 		container.addView(imgThumb);
 		imgThumb.bringToFront();
 		imgThumb.setVisibility(View.VISIBLE);
+
+		imgDrag = new ImageView(theContext);
+		imgDrag.setTag("dragImage");
+		imgDrag.setLayoutParams(new LayoutParams(postcardFrame.getWidth() / 4, postcardFrame.getHeight() / 4));
+		imgDrag.setImageBitmap(bitmap);
+		imgDrag.setScaleType(ScaleType.CENTER_CROP);
+		imgDrag.setX(postcardFrame.getX());
+		imgDrag.setY(postcardFrame.getY());
+		imgDrag.setVisibility(View.INVISIBLE);
+		container.addView(imgDrag);
+
 		hidePostcard(true);
 		ZoomHandler zoomHandler = new ZoomHandler(theContext);
 		zoomHandler.zoomOut(imgThumb, 0.25f);
@@ -461,19 +484,21 @@ public class Postcard
 	}
 
 	private void startDrag()
-	{// TODO ##################
-		Logs.showTrace("start drag#####################");
-		ClipData.Item item = new ClipData.Item((CharSequence) imgThumb.getTag());
+	{
+		container.removeView(imgThumb);
+		imgThumb = null;
+
+		ClipData.Item item = new ClipData.Item((CharSequence) imgDrag.getTag());
 
 		String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
-		ClipData data = new ClipData(imgThumb.getTag().toString(), mimeTypes, item);
-		DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imgThumb);
-		imgThumb.setLayoutParams(new LayoutParams(postcardFrame.getWidth() / 4, postcardFrame.getHeight() / 4));
-		imgThumb.startDrag(data, //data to be dragged
+		ClipData data = new ClipData(imgDrag.getTag().toString(), mimeTypes, item);
+		DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imgDrag);
+		imgDrag.startDrag(data, //data to be dragged
 				shadowBuilder, //drag shadow
-				imgThumb, //local data about the drag and drop operation
+				imgDrag, //local data about the drag and drop operation
 				0 //no needed flags
 		);
+
 	}
 
 	private void hidePostcard(boolean bhide)
@@ -511,7 +536,12 @@ public class Postcard
 															case EventMessage.MSG_ANIMATION_END:
 																startDrag();
 																break;
+															case EventMessage.MSG_DRAG_END:
+																container.removeView(imgDrag);
+																hidePostcard(false);
+																break;
 															}
+
 															super.handleMessage(msg);
 														}
 													};
@@ -574,7 +604,6 @@ public class Postcard
 		{
 			mbScaling = false;
 			container.removeView(imgThumb);
-			hidePostcard(false);
 			imgThumb = null;
 		}
 	}
@@ -607,6 +636,7 @@ public class Postcard
 				if (v == imgMailBox)
 				{
 					Logs.showTrace("send postcard");
+					sendPostcard();
 				}
 
 				break;
@@ -614,6 +644,7 @@ public class Postcard
 			//the drag and drop operation has concluded.
 			case DragEvent.ACTION_DRAG_ENDED:
 				imgMailBox.setBackgroundColor(Color.TRANSPARENT);
+				EventHandler.notify(postcardHandler, EventMessage.MSG_DRAG_END, 0, 0, null);
 			default:
 				break;
 			}
