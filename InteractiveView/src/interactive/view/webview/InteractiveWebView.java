@@ -128,16 +128,6 @@ public class InteractiveWebView extends WebView
 		pageReaderHandler = handler;
 	}
 
-	//	public void initDisplayPageHandler(Handler handler)
-	//	{
-	//		displayPageHandler = handler;
-	//	}
-	//
-	//	public Handler getDisplayPageHandler()
-	//	{
-	//		return displayPageHandler;
-	//	}
-
 	public void addObjectHandle(Handler handler, int nObjType, boolean bAutoPlay)
 	{
 		ObjectHandle objHandle = new ObjectHandle();
@@ -214,6 +204,16 @@ public class InteractiveWebView extends WebView
 	{
 		mnChapter = nChapter;
 		mnPage = nPage;
+	}
+
+	public int getChapter()
+	{
+		return mnChapter;
+	}
+
+	public int getPage()
+	{
+		return mnPage;
 	}
 
 	public void setDisplaySize(int nWidth, int nHeight)

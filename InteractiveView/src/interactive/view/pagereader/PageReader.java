@@ -256,6 +256,7 @@ public class PageReader extends RelativeLayout
 			PageData.listPageData.get(nOldChapter).get(nOldPage).extWebView.setCurrentView(false);
 		}
 		Global.interactiveHandler.removeAllMedia();
+		Global.notifyActive(Global.currentChapter, Global.currentPage);
 		notifyPageSwitched();
 		lockHorizonScroll(false);
 		lockVerticalScroll(false);

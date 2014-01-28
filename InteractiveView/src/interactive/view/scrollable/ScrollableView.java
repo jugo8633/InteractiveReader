@@ -1,19 +1,22 @@
 package interactive.view.scrollable;
 
 import interactive.common.EventHandler;
+import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.data.PageData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.webkit.WebView;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,6 +50,10 @@ public class ScrollableView extends RelativeLayout
 	private int						mnVScrollX				= 0;
 	private int						mnVScrollY				= 0;
 	private VerticalScrollView		verticalScrollView2		= null;
+	private int						mnDisplayX				= 0;
+	private int						mnDisplayY				= 0;
+	private int						mnChapter				= Type.INVALID;
+	private int						mnPage					= Type.INVALID;
 
 	public ScrollableView(Context context)
 	{
@@ -191,12 +198,30 @@ public class ScrollableView extends RelativeLayout
 		this.setX(nX);
 		this.setY(nY);
 		this.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		mnDisplayX = nX;
+		mnDisplayY = nY;
 		mnDisplayWidth = nWidth;
 		mnDisplayHeight = nHeight;
 	}
 
-	public void setImage(String strPath, int nWidth, int nHeight, int nScrollType, int nOffsetX, int nOffsetY)
+	public void setImage(String strTag, String strPath, int nWidth, int nHeight, int nScrollType, int nOffsetX,
+			int nOffsetY, ViewGroup container)
 	{
+		/** test start */
+		if (SCROLL_TYPE_HORIZONTAL == nScrollType)
+		{
+			Logs.showTrace("HorizonScrollableView: " + strTag + " ###############");
+			HorizonScrollableView hview = new HorizonScrollableView(getContext());
+			hview.setPosition(mnChapter, mnPage);
+			hview.setTag(strTag);
+			hview.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
+			hview.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
+			container.addView(hview);
+			return;
+		}
+
+		/** test end */
+
 		mnScrollType = nScrollType;
 		int nPadingLeft = 0;
 		int nPadingTop = 0;
@@ -224,10 +249,16 @@ public class ScrollableView extends RelativeLayout
 		// recreate the new Bitmap
 		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
 
+		Bitmap bmp = FileHandler.decodeScaledBitmap(strPath, nWidth, nHeight);
+
 		imageView = new ImageView(getContext());
-		imageView.setImageBitmap(resizedBitmap);
-		imageView.setScaleType(ScaleType.MATRIX);
+		imageView.setImageBitmap(bmp);
+		//imageView.setImageURI(Uri.parse(strPath));
+		//imageView.setScaleType(ScaleType.CENTER_CROP);
+		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		//imageView.setX(0 - nOffsetX);
+		//imageView.setY(0 - nOffsetY);
 
 		// 判斷直橫
 		if (SCROLL_TYPE_AUTO == nScrollType)
@@ -244,17 +275,17 @@ public class ScrollableView extends RelativeLayout
 				mnScrollType = SCROLL_TYPE_VERTICAL;
 			}
 
-			if (0 > nOffsetX)
-			{
-				nPadingLeft = 0 - nOffsetX;
-			}
-			if (0 > nOffsetY)
-			{
-				nPadingTop = 0 - nOffsetY;
-			}
-			this.setPadding(nPadingLeft, nPadingTop, 0, 0);
-
 		}
+
+		if (0 > nOffsetX)
+		{
+			nPadingLeft = 0 - nOffsetX;
+		}
+		if (0 > nOffsetY)
+		{
+			nPadingTop = 0 - nOffsetY;
+		}
+		this.setPadding(nPadingLeft, nPadingTop, 0, 0);
 
 		gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
 
@@ -321,6 +352,12 @@ public class ScrollableView extends RelativeLayout
 		}
 
 		super.onWindowFocusChanged(hasWindowFocus);
+	}
+
+	public void setPosition(int nChapter, int nPage)
+	{
+		mnChapter = nChapter;
+		mnPage = nPage;
 	}
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
