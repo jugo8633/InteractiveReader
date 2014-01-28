@@ -1,8 +1,6 @@
 package interactive.reader;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
+import interactive.common.ClearCache;
 import interactive.common.ConfigData;
 import interactive.common.Device;
 import interactive.common.EventHandler;
@@ -17,25 +15,19 @@ import interactive.view.gallery.GalleryView;
 import interactive.view.global.Global;
 import interactive.view.pagereader.DisplayPage;
 import interactive.view.pagereader.PageReader;
-import interactive.view.postcard.Postcard;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -57,6 +49,11 @@ public class ReaderActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		/** clear cache */
+		ClearCache clearCache = new ClearCache();
+		clearCache.clearApplicationData(this);
+		clearCache = null;
 
 		/** show device information */
 		getDeviceInfo(this);
@@ -109,6 +106,22 @@ public class ReaderActivity extends Activity
 			Logs.showTrace("Orientation change: " + newConfig.orientation);
 		}
 		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		ClearCache clearCache = new ClearCache();
+		clearCache.clearApplicationData(this);
+		clearCache = null;
+		super.onDestroy();
+	}
+
+	@Override
+	public void onLowMemory()
+	{
+		System.gc();
+		super.onLowMemory();
 	}
 
 	public int getResourceId(String name, String defType)

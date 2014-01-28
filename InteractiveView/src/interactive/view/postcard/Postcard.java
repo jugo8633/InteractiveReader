@@ -3,6 +3,7 @@ package interactive.view.postcard;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import interactive.common.ClearCache;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.IntentHandler;

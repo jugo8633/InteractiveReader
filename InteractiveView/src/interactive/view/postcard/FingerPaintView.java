@@ -1,6 +1,6 @@
 package interactive.view.postcard;
 
-import interactive.common.Logs;
+
 
 import java.io.FileOutputStream;
 
