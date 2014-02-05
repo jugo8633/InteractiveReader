@@ -6,11 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.view.View;
 
 public class BitmapHandler
 {
@@ -102,15 +106,36 @@ public class BitmapHandler
 		}
 		int bgWidth = background.getWidth();
 		int bgHeight = background.getHeight();
-		int fgWidth = foreground.getWidth();
-		int fgHeight = foreground.getHeight();
+		//	int fgWidth = foreground.getWidth();
+		//	int fgHeight = foreground.getHeight();
 		Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);
 		Canvas canvas = new Canvas(newmap);
 		canvas.drawBitmap(background, 0, 0, null);
-		canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2, (bgHeight - fgHeight) / 2, null);
+		//	canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2, (bgHeight - fgHeight) / 2, null);
+		canvas.drawBitmap(foreground, 0, 0, null);
 		canvas.save(Canvas.ALL_SAVE_FLAG);
 		canvas.restore();
 		return newmap;
 	}
 
+	public static Bitmap getScreenshotsForCurrentWindow(Activity activity)
+	{
+		View cv = activity.getWindow().getDecorView();
+		Bitmap bmp = Bitmap.createBitmap(cv.getWidth(), cv.getHeight(), Bitmap.Config.ARGB_4444);
+		cv.draw(new Canvas(bmp));
+		return bmp;
+	}
+
+	public static Bitmap cutBitmap(Bitmap mBitmap, Rect r, Bitmap.Config config)
+	{
+		int width = r.width();
+		int height = r.height();
+
+		Bitmap croppedImage = Bitmap.createBitmap(width, height, config);
+
+		Canvas cvs = new Canvas(croppedImage);
+		Rect dr = new Rect(0, 0, width, height);
+		cvs.drawBitmap(mBitmap, r, dr, null);
+		return croppedImage;
+	}
 }

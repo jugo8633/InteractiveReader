@@ -1,33 +1,26 @@
 package interactive.view.scrollable;
 
 import interactive.common.BitmapHandler;
-import interactive.common.ClearCache;
 import interactive.common.EventMessage;
-import interactive.common.FileHandler;
-import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 
 public class HorizonScrollableView extends HorizontalScrollView
 {
-	private LinearLayout	linearLayout	= null;
-	private ImageView		imageView		= null;
-	private int				mnOffsetX		= 0;
-	private int				mnChapter		= Type.INVALID;
-	private int				mnPage			= Type.INVALID;
-	private int				mnWidth			= Type.INVALID;
-	private int				mnHeight		= Type.INVALID;
-	private Context			theContext		= null;
+	private int		mnOffsetX	= 0;
+	private int		mnChapter	= Type.INVALID;
+	private int		mnPage		= Type.INVALID;
+	private int		mnWidth		= Type.INVALID;
+	private Context	theContext	= null;
 
 	public HorizonScrollableView(Context context)
 	{
@@ -51,14 +44,6 @@ public class HorizonScrollableView extends HorizontalScrollView
 	{
 		theContext = context;
 		setHorizontalScrollBarEnabled(false);
-
-		imageView = new ImageView(context);
-		imageView.setScaleType(ScaleType.CENTER_CROP);
-
-		linearLayout = new LinearLayout(context);
-		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-		linearLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
-		linearLayout.setHorizontalScrollBarEnabled(false);
 	}
 
 	public void setDisplay(int nX, int nY, int nWidth, int nHeight)
@@ -67,29 +52,35 @@ public class HorizonScrollableView extends HorizontalScrollView
 		setY(nY);
 		setLayoutParams(new LayoutParams(nWidth, nHeight));
 		mnWidth = nWidth;
-		mnHeight = nHeight;
 	}
 
 	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
 	{
-		Bitmap bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+		Bitmap bmp = null;
+
+		if ((nWidth - nOffsetX) < mnWidth)
+		{
+			Bitmap bitmapBack = Bitmap
+					.createBitmap(nWidth + (mnWidth - (nWidth - nOffsetX)), nHeight, Config.ARGB_8888);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront);
+			bitmapBack.recycle();
+			bitmapFront.recycle();
+		}
+		else
+		{
+			bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+		}
+
+		ImageView imageView = new ImageView(theContext);
+		imageView.setScaleType(ScaleType.MATRIX);
+		imageView.setAdjustViewBounds(true);
 		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
 		imageView.setImageBitmap(bmp);
 		bmp = null;
 
-		linearLayout.removeAllViewsInLayout();
-		linearLayout.addView(imageView);
-
-		if ((nWidth - nOffsetX) < mnWidth)
-		{
-			int nOffSize = nWidth - nOffsetX;
-			View view = new View(theContext);
-			view.setLayoutParams(new LayoutParams(nOffSize, LayoutParams.WRAP_CONTENT));
-			linearLayout.addView(view);
-		}
-
-		removeView(linearLayout);
-		addView(linearLayout);
+		removeAllViewsInLayout();
+		addView(imageView);
 
 		if (0 < nOffsetX)
 		{
@@ -133,8 +124,6 @@ public class HorizonScrollableView extends HorizontalScrollView
 											{
 											case EventMessage.MSG_CURRENT_ACTIVE:
 												initOffset();
-												Logs.showTrace("current view:" + HorizonScrollableView.this.getTag()
-														+ " ###########");
 												break;
 											}
 											super.handleMessage(msg);

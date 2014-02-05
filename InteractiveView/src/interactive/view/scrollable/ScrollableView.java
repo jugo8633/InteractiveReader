@@ -2,15 +2,12 @@ package interactive.view.scrollable;
 
 import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
-import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.data.PageData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -208,119 +205,133 @@ public class ScrollableView extends RelativeLayout
 	public void setImage(String strTag, String strPath, int nWidth, int nHeight, int nScrollType, int nOffsetX,
 			int nOffsetY, ViewGroup container)
 	{
-		/** test start */
-		if (SCROLL_TYPE_HORIZONTAL == nScrollType)
+		switch (nScrollType)
 		{
-			Logs.showTrace("HorizonScrollableView: " + strTag + " ###############");
+		case SCROLL_TYPE_HORIZONTAL:
+		{
 			HorizonScrollableView hview = new HorizonScrollableView(getContext());
 			hview.setPosition(mnChapter, mnPage);
 			hview.setTag(strTag);
 			hview.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
 			hview.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
 			container.addView(hview);
-			return;
 		}
-
-		/** test end */
-
-		mnScrollType = nScrollType;
-		int nPadingLeft = 0;
-		int nPadingTop = 0;
-
-		Bitmap bitmapOrg = BitmapFactory.decodeFile(strPath);
-		int width = bitmapOrg.getWidth();
-		int height = bitmapOrg.getHeight();
-
-		if (0 >= width || 0 >= height)
-		{
-			Logs.showTrace("Invalid Bitmap Size");
-			return;
-		}
-		// calculate the scale 
-		float scaleWidth = ((float) nWidth) / width;
-		float scaleHeight = ((float) nHeight) / height;
-
-		// create a matrix for the manipulation
-		Matrix matrix = new Matrix();
-		// resize the bit map
-		matrix.postScale(scaleWidth, scaleHeight);
-		// rotate the Bitmap
-		//matrix.postRotate(45);
-
-		// recreate the new Bitmap
-		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
-
-		Bitmap bmp = BitmapHandler.readBitmap(strPath, nWidth, nHeight);
-
-		imageView = new ImageView(getContext());
-		imageView.setImageBitmap(bmp);
-		//imageView.setImageURI(Uri.parse(strPath));
-		//imageView.setScaleType(ScaleType.CENTER_CROP);
-		imageView.setScaleType(ScaleType.FIT_XY);
-		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
-		//imageView.setX(0 - nOffsetX);
-		//imageView.setY(0 - nOffsetY);
-
-		// 判斷直橫
-		if (SCROLL_TYPE_AUTO == nScrollType)
-		{
-			if (mnDisplayWidth < nWidth && mnDisplayHeight >= nHeight)
-			{
-				// horizontal
-				mnScrollType = SCROLL_TYPE_HORIZONTAL;
-			}
-
-			if (mnDisplayHeight < nHeight && mnDisplayWidth >= nWidth)
-			{
-				// vertical
-				mnScrollType = SCROLL_TYPE_VERTICAL;
-			}
-
-		}
-
-		if (0 > nOffsetX)
-		{
-			nPadingLeft = 0 - nOffsetX;
-		}
-		if (0 > nOffsetY)
-		{
-			nPadingTop = 0 - nOffsetY;
-		}
-		this.setPadding(nPadingLeft, nPadingTop, 0, 0);
-
-		gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
-
-		switch (mnScrollType)
-		{
-		case SCROLL_TYPE_AUTO:
-			if (0 < nOffsetX)
-			{
-				mnScrollX = nOffsetX;
-			}
-			if (0 < nOffsetY)
-			{
-				mnScrollY = nOffsetY;
-			}
-			initImageView();
 			break;
 		case SCROLL_TYPE_VERTICAL:
-			if (0 < nOffsetY)
-			{
-				mnScrollY = nOffsetY;
-			}
-			initVertical();
+		{
+			VerticalScrollableView vView = new VerticalScrollableView(getContext());
+			vView.setPosition(mnChapter, mnPage);
+			vView.setTag(strTag);
+			vView.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
+			vView.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
+			container.addView(vView);
+		}
 			break;
-		case SCROLL_TYPE_HORIZONTAL:
-			if (0 < nOffsetX)
-			{
-				mnScrollX = nOffsetX;
-			}
-			initHorizontal();
+		case SCROLL_TYPE_AUTO:
 			break;
 		}
 
-		this.bringToFront();
+		if (nScrollType > 4)
+		{
 
+			mnScrollType = nScrollType;
+			int nPadingLeft = 0;
+			int nPadingTop = 0;
+
+			Bitmap bitmapOrg = BitmapFactory.decodeFile(strPath);
+			int width = bitmapOrg.getWidth();
+			int height = bitmapOrg.getHeight();
+
+			if (0 >= width || 0 >= height)
+			{
+				Logs.showTrace("Invalid Bitmap Size");
+				return;
+			}
+			// calculate the scale 
+			float scaleWidth = ((float) nWidth) / width;
+			float scaleHeight = ((float) nHeight) / height;
+
+			// create a matrix for the manipulation
+			Matrix matrix = new Matrix();
+			// resize the bit map
+			matrix.postScale(scaleWidth, scaleHeight);
+			// rotate the Bitmap
+			//matrix.postRotate(45);
+
+			// recreate the new Bitmap
+			Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
+
+			Bitmap bmp = BitmapHandler.readBitmap(strPath, nWidth, nHeight);
+
+			imageView = new ImageView(getContext());
+			imageView.setImageBitmap(bmp);
+			//imageView.setImageURI(Uri.parse(strPath));
+			//imageView.setScaleType(ScaleType.CENTER_CROP);
+			imageView.setScaleType(ScaleType.FIT_XY);
+			imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+			//imageView.setX(0 - nOffsetX);
+			//imageView.setY(0 - nOffsetY);
+
+			// 判斷直橫
+			if (SCROLL_TYPE_AUTO == nScrollType)
+			{
+				if (mnDisplayWidth < nWidth && mnDisplayHeight >= nHeight)
+				{
+					// horizontal
+					mnScrollType = SCROLL_TYPE_HORIZONTAL;
+				}
+
+				if (mnDisplayHeight < nHeight && mnDisplayWidth >= nWidth)
+				{
+					// vertical
+					mnScrollType = SCROLL_TYPE_VERTICAL;
+				}
+
+			}
+
+			if (0 > nOffsetX)
+			{
+				nPadingLeft = 0 - nOffsetX;
+			}
+			if (0 > nOffsetY)
+			{
+				nPadingTop = 0 - nOffsetY;
+			}
+			this.setPadding(nPadingLeft, nPadingTop, 0, 0);
+
+			gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
+
+			switch (mnScrollType)
+			{
+			case SCROLL_TYPE_AUTO:
+				if (0 < nOffsetX)
+				{
+					mnScrollX = nOffsetX;
+				}
+				if (0 < nOffsetY)
+				{
+					mnScrollY = nOffsetY;
+				}
+				initImageView();
+				break;
+			case SCROLL_TYPE_VERTICAL:
+				if (0 < nOffsetY)
+				{
+					mnScrollY = nOffsetY;
+				}
+				initVertical();
+				break;
+			case SCROLL_TYPE_HORIZONTAL:
+				if (0 < nOffsetX)
+				{
+					mnScrollX = nOffsetX;
+				}
+				initHorizontal();
+				break;
+			}
+
+			this.bringToFront();
+		}
 	}
 
 	@Override
