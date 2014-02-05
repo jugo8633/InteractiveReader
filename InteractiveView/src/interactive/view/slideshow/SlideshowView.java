@@ -1,5 +1,6 @@
 package interactive.view.slideshow;
 
+import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
@@ -526,7 +527,7 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			Bitmap bmp = FileHandler.decodeScaledBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
+			Bitmap bmp = BitmapHandler.readBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
 			imageview.setImageBitmap(bmp);
 			//	imageview.setImageURI(Uri.parse(strPath));
 		}

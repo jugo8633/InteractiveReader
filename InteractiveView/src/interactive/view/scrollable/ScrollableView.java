@@ -1,5 +1,6 @@
 package interactive.view.scrollable;
 
+import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.FileHandler;
 import interactive.common.Logs;
@@ -249,7 +250,7 @@ public class ScrollableView extends RelativeLayout
 		// recreate the new Bitmap
 		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
 
-		Bitmap bmp = FileHandler.decodeScaledBitmap(strPath, nWidth, nHeight);
+		Bitmap bmp = BitmapHandler.readBitmap(strPath, nWidth, nHeight);
 
 		imageView = new ImageView(getContext());
 		imageView.setImageBitmap(bmp);

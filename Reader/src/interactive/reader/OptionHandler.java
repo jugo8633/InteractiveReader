@@ -1,5 +1,6 @@
 package interactive.reader;
 
+import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
@@ -157,8 +158,8 @@ public class OptionHandler
 			{
 				ImageView img = new ImageView(activity);
 
-				Bitmap bmp = FileHandler.decodeScaledBitmap(PageData.listPageData.get(nChapter).get(nPage).strShapTiny,
-						nChapItemWidth, nChapItemHeight);
+				Bitmap bmp = BitmapHandler.readBitmap(
+						PageData.listPageData.get(nChapter).get(nPage).strShapTiny, nChapItemWidth, nChapItemHeight);
 				img.setImageBitmap(bmp);
 				img.setLayoutParams(new LayoutParams(nChapItemWidth, nChapItemHeight));
 				//	img.setImageURI(Uri.parse(PageData.listPageData.get(nChapter).get(nPage).strShapTiny));

@@ -21,9 +21,6 @@ import android.util.SparseArray;
 
 public class FileHandler
 {
-
-	//	private String			mstrPreviewPath		= null;
-	//	private String			mstrBookshelfsPath	= null;
 	public final String		ENCODING		= "UTF-8";
 	private final String	FILE_RESOURCE	= "resource";
 
@@ -41,7 +38,6 @@ public class FileHandler
 	@Override
 	protected void finalize() throws Throwable
 	{
-		// TODO Auto-generated method stub
 		super.finalize();
 	}
 
@@ -57,7 +53,6 @@ public class FileHandler
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Logs.showTrace("Unexpress file fail error: " + e.getMessage());
 				return false;
@@ -446,85 +441,6 @@ public class FileHandler
 		}
 		fstream = null;
 		return true;
-	}
-
-	synchronized public static Bitmap decodeFile(String filePath)
-	{
-		Bitmap bitmap = null;
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPurgeable = true;
-
-		try
-		{
-
-			BitmapFactory.Options.class.getField("inNativeAlloc").setBoolean(options, true);
-
-		}
-		catch (IllegalArgumentException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SecurityException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-		}
-
-		if (null != filePath)
-		{
-			bitmap = BitmapFactory.decodeFile(filePath, options);
-		}
-
-		return bitmap;
-	}
-
-	public static Bitmap decodeScaledBitmap(String filePath, int reqWidth, int reqHeight)
-	{
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		options.inPurgeable = true;
-		BitmapFactory.decodeFile(filePath, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(filePath, options);
-	}
-
-	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
-	{
-		// Raw height and width of image
-		final int height = options.outHeight;
-		final int width = options.outWidth;
-		int inSampleSize = 1;
-
-		if (height > reqHeight || width > reqWidth)
-		{
-
-			// Calculate ratios of height and width to requested height and
-			// width
-			final int heightRatio = Math.round((float) height / (float) reqHeight);
-			final int widthRatio = Math.round((float) width / (float) reqWidth);
-
-			// Choose the smallest ratio as inSampleSize value, this will
-			// guarantee
-			// a final image with both dimensions larger than or equal to the
-			// requested height and width.
-			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-		}
-
-		return inSampleSize;
 	}
 
 	public boolean checkPath(String strPath, boolean bCreate)

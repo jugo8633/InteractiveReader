@@ -1,5 +1,7 @@
 package interactive.view.scrollable;
 
+import interactive.common.BitmapHandler;
+import interactive.common.ClearCache;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
 import interactive.common.Logs;
@@ -70,7 +72,7 @@ public class HorizonScrollableView extends HorizontalScrollView
 
 	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
 	{
-		Bitmap bmp = FileHandler.decodeScaledBitmap(strImagePath, nWidth, nHeight);
+		Bitmap bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
 		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
 		imageView.setImageBitmap(bmp);
 		bmp = null;
