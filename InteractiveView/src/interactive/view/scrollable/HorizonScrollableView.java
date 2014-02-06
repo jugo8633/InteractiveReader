@@ -40,6 +40,12 @@ public class HorizonScrollableView extends HorizontalScrollView
 		init(context);
 	}
 
+	@Override
+	protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY)
+	{
+		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+	}
+
 	private void init(Context context)
 	{
 		theContext = context;
@@ -54,6 +60,16 @@ public class HorizonScrollableView extends HorizontalScrollView
 		mnWidth = nWidth;
 	}
 
+	private ImageView getImageView(Bitmap bitmap, int nWidth, int nHeight)
+	{
+		ImageView imageView = new ImageView(theContext);
+		imageView.setScaleType(ScaleType.FIT_XY);
+		imageView.setAdjustViewBounds(true);
+		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		imageView.setImageBitmap(bitmap);
+		return imageView;
+	}
+
 	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
 	{
 		Bitmap bmp = null;
@@ -63,7 +79,7 @@ public class HorizonScrollableView extends HorizontalScrollView
 			Bitmap bitmapBack = Bitmap
 					.createBitmap(nWidth + (mnWidth - (nWidth - nOffsetX)), nHeight, Config.ARGB_8888);
 			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
-			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront);
+			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
 		}
@@ -72,15 +88,8 @@ public class HorizonScrollableView extends HorizontalScrollView
 			bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
 		}
 
-		ImageView imageView = new ImageView(theContext);
-		imageView.setScaleType(ScaleType.MATRIX);
-		imageView.setAdjustViewBounds(true);
-		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
-		imageView.setImageBitmap(bmp);
+		ImageView imageView = getImageView(bmp, nWidth, nHeight);
 		bmp = null;
-
-		removeAllViewsInLayout();
-		addView(imageView);
 
 		if (0 < nOffsetX)
 		{
@@ -91,6 +100,9 @@ public class HorizonScrollableView extends HorizontalScrollView
 		{
 			setPadding(0 - nOffsetY);
 		}
+
+		removeAllViewsInLayout();
+		addView(imageView);
 	}
 
 	private void setPadding(int nTop)

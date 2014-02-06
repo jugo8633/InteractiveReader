@@ -7,14 +7,11 @@ import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView.ScaleType;
 
 public class VerticalScrollableView extends ScrollView
@@ -42,6 +39,12 @@ public class VerticalScrollableView extends ScrollView
 	{
 		super(context, attrs, defStyle);
 		init(context);
+	}
+
+	@Override
+	protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY)
+	{
+		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
 	}
 
 	private void init(Context context)
@@ -74,17 +77,34 @@ public class VerticalScrollableView extends ScrollView
 		mnWidth = nWidth;
 	}
 
+	private ImageView getImageView(Bitmap bitmap, int nWidth, int nHeight)
+	{
+		ImageView imageView = new ImageView(theContext);
+		imageView.setScaleType(ScaleType.FIT_XY);
+		imageView.setAdjustViewBounds(true);
+		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		imageView.setImageBitmap(bitmap);
+		return imageView;
+	}
+
 	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
 	{
 		Bitmap bmp = null;
 
-		bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+		if (0 > nOffsetY)
+		{
+			Bitmap bitmapBack = Bitmap.createBitmap(nWidth, nHeight + (0 - nOffsetY), Config.ARGB_8888);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, (0 - nOffsetY));
+			bitmapBack.recycle();
+			bitmapFront.recycle();
+		}
+		else
+		{
+			bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+		}
 
-		ImageView imageView = new ImageView(theContext);
-		imageView.setScaleType(ScaleType.CENTER_CROP);
-		imageView.setAdjustViewBounds(false);
-		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
-		imageView.setImageBitmap(bmp);
+		ImageView imageView = getImageView(bmp, nWidth, nHeight);
 		bmp = null;
 
 		if ((nWidth - nOffsetX) < mnWidth)
@@ -96,9 +116,6 @@ public class VerticalScrollableView extends ScrollView
 			}
 		}
 
-		removeAllViewsInLayout();
-		addView(imageView);
-
 		if (0 < nOffsetY)
 		{
 			setOffset(nOffsetY);
@@ -108,6 +125,9 @@ public class VerticalScrollableView extends ScrollView
 		{
 			setPadding(0 - nOffsetX);
 		}
+
+		removeAllViewsInLayout();
+		addView(imageView);
 	}
 
 	private void setPadding(int nLeft)

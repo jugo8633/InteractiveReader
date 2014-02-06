@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.view.View;
 
@@ -63,7 +62,8 @@ public class BitmapHandler
 		BitmapFactory.decodeFile(strFilePath, options);
 		options.inJustDecodeBounds = false;
 		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-		Bitmap bmp = BitmapFactory.decodeStream(fis, null, options);
+		Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
+		Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, reqWidth, reqHeight, false);
 		try
 		{
 			fis.close();
@@ -73,7 +73,7 @@ public class BitmapHandler
 		{
 			e.printStackTrace();
 		}
-		return bmp;
+		return resizedBitmap;
 	}
 
 	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
@@ -98,21 +98,16 @@ public class BitmapHandler
 	 * @param foreground 
 	 * @return Bitmap 
 	 */
-	public static Bitmap combineBitmap(Bitmap background, Bitmap foreground)
+	public static Bitmap combineBitmap(Bitmap background, Bitmap foreground, float left, float top)
 	{
 		if (background == null)
 		{
 			return null;
 		}
-		int bgWidth = background.getWidth();
-		int bgHeight = background.getHeight();
-		//	int fgWidth = foreground.getWidth();
-		//	int fgHeight = foreground.getHeight();
-		Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);
+		Bitmap newmap = Bitmap.createBitmap(background.getWidth(), background.getHeight(), Config.ARGB_8888);
 		Canvas canvas = new Canvas(newmap);
 		canvas.drawBitmap(background, 0, 0, null);
-		//	canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2, (bgHeight - fgHeight) / 2, null);
-		canvas.drawBitmap(foreground, 0, 0, null);
+		canvas.drawBitmap(foreground, left, top, null);
 		canvas.save(Canvas.ALL_SAVE_FLAG);
 		canvas.restore();
 		return newmap;
