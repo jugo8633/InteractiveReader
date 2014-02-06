@@ -4,10 +4,8 @@ import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import interactive.view.type.InteractiveType;
 
@@ -211,8 +209,6 @@ public class SlideshowView extends RelativeLayout
 		rLayoutThumbnail.setVisibility(View.GONE);
 
 		initGestureDetector();
-
-		this.setBackgroundResource(android.R.color.background_dark);
 
 		/** init Scale */
 		imgScale = new ImageView(context);
@@ -520,6 +516,7 @@ public class SlideshowView extends RelativeLayout
 		imageview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		imageview.setScaleType(ScaleType.CENTER_CROP);
 		imageview.setAdjustViewBounds(false);
+		imageview.setBackgroundColor(Color.TRANSPARENT);
 
 		if (0 < nResId)
 		{
@@ -527,9 +524,9 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			Bitmap bmp = BitmapHandler.readBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
-			imageview.setImageBitmap(bmp);
-			//	imageview.setImageURI(Uri.parse(strPath));
+			//Bitmap bmp = BitmapHandler.readBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
+			//imageview.setImageBitmap(bmp);
+			imageview.setImageURI(Uri.parse(strPath));
 		}
 		else
 		{
@@ -631,6 +628,7 @@ public class SlideshowView extends RelativeLayout
 	private SlideshowViewVideoLayout initLocalVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
 		SlideshowViewVideoLayout localVideoLayout = new SlideshowViewVideoLayout(getContext());
+		localVideoLayout.setBackgroundColor(Color.BLACK);
 		localVideoLayout.setVideoType(InteractiveType.VIDEO_TYPE_LOCAL);
 		localVideoLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
@@ -663,6 +661,7 @@ public class SlideshowView extends RelativeLayout
 	private SlideshowViewVideoLayout initYoutubeVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
 		SlideshowViewVideoLayout youtubeLayout = new SlideshowViewVideoLayout(getContext());
+		youtubeLayout.setBackgroundColor(Color.BLACK);
 		youtubeLayout.setVideoType(InteractiveType.VIDEO_TYPE_TOUTUBE);
 		youtubeLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
