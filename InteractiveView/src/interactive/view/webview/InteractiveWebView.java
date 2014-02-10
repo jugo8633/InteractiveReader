@@ -12,6 +12,7 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import android.widget.RelativeLayout;
 
 public class InteractiveWebView extends WebView
 {
+	public static final String				EXTRA_URL				= "extra_url";
 	private SparseArray<InteractiveImage>	listInteractiveImage	= null;		// webview clicked then hide
 	private Handler							pageReaderHandler		= null;		//send message to PageReader
 	private boolean							mbOverLoadUrl			= false;
@@ -167,6 +169,9 @@ public class InteractiveWebView extends WebView
 			if (url.startsWith("http:") || url.startsWith("https:"))
 			{
 				// show web active
+				Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
+				intent.putExtra(EXTRA_URL, url);
+				getContext().startActivity(intent);
 				return true;
 			}
 			File file = new File(url);

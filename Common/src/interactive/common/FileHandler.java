@@ -435,7 +435,7 @@ public class FileHandler
 	{
 		File fstream = null;
 		fstream = new File(strFilePath);
-		if (null == fstream || !fstream.exists())
+		if (null == fstream || !fstream.exists() || !fstream.isFile())
 		{
 			return false;
 		}

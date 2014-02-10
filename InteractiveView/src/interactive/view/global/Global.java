@@ -21,6 +21,7 @@ public class Global
 	public static PageReader				pageReader			= null;
 	public static Handler					handlerPostcard		= null;
 	public static SparseArray<ActiveNotify>	listActiveNotify	= new SparseArray<ActiveNotify>();
+	public static int						mnUserId			= 2048;
 
 	public static class ActiveNotify
 	{

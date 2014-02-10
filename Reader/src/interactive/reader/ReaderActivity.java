@@ -27,13 +27,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ReaderActivity extends Activity
 {
-
+	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40210";
 	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
@@ -284,6 +286,15 @@ public class ReaderActivity extends Activity
 	{
 		TextView txBookName = (TextView) findViewById(getResourceId("textViewBookName", "id"));
 		txBookName.setText(strBookName);
+		txBookName.setOnLongClickListener(new OnLongClickListener()
+		{
+			@Override
+			public boolean onLongClick(View arg0)
+			{
+				Toast.makeText(ReaderActivity.this, VERSION_STRING, Toast.LENGTH_LONG).show();
+				return true;
+			}
+		});
 	}
 
 	private void loadDisplayPage(ConfigData configData, String strBookPath)
@@ -464,32 +475,6 @@ public class ReaderActivity extends Activity
 		{
 			EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, bitmap);
 		}
-		//		if (resultCode == Activity.RESULT_OK)
-		//		{
-		//			if (requestCode == Postcard.POSTCARD_ACTIVITY_RESULT && null != data)
-		//			{
-		//				ContentResolver resolver = getContentResolver();
-		//				//取得圖片位址
-		//				Uri uri = data.getData();
-		//				Bitmap bmp = null;
-		//				try
-		//				{
-		//					//取得圖片Bitmap
-		//					bmp = MediaStore.Images.Media.getBitmap(resolver, uri);
-		//					EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, bmp);
-		//				}
-		//				catch (FileNotFoundException e)
-		//				{
-		//					e.printStackTrace();
-		//				}
-		//				catch (IOException e)
-		//				{
-		//					e.printStackTrace();
-		//				}
-		//
-		//			}
-		//		}
-
 	}
 
 	private Handler	activityHandler	= new Handler()

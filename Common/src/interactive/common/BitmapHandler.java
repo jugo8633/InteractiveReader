@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.IntBuffer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,14 +14,24 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.opengl.GLES10;
 import android.view.View;
 
 public class BitmapHandler
 {
 
+	private static final int	msMaxTexture	= getMaxTexDim();
+
 	public BitmapHandler()
 	{
 		super();
+	}
+
+	private static int getMaxTexDim()
+	{
+		int[] maxTextureSize = new int[1];
+		GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxTextureSize, 0);
+		return maxTextureSize[0];
 	}
 
 	/**
@@ -61,9 +72,34 @@ public class BitmapHandler
 		options.inPurgeable = true;
 		BitmapFactory.decodeFile(strFilePath, options);
 		options.inJustDecodeBounds = false;
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		float fWidth = reqWidth;
+		float fHeight = reqHeight;
+		float fScale = 1.0f;
+		if (reqWidth > reqHeight && msMaxTexture < reqWidth)
+		{
+			fWidth = msMaxTexture;
+			fScale = reqWidth / msMaxTexture;
+			fHeight = reqHeight / fScale;
+		}
+
+		if (reqWidth < reqHeight && msMaxTexture < reqHeight)
+		{
+			fHeight = msMaxTexture;
+			fScale = reqHeight / msMaxTexture;
+			fWidth = reqWidth / fScale;
+		}
+
+		if (reqWidth == reqHeight && msMaxTexture < reqWidth)
+		{
+			fWidth = msMaxTexture;
+			fHeight = msMaxTexture;
+		}
+
+		int nWidth = (int) Math.floor(fWidth);
+		int nHeight = (int) Math.floor(fHeight);
+		options.inSampleSize = calculateInSampleSize(options, nWidth, nHeight);
 		Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
-		Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, reqWidth, reqHeight, false);
+		Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, nWidth, nHeight, false);
 		try
 		{
 			fis.close();

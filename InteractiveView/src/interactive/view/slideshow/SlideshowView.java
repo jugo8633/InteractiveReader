@@ -1,6 +1,5 @@
 package interactive.view.slideshow;
 
-import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;

@@ -81,6 +81,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="interactive.view.webview.WebBrowserActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:taskAffinity=":activity" >
+            <intent-filter>
+                <action android:name="interactive.view.webview.WebBrowserActivity.LAUNCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

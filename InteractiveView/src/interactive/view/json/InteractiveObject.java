@@ -14,6 +14,7 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
+@SuppressWarnings("unused")
 public abstract class InteractiveObject
 {
 	// main json key
@@ -216,7 +217,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			listItem.clear();
 			listItem = null;
 			super.finalize();
@@ -259,7 +259,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			offSet = null;
 			imgBBox = null;
 			super.finalize();
@@ -468,7 +467,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			listEvent.clear();
 			listEvent = null;
 			super.finalize();
@@ -479,7 +477,6 @@ public abstract class InteractiveObject
 	public InteractiveObject(Context context)
 	{
 		super();
-		// TODO Auto-generated constructor stub
 		theContext = context;
 		metrics = theContext.getResources().getDisplayMetrics();
 		oldKeys = new HashMap<String, String>();
@@ -503,7 +500,6 @@ public abstract class InteractiveObject
 	@Override
 	protected void finalize() throws Throwable
 	{
-		// TODO Auto-generated method stub
 		super.finalize();
 	}
 
@@ -982,7 +978,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1003,7 +998,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1024,7 +1018,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1045,7 +1038,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

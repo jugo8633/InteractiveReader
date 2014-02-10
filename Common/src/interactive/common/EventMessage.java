@@ -37,6 +37,7 @@ public class EventMessage
 	public static final int	MSG_ANIMATION_END			= MSG_CUSTOM + 27;
 	public static final int	MSG_DRAG_END				= MSG_CUSTOM + 28;
 	public static final int	MSG_CURRENT_ACTIVE			= MSG_CUSTOM + 29;
+	public static final int	MSG_BROWSER_CLOSE			= MSG_CUSTOM + 30;
 
 	/**
 	 * @author jugo

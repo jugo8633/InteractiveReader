@@ -4,7 +4,6 @@ import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.ObjectFactory;
 import interactive.common.Share;
