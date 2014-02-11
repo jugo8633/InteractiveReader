@@ -2,6 +2,8 @@ package interactive.view.webview;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.FileHandler;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
@@ -15,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.MailTo;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -166,14 +169,9 @@ public class InteractiveWebView extends WebView
 	{
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
-			if (url.startsWith("http:") || url.startsWith("https:"))
-			{
-				// show web active
-				Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
-				intent.putExtra(EXTRA_URL, url);
-				getContext().startActivity(intent);
-				return true;
-			}
+			Logs.showTrace("url=" + url + " ###########################################");
+
+			/** 跳頁 */
 			File file = new File(url);
 			String strName = file.getName();
 			file = null;
@@ -186,7 +184,24 @@ public class InteractiveWebView extends WebView
 				return true;
 			}
 
-			return false;
+			/** 外部連結 & 內部連結 */
+			String strFilePath = url.substring(7, url.length());
+			if (url.startsWith("http:") || url.startsWith("https:")
+					|| (mbOverLoadUrl && url.startsWith("file:") && FileHandler.isFileExist(strFilePath)))
+			{
+				Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
+				intent.putExtra(EXTRA_URL, url);
+				getContext().startActivity(intent);
+				return true;
+			}
+
+			if (url.startsWith("mailto:"))
+			{
+				MailTo mt = MailTo.parse(url);
+				Intent i = newEmailIntent(Global.theActivity, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
+				Global.theActivity.startActivity(i);
+			}
+			return true;
 		}
 
 		@Override
@@ -201,6 +216,17 @@ public class InteractiveWebView extends WebView
 		{
 			mbOverLoadUrl = false;
 			super.onPageStarted(view, url, favicon);
+		}
+
+		private Intent newEmailIntent(Context context, String address, String subject, String body, String cc)
+		{
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+			intent.putExtra(Intent.EXTRA_TEXT, body);
+			intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+			intent.putExtra(Intent.EXTRA_CC, cc);
+			intent.setType("message/rfc822");
+			return intent;
 		}
 
 	}
@@ -306,10 +332,6 @@ public class InteractiveWebView extends WebView
 					}
 				}
 			}
-		}
-		else
-		{
-			//		EventHandler.notify(displayPageHandler, EventMessage.MSG_WEB, EventMessage.WND_STOP, Type.INVALID, null);
 		}
 	}
 
@@ -440,10 +462,6 @@ public class InteractiveWebView extends WebView
 																			mnPage - 1);
 																	break;
 																case ScrollableView.DOUBLE_CLICK:
-																	//																	EventHandler.notify(displayPageHandler,
-																	//																			EventMessage.MSG_WEB,
-																	//																			EventMessage.MSG_DOUBLE_CLICK,
-																	//																			Type.INVALID, null);
 																	EventHandler.notify(Global.handlerActivity,
 																			EventMessage.MSG_DOUBLE_CLICK,
 																			Type.INVALID, Type.INVALID, null);

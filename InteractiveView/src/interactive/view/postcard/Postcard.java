@@ -241,11 +241,6 @@ public class Postcard
 
 	public void initTextArea(int nWidth, int nHeight, int nX, int nY, String strImagePath)
 	{
-		//		ImageView imgTextArea = new ImageView(theContext);
-		//		imgTextArea.setTag("textArea");
-		//		imgTextArea.setVisibility(View.GONE);
-		//		initOptionImage(imgTextArea, nWidth, nHeight, nX, nY, strImagePath);
-
 		mnTextMaxLine = nHeight / 24;
 		--mnTextMaxLine;
 		editText = new EditText(theContext);
@@ -345,7 +340,6 @@ public class Postcard
 				{
 					eraserView.setBackground(null);
 				}
-				//view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
 				view.setBackgroundColor(Color.YELLOW);
 				fingerPaintView.setIsCapturing(true);
 				fingerPaintView.setEraser(false);
@@ -357,7 +351,6 @@ public class Postcard
 				container.requestDisallowInterceptTouchEvent(false);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 				fingerPaintView.setIsCapturing(false);
-				//view.setBackground(null);
 				view.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
@@ -371,7 +364,6 @@ public class Postcard
 				{
 					penView.setBackground(null);
 				}
-				//view.setBackgroundResource(Global.getResourceId(theContext, "circle", "drawable"));
 				view.setBackgroundColor(Color.YELLOW);
 				fingerPaintView.setIsCapturing(true);
 				fingerPaintView.setEraser(true);
@@ -383,7 +375,6 @@ public class Postcard
 				container.requestDisallowInterceptTouchEvent(false);
 				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 				fingerPaintView.setIsCapturing(false);
-				//view.setBackground(null);
 				view.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
