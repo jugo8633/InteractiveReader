@@ -1,3 +1,4 @@
+2014/02/11 : 修正postcard drag and drop event傳遞錯誤的問題
 2014/02/11 : 新增內部網頁連結與mailto連結
 2014/02/10 : fix scrollable bitmap max texture size bug
 2014/02/10 : fix button down no image bug

@@ -25,10 +25,11 @@ import android.widget.RelativeLayout;
 public class InteractiveHandler
 {
 	private Runnable				runRemoveImage;
-	private String					mstrRemoveImage	= null;
-	private static YoutubeView		youtubeView		= null;
-	private static VideoPlayer		videoView		= null;
-	private SparseArray<Postcard>	listPostcard	= null;
+	private String					mstrRemoveImage		= null;
+	private static YoutubeView		youtubeView			= null;
+	private static VideoPlayer		videoView			= null;
+	private SparseArray<Postcard>	listPostcard		= null;
+	private String					mstrPostcardDragTag	= null;
 
 	public class GoogleMap
 	{
@@ -160,9 +161,51 @@ public class InteractiveHandler
 		};
 	}
 
-	public void addPostcard(Postcard postcard)
+	public int addPostcard(Postcard postcard)
 	{
-		listPostcard.put(listPostcard.size(), postcard);
+		int nKey = listPostcard.size();
+		listPostcard.put(nKey, postcard);
+		return nKey;
+	}
+
+	public Postcard getPostcard(int nKey)
+	{
+		if (null != listPostcard)
+		{
+			return listPostcard.get(nKey);
+		}
+		return null;
+	}
+
+	public Postcard getPostcard(String strTag)
+	{
+		if (null != listPostcard)
+		{
+			for (int i = 0; i < listPostcard.size(); ++i)
+			{
+				if (listPostcard.get(i).getTag().equals(strTag))
+				{
+					return listPostcard.get(i);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public void setPostcardDragTag(String strTag)
+	{
+		mstrPostcardDragTag = strTag;
+	}
+
+	public String getPostcardDragTag()
+	{
+		return mstrPostcardDragTag;
+	}
+
+	public void clearPostcardDragTag()
+	{
+		mstrPostcardDragTag = null;
 	}
 
 	public void initMediaView(Activity activity)
@@ -477,6 +520,36 @@ public class InteractiveHandler
 		removeYoutube();
 	}
 
+	private void sendPostcard()
+	{
+		if (null != getPostcardDragTag())
+		{
+			Postcard postcard = getPostcard(getPostcardDragTag());
+			if (null != postcard)
+			{
+				postcard.sendPostcard();
+			}
+		}
+	}
+
+	private void DragEnd(int nObject)
+	{
+		switch (nObject)
+		{
+		case InteractiveEvent.OBJECT_CATEGORY_POSTCARD:
+			if (null != getPostcardDragTag())
+			{
+				Postcard postcard = getPostcard(getPostcardDragTag());
+				if (null != postcard)
+				{
+					postcard.hidePostcard(false);
+				}
+				clearPostcardDragTag();
+			}
+			break;
+		}
+	}
+
 	private Handler	notifyHandler	= new Handler()
 									{
 										@Override
@@ -493,6 +566,12 @@ public class InteractiveHandler
 												break;
 											case EventMessage.MSG_VIDEO_PLAY:
 												playVideo(msg.arg1, (String) msg.obj);
+												break;
+											case EventMessage.MSG_SEND_POSTCARD:
+												sendPostcard();
+												break;
+											case EventMessage.MSG_DRAG_END:
+												DragEnd(msg.arg1);
 												break;
 											}
 										}

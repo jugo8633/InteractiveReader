@@ -169,8 +169,6 @@ public class InteractiveWebView extends WebView
 	{
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
-			Logs.showTrace("url=" + url + " ###########################################");
-
 			/** 跳頁 */
 			File file = new File(url);
 			String strName = file.getName();

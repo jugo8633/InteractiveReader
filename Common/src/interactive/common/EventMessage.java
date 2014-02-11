@@ -38,6 +38,8 @@ public class EventMessage
 	public static final int	MSG_DRAG_END				= MSG_CUSTOM + 28;
 	public static final int	MSG_CURRENT_ACTIVE			= MSG_CUSTOM + 29;
 	public static final int	MSG_BROWSER_CLOSE			= MSG_CUSTOM + 30;
+	public static final int	MSG_DRAG_START				= MSG_CUSTOM + 31;
+	public static final int	MSG_SEND_POSTCARD			= MSG_CUSTOM + 32;
 
 	/**
 	 * @author jugo
