@@ -10,6 +10,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.SparseArray;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class Global
 {
@@ -67,5 +71,19 @@ public class Global
 				EventHandler.notify(listActiveNotify.get(i).mHandler, EventMessage.MSG_CURRENT_ACTIVE, 0, 0, null);
 			}
 		}
+	}
+
+	public static void showToast(String strMsg)
+	{
+		if (null == theActivity)
+		{
+			return;
+		}
+		Toast toast = Toast.makeText(theActivity, strMsg, Toast.LENGTH_LONG);
+		LinearLayout toastLayout = (LinearLayout) toast.getView();
+		TextView toastTV = (TextView) toastLayout.getChildAt(0);
+		toastTV.setTextSize(30);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.show();
 	}
 }

@@ -1,3 +1,4 @@
+2014/02/12 : 修正google play obb檔抓不到的問題,Android 4.2.2 mulite user問題
 2014/02/11 : 修正postcard drag and drop event傳遞錯誤的問題
 2014/02/11 : 新增內部網頁連結與mailto連結
 2014/02/10 : fix scrollable bitmap max texture size bug

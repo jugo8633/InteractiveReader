@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 public class ReaderActivity extends Activity
 {
-	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40210";
+	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40212";
 	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
@@ -206,8 +206,9 @@ public class ReaderActivity extends Activity
 	{
 		if (null == strBookPath)
 		{
-			// TODO show notify dialog
 			closeProgressDialog();
+			Global.showToast("未找到書籍");
+			finish();
 			return;
 		}
 		mstrBookPath = strBookPath;
@@ -224,7 +225,7 @@ public class ReaderActivity extends Activity
 		}
 		else
 		{
-			// TODO show parse fail dialog 
+			Global.showToast("書籍解析失敗");
 		}
 		closeProgressDialog();
 	}
@@ -382,8 +383,7 @@ public class ReaderActivity extends Activity
 				}
 				else
 				{
-					// TODO show open book fail dialog
-					//AppCrossApplication.showToast("開啟書本失敗");
+					Global.showToast("開啟書本失敗");
 					return Type.INVALID;
 				}
 				data = null;
@@ -490,8 +490,7 @@ public class ReaderActivity extends Activity
 												showProgreeDialog(strTmp);
 												break;
 											case EventMessage.MSG_CHECKED_BOOK:
-												String strBookPath = bookHandler.getBookPath();
-												initBook(strBookPath);
+												initBook(bookHandler.getBookPath());
 												break;
 											case EventMessage.MSG_DOUBLE_CLICK:
 												showOption();

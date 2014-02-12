@@ -120,7 +120,7 @@ public class BookHandler
 			String strObbBook = fileHandler.getObbFile(strObbPath, strObbFile);
 			if (null != strObbBook)
 			{
-				if (fileHandler.fileRename(strObbPath, strObbBook, strSdPath + "download", strFile))
+				if (fileHandler.fileCopy(strObbPath, strObbBook, strSdPath + "download", strFile))
 				{
 					if (checkExpressBook(fileHandler, strSdPath, strFile))
 					{
@@ -136,7 +136,7 @@ public class BookHandler
 				strObbBook = fileHandler.getObbFile(strObbPath, strObbFile);
 				if (null != strObbBook)
 				{
-					if (fileHandler.fileRename(strObbPath, strObbBook, strSdPath + "download", strFile))
+					if (fileHandler.fileCopy(strObbPath, strObbBook, strSdPath + "download", strFile))
 					{
 						fileHandler.delete(strObbPath);
 						if (checkExpressBook(fileHandler, strSdPath, strFile))

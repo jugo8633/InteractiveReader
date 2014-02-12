@@ -3,6 +3,7 @@ package interactive.common;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,8 +15,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.SparseArray;
 
@@ -24,11 +23,11 @@ public class FileHandler
 	public final String		ENCODING		= "UTF-8";
 	private final String	FILE_RESOURCE	= "resource";
 
-	String[]				astrBookPath	= { "/sdcard/download/", "/sdcard/Download/", "/mnt/sdcard/download/",
-			"/sdcard/external_sd/", "/emmc/", "/mnt/sdcard/external_sd/", "/mnt/external_sd/", "/sdcard/sd/",
-			"/mnt/sdcard/bpemmctest/", "/mnt/sdcard/_ExternalSD/", "/mnt/sdcard-ext/", "/mnt/Removable/MicroSD/",
-			"/Removable/MicroSD/", "/mnt/external1/", "/mnt/extSdCard/", "/mnt/extsd/", "/mnt/usb_storage/",
-			"/mnt/extSdCard/", "/mnt/UsbDriveA/", "/mnt/UsbDriveB/" };
+	String[]				astrBookPath	= { "/sdcard/download/", "/sdcard/Download/", "/mnt/shell/emulated/obb/",
+			"/mnt/sdcard/download/", "/sdcard/external_sd/", "/emmc/", "/mnt/sdcard/external_sd/", "/mnt/external_sd/",
+			"/sdcard/sd/", "/mnt/sdcard/bpemmctest/", "/mnt/sdcard/_ExternalSD/", "/mnt/sdcard-ext/",
+			"/mnt/Removable/MicroSD/", "/Removable/MicroSD/", "/mnt/external1/", "/mnt/extSdCard/", "/mnt/extsd/",
+			"/mnt/usb_storage/", "/mnt/extSdCard/", "/mnt/UsbDriveA/", "/mnt/UsbDriveB/" };
 
 	public FileHandler()
 	{
@@ -353,8 +352,58 @@ public class FileHandler
 	{
 		String strOld = strOldPath + strOldFile;
 		File d2 = new File(strOld);
-		Logs.showTrace("Move file:" + strOld + " to:" + strNewPath + "/" + strNewFile);
+		Logs.showTrace("Move file:" + strOld + " to:" + strNewPath + File.separator + strNewFile);
 		return d2.renameTo(new File(strNewPath, strNewFile));
+	}
+
+	public boolean fileCopy(String strOldPath, String strOldFile, String strNewPath, String strNewFile)
+	{
+		boolean bResult = true;
+
+		String strOld = strOldPath + strOldFile;
+		File source = new File(strOld);
+
+		String strNew = strNewPath + File.separator + strNewFile;
+		File dest = new File(strNew);
+
+		InputStream is = null;
+		OutputStream os = null;
+		try
+		{
+			is = new FileInputStream(source);
+			os = new FileOutputStream(dest);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = is.read(buffer)) > 0)
+			{
+				os.write(buffer, 0, length);
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			bResult = false;
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			bResult = false;
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				is.close();
+				os.close();
+			}
+			catch (IOException e)
+			{
+				bResult = false;
+				e.printStackTrace();
+			}
+		}
+
+		return bResult;
 	}
 
 	public boolean deleteFile(String strFile)
