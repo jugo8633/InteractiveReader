@@ -30,6 +30,7 @@ public class InteractiveHandler
 	private static VideoPlayer		videoView			= null;
 	private SparseArray<Postcard>	listPostcard		= null;
 	private String					mstrPostcardDragTag	= null;
+	private boolean					mbDraging			= false;
 
 	public class GoogleMap
 	{
@@ -190,6 +191,7 @@ public class InteractiveHandler
 			}
 		}
 
+		Logs.showTrace("Get postcard fail");
 		return null;
 	}
 
@@ -206,6 +208,16 @@ public class InteractiveHandler
 	public void clearPostcardDragTag()
 	{
 		mstrPostcardDragTag = null;
+	}
+
+	private void setDraging(boolean bDraging)
+	{
+		mbDraging = bDraging;
+	}
+
+	public boolean getDraging()
+	{
+		return mbDraging;
 	}
 
 	public void initMediaView(Activity activity)
@@ -542,9 +554,14 @@ public class InteractiveHandler
 				Postcard postcard = getPostcard(getPostcardDragTag());
 				if (null != postcard)
 				{
+					Logs.showTrace("Show postcard tag=" + getPostcardDragTag());
 					postcard.hidePostcard(false);
 				}
 				clearPostcardDragTag();
+			}
+			else
+			{
+				Logs.showTrace("No postcard drag tag");
 			}
 			break;
 		}
@@ -570,7 +587,11 @@ public class InteractiveHandler
 											case EventMessage.MSG_SEND_POSTCARD:
 												sendPostcard();
 												break;
+											case EventMessage.MSG_DRAG_START:
+												setDraging(true);
+												break;
 											case EventMessage.MSG_DRAG_END:
+												setDraging(false);
 												DragEnd(msg.arg1);
 												break;
 											}

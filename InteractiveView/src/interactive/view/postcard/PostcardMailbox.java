@@ -3,6 +3,7 @@ package interactive.view.postcard;
 import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.Logs;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveEvent;
 import android.content.Context;
@@ -72,38 +73,34 @@ public class PostcardMailbox extends RelativeLayout
 		{
 			switch (event.getAction())
 			{
-			//signal for the start of a drag and drop operation.
 			case DragEvent.ACTION_DRAG_STARTED:
-				// do nothing
+				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_DRAG_START,
+						InteractiveEvent.OBJECT_CATEGORY_POSTCARD, 0, null);
+				Logs.showTrace("ACTION_DRAG_STARTED");
 				break;
-
-			//the drag point has entered the bounding box of the View
 			case DragEvent.ACTION_DRAG_ENTERED:
+				Logs.showTrace("ACTION_DRAG_ENTERED");
 				imageView.setBackgroundColor(Color.YELLOW);
 				break;
-
-			//the user has moved the drag shadow outside the bounding box of the View
 			case DragEvent.ACTION_DRAG_EXITED:
+				Logs.showTrace("ACTION_DRAG_EXITED");
 				imageView.setBackgroundColor(Color.TRANSPARENT);
 				break;
-
-			//drag shadow has been released,the drag point is within the bounding box of the View
 			case DragEvent.ACTION_DROP:
-				// if the view is the bottomlinear, we accept the drag item
+				Logs.showTrace("ACTION_DROP");
 				if (v == imageView)
 				{
 					EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_SEND_POSTCARD,
 							0, 0, null);
 				}
-
 				break;
-
-			//the drag and drop operation has concluded.
 			case DragEvent.ACTION_DRAG_ENDED:
+				Logs.showTrace("ACTION_DRAG_ENDED");
 				imageView.setBackgroundColor(Color.TRANSPARENT);
 				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_DRAG_END,
 						InteractiveEvent.OBJECT_CATEGORY_POSTCARD, 0, null);
 			default:
+				Logs.showTrace("DragEvent=" + event.getAction());
 				break;
 			}
 			return true;

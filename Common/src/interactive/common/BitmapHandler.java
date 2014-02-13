@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.IntBuffer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.opengl.GLES10;
 import android.view.View;
@@ -51,12 +51,22 @@ public class BitmapHandler
 		return BitmapFactory.decodeStream(is, null, opt);
 	}
 
+	public static Bitmap readBitmap(Context context, String strFilePath, int reqWidth, int reqHeight)
+	{
+		ClearCache clearCache = new ClearCache();
+		clearCache.trimCache(context);
+		clearCache = null;
+		Bitmap bitmap = readBitmap(strFilePath, reqWidth, reqHeight);
+		return bitmap;
+	}
+
 	public static Bitmap readBitmap(String strFilePath, int reqWidth, int reqHeight)
 	{
 		if (null == strFilePath)
 		{
 			return null;
 		}
+
 		FileInputStream fis = null;
 		try
 		{
@@ -98,8 +108,19 @@ public class BitmapHandler
 		int nWidth = (int) Math.floor(fWidth);
 		int nHeight = (int) Math.floor(fHeight);
 		options.inSampleSize = calculateInSampleSize(options, nWidth, nHeight);
-		Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
-		Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, nWidth, nHeight, false);
+		//	Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
+		Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
+
+		options.inDither = false;
+		options.inInputShareable = true;
+		options.inTempStorage = new byte[16 * msMaxTexture];
+
+		//	Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, nWidth, nHeight, false);
+		Bitmap resizedBitmap = getResizedBitmap(originalBitmap, nWidth, nHeight);
+		if (originalBitmap != resizedBitmap)
+		{
+			originalBitmap.recycle();
+		}
 		try
 		{
 			fis.close();
@@ -126,6 +147,22 @@ public class BitmapHandler
 		}
 
 		return inSampleSize;
+	}
+
+	public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight)
+	{
+		int width = bm.getWidth();
+		int height = bm.getHeight();
+		float scaleWidth = ((float) newWidth) / width;
+		float scaleHeight = ((float) newHeight) / height;
+		// CREATE A MATRIX FOR THE MANIPULATION
+		Matrix matrix = new Matrix();
+		// RESIZE THE BIT MAP
+		matrix.postScale(scaleWidth, scaleHeight);
+
+		// "RECREATE" THE NEW BITMAP
+		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+		return resizedBitmap;
 	}
 
 	/** 
@@ -168,5 +205,99 @@ public class BitmapHandler
 		Rect dr = new Rect(0, 0, width, height);
 		cvs.drawBitmap(mBitmap, r, dr, null);
 		return croppedImage;
+	}
+
+	public static int getBitmapWidth(String strFilePath)
+	{
+		if (null == strFilePath)
+		{
+			return 0;
+		}
+
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream(new File(strFilePath));
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inJustDecodeBounds = true;
+		bitmapOptions.inPurgeable = true;
+		BitmapFactory.decodeStream(fis, null, bitmapOptions);
+		return bitmapOptions.outWidth;
+	}
+
+	public static int getBitmapHeight(String strFilePath)
+	{
+		if (null == strFilePath)
+		{
+			return 0;
+		}
+
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream(new File(strFilePath));
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inJustDecodeBounds = true;
+		bitmapOptions.inPurgeable = true;
+		BitmapFactory.decodeStream(fis, null, bitmapOptions);
+
+		return bitmapOptions.outHeight;
+
+	}
+
+	public static Bitmap readBitmapThumbnail(Context context, String strFilePath, int nSampleSize)
+	{
+		if (null == strFilePath)
+		{
+			return null;
+		}
+
+		ClearCache clearCache = new ClearCache();
+		clearCache.trimCache(context);
+		clearCache = null;
+
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream(new File(strFilePath));
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inJustDecodeBounds = true;
+		bitmapOptions.inPurgeable = true;
+		BitmapFactory.decodeStream(fis, null, bitmapOptions);
+		//		int imageWidth = bitmapOptions.outWidth;
+		//		int imageHeight = bitmapOptions.outHeight;
+
+		bitmapOptions.inJustDecodeBounds = false;
+		bitmapOptions.inSampleSize = nSampleSize;
+		Bitmap thumbnailBitmap = BitmapFactory.decodeStream(fis, null, bitmapOptions);
+
+		try
+		{
+			fis.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		return thumbnailBitmap;
 	}
 }

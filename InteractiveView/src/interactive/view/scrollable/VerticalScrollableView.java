@@ -94,14 +94,14 @@ public class VerticalScrollableView extends ScrollView
 		if (0 > nOffsetY)
 		{
 			Bitmap bitmapBack = Bitmap.createBitmap(nWidth, nHeight + (0 - nOffsetY), Config.ARGB_8888);
-			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, (0 - nOffsetY));
 			bitmapBack.recycle();
 			bitmapFront.recycle();
 		}
 		else
 		{
-			bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
 		}
 
 		ImageView imageView = getImageView(bmp, nWidth, nHeight);

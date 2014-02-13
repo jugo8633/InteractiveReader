@@ -78,14 +78,14 @@ public class HorizonScrollableView extends HorizontalScrollView
 		{
 			Bitmap bitmapBack = Bitmap
 					.createBitmap(nWidth + (mnWidth - (nWidth - nOffsetX)), nHeight, Config.ARGB_8888);
-			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
 		}
 		else
 		{
-			bmp = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
 		}
 
 		ImageView imageView = getImageView(bmp, nWidth, nHeight);

@@ -1,5 +1,6 @@
 package interactive.view.slideshow;
 
+import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
@@ -448,6 +449,7 @@ public class SlideshowView extends RelativeLayout
 		postDelayed(scrollerTask, newCheck);
 	}
 
+	@SuppressWarnings("unused")
 	private int setOffSetTemp(int nTempWidth)
 	{
 		View viewOffSet = new View(theActivity);
@@ -523,9 +525,22 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			//Bitmap bmp = BitmapHandler.readBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
-			//imageview.setImageBitmap(bmp);
-			imageview.setImageURI(Uri.parse(strPath));
+			int nBitmapWidth = BitmapHandler.getBitmapWidth(strPath);
+			int nBitmapHeight = BitmapHandler.getBitmapHeight(strPath);
+			if (0 >= nBitmapWidth)
+			{
+				nBitmapWidth = 800;
+			}
+
+			if (0 >= nBitmapHeight)
+			{
+				nBitmapHeight = 800;
+			}
+
+			Logs.showTrace("Slideshow get image width=" + nBitmapWidth + " height=" + nBitmapHeight);
+			Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
+			imageview.setImageBitmap(bmp);
+			//imageview.setImageURI(Uri.parse(strPath));
 		}
 		else
 		{
@@ -924,10 +939,12 @@ public class SlideshowView extends RelativeLayout
 			switch (viewItem.getType())
 			{
 			case SlideshowViewItem.TYPE_IMAGE:
-				img.setImageURI(Uri.parse(viewItem.getImageSrc()));
+				//	img.setImageURI(Uri.parse(viewItem.getImageSrc()));
+				img.setImageBitmap(getThumbnail(viewItem.getImageSrc()));
 				break;
 			case SlideshowViewItem.TYPE_VIDEO:
-				img.setImageURI(Uri.parse(viewItem.getVideoSrc()));
+				//img.setImageURI(Uri.parse(viewItem.getVideoSrc()));
+				img.setImageBitmap(getThumbnail(viewItem.getVideoSrc()));
 				break;
 			}
 			img.setScaleType(ScaleType.FIT_CENTER);
@@ -948,6 +965,24 @@ public class SlideshowView extends RelativeLayout
 				}
 			});
 		}
+	}
+
+	private Bitmap getThumbnail(String strImagePath)
+	{
+		//Bitmap bitmap = BitmapHandler.readBitmapThumbnail(theActivity, strImagePath, 4);
+		int nBitmapWidth = BitmapHandler.getBitmapWidth(strImagePath);
+		int nBitmapHeight = BitmapHandler.getBitmapHeight(strImagePath);
+		if (0 >= nBitmapWidth)
+		{
+			nBitmapWidth = 200;
+		}
+
+		if (0 >= nBitmapHeight)
+		{
+			nBitmapHeight = 200;
+		}
+		Bitmap bitmap = BitmapHandler.readBitmap(theActivity, strImagePath, nBitmapWidth / 4, nBitmapHeight / 4);
+		return bitmap;
 	}
 
 	OnTouchListener	onHVTouchListener	= new OnTouchListener()

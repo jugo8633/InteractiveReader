@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.IntentHandler;
+import interactive.common.Logs;
 import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
 import interactive.view.animation.zoom.ZoomHandler;
@@ -103,6 +104,10 @@ public class Postcard
 					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_HORIZON, 0, 0, null);
 					break;
 				case MotionEvent.ACTION_UP:
+					if (!Global.interactiveHandler.getDraging())
+					{
+						hidePostcard(false);
+					}
 					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
 					break;
 				}
@@ -534,6 +539,7 @@ public class Postcard
 		container.addView(imgDrag);
 
 		Global.interactiveHandler.setPostcardDragTag((String) postcardFrame.getTag());
+		Logs.showTrace("Set postcard drag tag=" + (String) postcardFrame.getTag());
 		hidePostcard(true);
 		ZoomHandler zoomHandler = new ZoomHandler(theContext);
 		zoomHandler.zoomOut(imgThumb, 0.25f);
@@ -552,6 +558,7 @@ public class Postcard
 		imgThumb = null;
 		if (null == imgDrag)
 		{
+			Logs.showTrace("Image drag is null");
 			return;
 		}
 
@@ -565,6 +572,7 @@ public class Postcard
 				imgDrag, //local data about the drag and drop operation
 				0 //no needed flags
 		);
+		Logs.showTrace("Start Drag");
 
 	}
 
@@ -597,6 +605,7 @@ public class Postcard
 				fingerPaintView.bringToFront();
 			}
 			postcardFrame.setVisibility(View.VISIBLE);
+			Logs.showTrace("Show postcardFrame tag=" + postcardFrame.getTag());
 		}
 	}
 
@@ -612,10 +621,6 @@ public class Postcard
 																break;
 															case EventMessage.MSG_ANIMATION_END:
 																startDrag();
-																break;
-															case EventMessage.MSG_DRAG_END:
-																container.removeView(imgDrag);
-																hidePostcard(false);
 																break;
 															}
 

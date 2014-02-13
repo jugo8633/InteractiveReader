@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 public class ReaderActivity extends Activity
 {
-	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40212";
+	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40213";
 	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
@@ -51,11 +51,6 @@ public class ReaderActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		/** clear cache */
-		ClearCache clearCache = new ClearCache();
-		clearCache.clearApplicationData(this);
-		clearCache = null;
 
 		/** show device information */
 		getDeviceInfo(this);
@@ -122,6 +117,9 @@ public class ReaderActivity extends Activity
 	@Override
 	public void onLowMemory()
 	{
+		ClearCache clearCache = new ClearCache();
+		clearCache.trimCache(this);
+		clearCache = null;
 		System.gc();
 		super.onLowMemory();
 	}
@@ -222,6 +220,10 @@ public class ReaderActivity extends Activity
 			{
 				loadDisplayPage(configData, mstrBookPath);
 			}
+			else
+			{
+				Logs.showTrace("Orientation check Fail!!");
+			}
 		}
 		else
 		{
@@ -230,13 +232,23 @@ public class ReaderActivity extends Activity
 		closeProgressDialog();
 	}
 
+	/**
+	 * 如過checkOrientation return false, 則由configure change去load display
+	 * @param configData
+	 * @return
+	 */
 	private boolean checkOrientation(ConfigData configData)
 	{
 		Device device = new Device(this);
 		int nOrientation = device.getOrientation();
 		device = null;
 
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		String strDefaultOrientation = configData.thePackage.flow.strDefault_orientation;
+		if (strDefaultOrientation.contains("portrait") && strDefaultOrientation.contains("landscape"))
+		{
+			return true;
+		}
+		else if (strDefaultOrientation.contains("portrait"))
 		{
 			if (Configuration.ORIENTATION_PORTRAIT == nOrientation)
 			{
@@ -247,8 +259,7 @@ public class ReaderActivity extends Activity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 		}
-
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		else if (strDefaultOrientation.contains("landscape"))
 		{
 			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
 			{
@@ -260,12 +271,38 @@ public class ReaderActivity extends Activity
 			}
 		}
 
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
-		{
-			return true;
-		}
-
 		return false;
+
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		//		{
+		//			if (Configuration.ORIENTATION_PORTRAIT == nOrientation)
+		//			{
+		//				return true;
+		//			}
+		//			else
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//			}
+		//		}
+		//
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		//		{
+		//			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
+		//			{
+		//				return true;
+		//			}
+		//			else
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//			}
+		//		}
+		//
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+		//		{
+		//			return true;
+		//		}
+		//
+		//return false;
 	}
 
 	private void initOption()
@@ -304,6 +341,7 @@ public class ReaderActivity extends Activity
 		{
 			return;
 		}
+		Logs.showTrace("Start load display page");
 		PageData.listPageData.clear();
 		SparseArray<SparseArray<DisplayPage>> book = new SparseArray<SparseArray<DisplayPage>>();
 		int nBookOrientation = createDisplayPage(book, configData, strBookPath);
@@ -324,18 +362,11 @@ public class ReaderActivity extends Activity
 			Logs.showTrace("Reader create display page fail: invalid params");
 			return Type.INVALID;
 		}
+
 		int nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
-		{
-			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
-		{
-			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		}
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+
+		String strDefaultOrientation = configData.thePackage.flow.strDefault_orientation;
+		if (strDefaultOrientation.contains("portrait") && strDefaultOrientation.contains("landscape"))
 		{
 			nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -353,6 +384,45 @@ public class ReaderActivity extends Activity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 		}
+		else if (strDefaultOrientation.contains("portrait"))
+		{
+			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+		else if (strDefaultOrientation.contains("landscape"))
+		{
+			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		}
+
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//		}
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//		}
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		//
+		//			// we lock first, when wen load page
+		//			Device device = new Device(this);
+		//			int nOrientation = device.getOrientation();
+		//			device = null;
+		//			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//			}
+		//			else
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//			}
+		//		}
 
 		SparseArray<PageData.Data> listPageData = null;
 		PageData pageData = null;
