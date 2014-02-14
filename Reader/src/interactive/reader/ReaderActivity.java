@@ -10,6 +10,8 @@ import interactive.common.Logs;
 import interactive.common.SqliteHandler;
 import interactive.common.Type;
 import interactive.common.SqliteHandler.FavoriteData;
+import interactive.common.VersionHandler;
+import interactive.common.WordHandler;
 import interactive.view.data.PageData;
 import interactive.view.gallery.GalleryView;
 import interactive.view.global.Global;
@@ -35,7 +37,6 @@ import android.widget.Toast;
 
 public class ReaderActivity extends Activity
 {
-	private final String				VERSION_STRING		= "Android AppCross Reader Version: V1.40213";
 	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
@@ -87,6 +88,7 @@ public class ReaderActivity extends Activity
 	protected void onResume()
 	{
 		Logs.showTrace("Reader activity resume");
+		Global.theActivity = this;
 		Global.interactiveHandler.initMediaView(this);
 		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
 		super.onResume();
@@ -272,37 +274,6 @@ public class ReaderActivity extends Activity
 		}
 
 		return false;
-
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
-		//		{
-		//			if (Configuration.ORIENTATION_PORTRAIT == nOrientation)
-		//			{
-		//				return true;
-		//			}
-		//			else
-		//			{
-		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		//			}
-		//		}
-		//
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
-		//		{
-		//			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
-		//			{
-		//				return true;
-		//			}
-		//			else
-		//			{
-		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		//			}
-		//		}
-		//
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
-		//		{
-		//			return true;
-		//		}
-		//
-		//return false;
 	}
 
 	private void initOption()
@@ -329,7 +300,18 @@ public class ReaderActivity extends Activity
 			@Override
 			public boolean onLongClick(View arg0)
 			{
-				Toast.makeText(ReaderActivity.this, VERSION_STRING, Toast.LENGTH_LONG).show();
+				String strVersionValue = null;
+				String strVersionName = null;
+				WordHandler word = new WordHandler();
+				strVersionName = word.getString(ReaderActivity.this, "reader_version");
+				word = null;
+				VersionHandler version = new VersionHandler();
+				strVersionValue = version.getVersionName(ReaderActivity.this);
+
+				Toast.makeText(ReaderActivity.this, strVersionName + " : V" + strVersionValue, Toast.LENGTH_LONG)
+						.show();
+				strVersionValue = null;
+				strVersionName = null;
 				return true;
 			}
 		});

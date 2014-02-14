@@ -1,6 +1,7 @@
 package interactive.view.webview;
 
 import interactive.common.EventMessage;
+import interactive.view.global.Global;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class WebBrowserActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Global.theActivity = this;
 		WebBrowser webBrowser = new WebBrowser(this);
 		webBrowser.setNotifyHandler(handler);
 		this.setContentView(webBrowser);

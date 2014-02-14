@@ -30,6 +30,8 @@ public class SlideshowViewActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 
+		Global.theActivity = this;
+
 		gallery = new SlideshowView(this);
 		gallery.setSlideViewActivity(this);
 		gallery.setDisplay(0, 0, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

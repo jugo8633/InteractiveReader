@@ -364,8 +364,8 @@ public class InteractiveHandler
 		GoogleMap googleMap = findGoogleMap(strTag);
 		if (null != googleMap)
 		{
-			//	Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
-			Intent intent = new Intent("interactive.view.map.GoogleMapActivity.LAUNCH");
+			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
+			//Intent intent = new Intent("interactive.view.map.GoogleMapActivity.LAUNCH");
 			intent.putExtra(GoogleMapActivity.EXTRA_TAG, googleMap.mstrTag);
 			intent.putExtra(GoogleMapActivity.EXTRA_MAP_TYPE, googleMap.mnMapType);
 			intent.putExtra(GoogleMapActivity.EXTRA_LATITUDE, googleMap.mdLatitude);
@@ -556,6 +556,7 @@ public class InteractiveHandler
 				{
 					Logs.showTrace("Show postcard tag=" + getPostcardDragTag());
 					postcard.hidePostcard(false);
+					postcard.endDrag();
 				}
 				clearPostcardDragTag();
 			}

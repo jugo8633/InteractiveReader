@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Interactive Reader</string>
+    <string name="reader_version">Android Reader Version</string>
     <string name="book_store">書城</string>
     <string name="bookshelf">書櫃</string>
     <string name="preview">預覽</string>

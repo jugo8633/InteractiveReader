@@ -3,7 +3,6 @@ package interactive.view.webview;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
-import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
@@ -187,7 +186,8 @@ public class InteractiveWebView extends WebView
 			if (url.startsWith("http:") || url.startsWith("https:")
 					|| (mbOverLoadUrl && url.startsWith("file:") && FileHandler.isFileExist(strFilePath)))
 			{
-				Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
+				//Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
+				Intent intent = new Intent(getContext(), WebBrowserActivity.class);
 				intent.putExtra(EXTRA_URL, url);
 				getContext().startActivity(intent);
 				return true;
@@ -199,7 +199,8 @@ public class InteractiveWebView extends WebView
 				Intent i = newEmailIntent(Global.theActivity, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
 				Global.theActivity.startActivity(i);
 			}
-			return true;
+
+			return mbOverLoadUrl;
 		}
 
 		@Override

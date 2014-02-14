@@ -1,3 +1,6 @@
+2014/02/14 : 修正Activity的呼叫 , 只會呼叫程式本身library內的Activity , 不會出現Activity選單了
+2014/02/14 : 新增WordHandler , 讀取string.xml內的wording
+2014/02/14 : 修正明信片Thumbnail & Drag bitmap , 新增recyle機制 避免out of memory的發生
 2014/02/13 : 修正讀取圖檔時out of memory的問題,在BitmapHandler class 新增 readBitmap clear cache機制
 2014/02/13 : 修正definition.xml browsing_mode的判斷 , 直橫改用default_orientation來判斷
 2014/02/12 : 修正google play obb檔抓不到的問題,Android 4.2.2 mulite user問題

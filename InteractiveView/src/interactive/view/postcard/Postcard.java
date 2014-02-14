@@ -62,6 +62,7 @@ public class Postcard
 	private EditText				editText					= null;
 	private String					mstrText					= null;
 	private int						mnTextMaxLine				= 1;
+	private Bitmap					mBmpThumbnail				= null;
 
 	public Postcard(Context context, ViewGroup viewGroup)
 	{
@@ -107,6 +108,7 @@ public class Postcard
 					if (!Global.interactiveHandler.getDraging())
 					{
 						hidePostcard(false);
+						endDrag();
 					}
 					EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
 					break;
@@ -510,15 +512,20 @@ public class Postcard
 	private void zoomPostcard()
 	{
 		imgThumb = new ImageView(theContext);
-		Bitmap bitmap = Bitmap.createBitmap(postcardFrame.getWidth(), postcardFrame.getHeight(),
+		if (null != mBmpThumbnail && !mBmpThumbnail.isRecycled())
+		{
+			mBmpThumbnail.recycle();
+			mBmpThumbnail = null;
+		}
+		mBmpThumbnail = Bitmap.createBitmap(postcardFrame.getWidth(), postcardFrame.getHeight(),
 				Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(bitmap);
+		Canvas c = new Canvas(mBmpThumbnail);
 		postcardFrame.draw(c);
 		imgThumb.setTag("thumbImage");
 		imgThumb.setX(postcardFrame.getX());
 		imgThumb.setY(postcardFrame.getY());
 		imgThumb.setLayoutParams(new LayoutParams(postcardFrame.getWidth(), postcardFrame.getHeight()));
-		imgThumb.setImageBitmap(bitmap);
+		imgThumb.setImageBitmap(mBmpThumbnail);
 		imgThumb.setScaleType(ScaleType.CENTER_CROP);
 		imgThumb.setPadding(2, 2, 2, 2);
 		imgThumb.setBackgroundColor(Color.GRAY);
@@ -529,7 +536,7 @@ public class Postcard
 		imgDrag = new ImageView(theContext);
 		imgDrag.setTag("dragImage");
 		imgDrag.setLayoutParams(new LayoutParams(postcardFrame.getWidth() / 4, postcardFrame.getHeight() / 4));
-		imgDrag.setImageBitmap(bitmap);
+		imgDrag.setImageBitmap(mBmpThumbnail);
 		imgDrag.setScaleType(ScaleType.CENTER_CROP);
 		imgDrag.setX(postcardFrame.getX());
 		imgDrag.setY(postcardFrame.getY());
@@ -576,6 +583,16 @@ public class Postcard
 
 	}
 
+	public void endDrag()
+	{
+		container.removeView(imgDrag);
+		if (null != mBmpThumbnail && !mBmpThumbnail.isRecycled())
+		{
+			mBmpThumbnail.recycle();
+			mBmpThumbnail = null;
+		}
+	}
+
 	public void hidePostcard(boolean bhide)
 	{
 		if (bhide)
@@ -598,11 +615,13 @@ public class Postcard
 			else
 			{
 				fingerPaintView.setVisibility(View.VISIBLE);
+				fingerPaintView.bringToFront();
 				if (null != editText)
 				{
 					editText.setVisibility(View.VISIBLE);
+					editText.bringToFront();
 				}
-				fingerPaintView.bringToFront();
+
 			}
 			postcardFrame.setVisibility(View.VISIBLE);
 			Logs.showTrace("Show postcardFrame tag=" + postcardFrame.getTag());

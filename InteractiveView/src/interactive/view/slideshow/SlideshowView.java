@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.GestureDetector;
@@ -525,8 +524,8 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			int nBitmapWidth = BitmapHandler.getBitmapWidth(strPath);
-			int nBitmapHeight = BitmapHandler.getBitmapHeight(strPath);
+			int nBitmapWidth = Global.ScaleSize(BitmapHandler.getBitmapWidth(strPath));
+			int nBitmapHeight = Global.ScaleSize(BitmapHandler.getBitmapHeight(strPath));
 			if (0 >= nBitmapWidth)
 			{
 				nBitmapWidth = 800;
@@ -1101,7 +1100,6 @@ public class SlideshowView extends RelativeLayout
 		mnHeight = getHeight();
 		setViewCenter();
 		bitmapScale = loadBitmapFromView(SlideshowView.this);
-		//	bitmapScale = loadBitmapFromView(horizontalScrollView);
 		imgScale.setImageBitmap(bitmapScale);
 		imgScale.bringToFront();
 		rLayoutScaleImage.setVisibility(View.VISIBLE);
@@ -1148,8 +1146,8 @@ public class SlideshowView extends RelativeLayout
 			int nOrientation = device.getOrientation();
 			device = null;
 
-			Intent intent = new Intent("interactive.view.slideshow.SlideshowViewActivity.LAUNCH");
-			//		Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
+			//Intent intent = new Intent("interactive.view.slideshow.SlideshowViewActivity.LAUNCH");
+			Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
 			intent.putExtra(EXTRA_CURRENT_ITEM, mnCurrentItem);
 			intent.putExtra(EXTRA_GALLERY_ITEM, listGalleryItem);
 			intent.putExtra(EXTRA_ORIENTATION, nOrientation);
