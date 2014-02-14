@@ -1,5 +1,6 @@
 package interactive.view.scrollable;
 
+import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
@@ -13,7 +14,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.webkit.WebView;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -46,7 +47,10 @@ public class ScrollableView extends RelativeLayout
 	private int						mnHScrollY				= 0;
 	private int						mnVScrollX				= 0;
 	private int						mnVScrollY				= 0;
-	private VerticalScrollView		verticalScrollView2		= null;
+	private int						mnDisplayX				= 0;
+	private int						mnDisplayY				= 0;
+	private int						mnChapter				= Type.INVALID;
+	private int						mnPage					= Type.INVALID;
 
 	public ScrollableView(Context context)
 	{
@@ -70,18 +74,18 @@ public class ScrollableView extends RelativeLayout
 
 	private void initImageView()
 	{
-		verticalScrollView2 = new VerticalScrollView(getContext());
-		verticalScrollView2.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		verticalScrollView2.addView(imageView);
-		verticalScrollView2.setSmoothScrollingEnabled(true);
-		verticalScrollView2.setVerticalScrollBarEnabled(false);
-		verticalScrollView2.setHorizontalScrollBarEnabled(false);
-		verticalScrollView2.setVerticalFadingEdgeEnabled(false);
-		verticalScrollView2.setHorizontalFadingEdgeEnabled(false);
+		verticalScrollView = new ScrollView(getContext());
+		verticalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		verticalScrollView.addView(imageView);
+		verticalScrollView.setSmoothScrollingEnabled(true);
+		verticalScrollView.setVerticalScrollBarEnabled(false);
+		verticalScrollView.setHorizontalScrollBarEnabled(false);
+		verticalScrollView.setVerticalFadingEdgeEnabled(false);
+		verticalScrollView.setHorizontalFadingEdgeEnabled(false);
 
 		horizontalScrollView = new HorizontalScrollView(getContext());
 		horizontalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		horizontalScrollView.addView(verticalScrollView2);
+		horizontalScrollView.addView(verticalScrollView);
 		horizontalScrollView.setSmoothScrollingEnabled(true);
 		horizontalScrollView.setHorizontalFadingEdgeEnabled(false);
 		horizontalScrollView.setHorizontalScrollBarEnabled(false);
@@ -90,7 +94,7 @@ public class ScrollableView extends RelativeLayout
 
 		this.addView(horizontalScrollView);
 
-		verticalScrollView2.setOnTouchListener(new OnTouchListener()
+		verticalScrollView.setOnTouchListener(new OnTouchListener()
 		{
 			@Override
 			public boolean onTouch(View v, MotionEvent event)
@@ -98,8 +102,8 @@ public class ScrollableView extends RelativeLayout
 				switch (event.getAction())
 				{
 				case MotionEvent.ACTION_DOWN:
-					mnVScrollX = verticalScrollView2.getScrollX();
-					mnVScrollY = verticalScrollView2.getScrollY();
+					mnVScrollX = verticalScrollView.getScrollX();
+					mnVScrollY = verticalScrollView.getScrollY();
 					break;
 				}
 				gestureDetector.onTouchEvent(event);
@@ -191,57 +195,130 @@ public class ScrollableView extends RelativeLayout
 		this.setX(nX);
 		this.setY(nY);
 		this.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		mnDisplayX = nX;
+		mnDisplayY = nY;
 		mnDisplayWidth = nWidth;
 		mnDisplayHeight = nHeight;
 	}
 
-	public void setImage(String strPath, int nWidth, int nHeight, int nScrollType, int nOffsetX, int nOffsetY)
+	private void createHorizonScrollView(String strTag, String strPath, int nWidth, int nHeight, int nScrollType,
+			int nOffsetX, int nOffsetY, ViewGroup container)
 	{
-		mnScrollType = nScrollType;
-		int nPadingLeft = 0;
-		int nPadingTop = 0;
+		HorizonScrollableView hview = new HorizonScrollableView(getContext());
+		hview.setPosition(mnChapter, mnPage);
+		hview.setTag(strTag);
+		hview.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
+		hview.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
+		container.addView(hview);
+	}
 
-		Bitmap bitmapOrg = BitmapFactory.decodeFile(strPath);
-		int width = bitmapOrg.getWidth();
-		int height = bitmapOrg.getHeight();
+	private void createVerticalScrollView(String strTag, String strPath, int nWidth, int nHeight, int nScrollType,
+			int nOffsetX, int nOffsetY, ViewGroup container)
+	{
+		VerticalScrollableView vView = new VerticalScrollableView(getContext());
+		vView.setPosition(mnChapter, mnPage);
+		vView.setTag(strTag);
+		vView.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
+		vView.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
+		container.addView(vView);
+	}
 
-		if (0 >= width || 0 >= height)
+	private void createAutoScrollView(String strTag, String strPath, int nWidth, int nHeight, int nScrollType,
+			int nOffsetX, int nOffsetY, ViewGroup container)
+	{
+		if (mnDisplayWidth < nWidth && mnDisplayHeight >= nHeight)
 		{
-			Logs.showTrace("Invalid Bitmap Size");
+			createHorizonScrollView(strTag, strPath, nWidth, nHeight, nScrollType, nOffsetX, nOffsetY, container);
 			return;
 		}
-		// calculate the scale 
-		float scaleWidth = ((float) nWidth) / width;
-		float scaleHeight = ((float) nHeight) / height;
-
-		// create a matrix for the manipulation
-		Matrix matrix = new Matrix();
-		// resize the bit map
-		matrix.postScale(scaleWidth, scaleHeight);
-		// rotate the Bitmap
-		//matrix.postRotate(45);
-
-		// recreate the new Bitmap
-		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
-
-		imageView = new ImageView(getContext());
-		imageView.setImageBitmap(resizedBitmap);
-		imageView.setScaleType(ScaleType.MATRIX);
-		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
-
-		// 判斷直橫
-		if (SCROLL_TYPE_AUTO == nScrollType)
+		if (mnDisplayHeight < nHeight && mnDisplayWidth >= nWidth)
 		{
-			if (mnDisplayWidth < nWidth && mnDisplayHeight >= nHeight)
-			{
-				// horizontal
-				mnScrollType = SCROLL_TYPE_HORIZONTAL;
-			}
+			createVerticalScrollView(strTag, strPath, nWidth, nHeight, nScrollType, nOffsetX, nOffsetY, container);
+			return;
+		}
 
-			if (mnDisplayHeight < nHeight && mnDisplayWidth >= nWidth)
+		AutoScrollableView autoView = new AutoScrollableView(getContext());
+		autoView.setPosition(mnChapter, mnPage);
+		autoView.setTag(strTag);
+		autoView.setDisplay(mnDisplayX, mnDisplayY, mnDisplayWidth, mnDisplayHeight);
+		autoView.setImage(strPath, nWidth, nHeight, nOffsetX, nOffsetY);
+		container.addView(autoView);
+	}
+
+	public void setImage(String strTag, String strPath, int nWidth, int nHeight, int nScrollType, int nOffsetX,
+			int nOffsetY, ViewGroup container)
+	{
+		switch (nScrollType)
+		{
+		case SCROLL_TYPE_HORIZONTAL:
+			createHorizonScrollView(strTag, strPath, nWidth, nHeight, nScrollType, nOffsetX, nOffsetY, container);
+			break;
+		case SCROLL_TYPE_VERTICAL:
+			createVerticalScrollView(strTag, strPath, nWidth, nHeight, nScrollType, nOffsetX, nOffsetY, container);
+			break;
+		case SCROLL_TYPE_AUTO:
+			createAutoScrollView(strTag, strPath, nWidth, nHeight, nScrollType, nOffsetX, nOffsetY, container);
+			break;
+		}
+
+		/** ========================================================================*/
+
+		if (nScrollType > 4)
+		{
+
+			mnScrollType = nScrollType;
+			int nPadingLeft = 0;
+			int nPadingTop = 0;
+
+			Bitmap bitmapOrg = BitmapFactory.decodeFile(strPath);
+			int width = bitmapOrg.getWidth();
+			int height = bitmapOrg.getHeight();
+
+			if (0 >= width || 0 >= height)
 			{
-				// vertical
-				mnScrollType = SCROLL_TYPE_VERTICAL;
+				Logs.showTrace("Invalid Bitmap Size");
+				return;
+			}
+			// calculate the scale 
+			float scaleWidth = ((float) nWidth) / width;
+			float scaleHeight = ((float) nHeight) / height;
+
+			// create a matrix for the manipulation
+			Matrix matrix = new Matrix();
+			// resize the bit map
+			matrix.postScale(scaleWidth, scaleHeight);
+			// rotate the Bitmap
+			//matrix.postRotate(45);
+
+			// recreate the new Bitmap
+			Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0, width, height, matrix, true);
+
+			Bitmap bmp = BitmapHandler.readBitmap(strPath, nWidth, nHeight);
+
+			imageView = new ImageView(getContext());
+			imageView.setImageBitmap(bmp);
+			//imageView.setImageURI(Uri.parse(strPath));
+			//imageView.setScaleType(ScaleType.CENTER_CROP);
+			imageView.setScaleType(ScaleType.FIT_XY);
+			imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+			//imageView.setX(0 - nOffsetX);
+			//imageView.setY(0 - nOffsetY);
+
+			// 判斷直橫
+			if (SCROLL_TYPE_AUTO == nScrollType)
+			{
+				if (mnDisplayWidth < nWidth && mnDisplayHeight >= nHeight)
+				{
+					// horizontal
+					mnScrollType = SCROLL_TYPE_HORIZONTAL;
+				}
+
+				if (mnDisplayHeight < nHeight && mnDisplayWidth >= nWidth)
+				{
+					// vertical
+					mnScrollType = SCROLL_TYPE_VERTICAL;
+				}
+
 			}
 
 			if (0 > nOffsetX)
@@ -254,41 +331,39 @@ public class ScrollableView extends RelativeLayout
 			}
 			this.setPadding(nPadingLeft, nPadingTop, 0, 0);
 
+			gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
+
+			switch (mnScrollType)
+			{
+			case SCROLL_TYPE_AUTO:
+				if (0 < nOffsetX)
+				{
+					mnScrollX = nOffsetX;
+				}
+				if (0 < nOffsetY)
+				{
+					mnScrollY = nOffsetY;
+				}
+				initImageView();
+				break;
+			case SCROLL_TYPE_VERTICAL:
+				if (0 < nOffsetY)
+				{
+					mnScrollY = nOffsetY;
+				}
+				initVertical();
+				break;
+			case SCROLL_TYPE_HORIZONTAL:
+				if (0 < nOffsetX)
+				{
+					mnScrollX = nOffsetX;
+				}
+				initHorizontal();
+				break;
+			}
+
+			this.bringToFront();
 		}
-
-		gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
-
-		switch (mnScrollType)
-		{
-		case SCROLL_TYPE_AUTO:
-			if (0 < nOffsetX)
-			{
-				mnScrollX = nOffsetX;
-			}
-			if (0 < nOffsetY)
-			{
-				mnScrollY = nOffsetY;
-			}
-			initImageView();
-			break;
-		case SCROLL_TYPE_VERTICAL:
-			if (0 < nOffsetY)
-			{
-				mnScrollY = nOffsetY;
-			}
-			initVertical();
-			break;
-		case SCROLL_TYPE_HORIZONTAL:
-			if (0 < nOffsetX)
-			{
-				mnScrollX = nOffsetX;
-			}
-			initHorizontal();
-			break;
-		}
-
-		this.bringToFront();
-
 	}
 
 	@Override
@@ -321,6 +396,12 @@ public class ScrollableView extends RelativeLayout
 		}
 
 		super.onWindowFocusChanged(hasWindowFocus);
+	}
+
+	public void setPosition(int nChapter, int nPage)
+	{
+		mnChapter = nChapter;
+		mnPage = nPage;
 	}
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
@@ -382,12 +463,6 @@ public class ScrollableView extends RelativeLayout
 																			ScrollableView.SCROLL_TOP_END, 0, 0, null);
 																}
 
-																if (null != verticalScrollView2
-																		&& verticalScrollView2.getIsBottom())
-																{
-																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_TOP_END, 0, 0, null);
-																}
 															}
 															else if ((e2.getY() - e1.getY()) > sensitvity)
 															{
@@ -399,12 +474,6 @@ public class ScrollableView extends RelativeLayout
 																			ScrollableView.SCROLL_DOWN_END, 0, 0, null);
 																}
 
-																if (null != verticalScrollView2
-																		&& verticalScrollView2.getIsTop())
-																{
-																	EventHandler.notify(notifyHandler,
-																			ScrollableView.SCROLL_DOWN_END, 0, 0, null);
-																}
 															}
 															return super.onFling(e1, e2, velocityX, velocityY);
 														}

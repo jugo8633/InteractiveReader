@@ -1,12 +1,11 @@
 package interactive.view.slideshow;
 
+import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import interactive.view.type.InteractiveType;
 
@@ -18,7 +17,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.GestureDetector;
@@ -210,8 +208,6 @@ public class SlideshowView extends RelativeLayout
 		rLayoutThumbnail.setVisibility(View.GONE);
 
 		initGestureDetector();
-
-		this.setBackgroundResource(android.R.color.background_dark);
 
 		/** init Scale */
 		imgScale = new ImageView(context);
@@ -452,6 +448,7 @@ public class SlideshowView extends RelativeLayout
 		postDelayed(scrollerTask, newCheck);
 	}
 
+	@SuppressWarnings("unused")
 	private int setOffSetTemp(int nTempWidth)
 	{
 		View viewOffSet = new View(theActivity);
@@ -519,6 +516,7 @@ public class SlideshowView extends RelativeLayout
 		imageview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		imageview.setScaleType(ScaleType.CENTER_CROP);
 		imageview.setAdjustViewBounds(false);
+		imageview.setBackgroundColor(Color.TRANSPARENT);
 
 		if (0 < nResId)
 		{
@@ -526,9 +524,22 @@ public class SlideshowView extends RelativeLayout
 		}
 		else if (null != strPath)
 		{
-			Bitmap bmp = FileHandler.decodeScaledBitmap(strPath, mnDisplayWidth, mnDisplayHeight);
+			int nBitmapWidth = Global.ScaleSize(BitmapHandler.getBitmapWidth(strPath));
+			int nBitmapHeight = Global.ScaleSize(BitmapHandler.getBitmapHeight(strPath));
+			if (0 >= nBitmapWidth)
+			{
+				nBitmapWidth = 800;
+			}
+
+			if (0 >= nBitmapHeight)
+			{
+				nBitmapHeight = 800;
+			}
+
+			Logs.showTrace("Slideshow get image width=" + nBitmapWidth + " height=" + nBitmapHeight);
+			Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
 			imageview.setImageBitmap(bmp);
-			//	imageview.setImageURI(Uri.parse(strPath));
+			//imageview.setImageURI(Uri.parse(strPath));
 		}
 		else
 		{
@@ -630,6 +641,7 @@ public class SlideshowView extends RelativeLayout
 	private SlideshowViewVideoLayout initLocalVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
 		SlideshowViewVideoLayout localVideoLayout = new SlideshowViewVideoLayout(getContext());
+		localVideoLayout.setBackgroundColor(Color.BLACK);
 		localVideoLayout.setVideoType(InteractiveType.VIDEO_TYPE_LOCAL);
 		localVideoLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
@@ -662,6 +674,7 @@ public class SlideshowView extends RelativeLayout
 	private SlideshowViewVideoLayout initYoutubeVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
 		SlideshowViewVideoLayout youtubeLayout = new SlideshowViewVideoLayout(getContext());
+		youtubeLayout.setBackgroundColor(Color.BLACK);
 		youtubeLayout.setVideoType(InteractiveType.VIDEO_TYPE_TOUTUBE);
 		youtubeLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
@@ -925,10 +938,12 @@ public class SlideshowView extends RelativeLayout
 			switch (viewItem.getType())
 			{
 			case SlideshowViewItem.TYPE_IMAGE:
-				img.setImageURI(Uri.parse(viewItem.getImageSrc()));
+				//	img.setImageURI(Uri.parse(viewItem.getImageSrc()));
+				img.setImageBitmap(getThumbnail(viewItem.getImageSrc()));
 				break;
 			case SlideshowViewItem.TYPE_VIDEO:
-				img.setImageURI(Uri.parse(viewItem.getVideoSrc()));
+				//img.setImageURI(Uri.parse(viewItem.getVideoSrc()));
+				img.setImageBitmap(getThumbnail(viewItem.getVideoSrc()));
 				break;
 			}
 			img.setScaleType(ScaleType.FIT_CENTER);
@@ -949,6 +964,24 @@ public class SlideshowView extends RelativeLayout
 				}
 			});
 		}
+	}
+
+	private Bitmap getThumbnail(String strImagePath)
+	{
+		//Bitmap bitmap = BitmapHandler.readBitmapThumbnail(theActivity, strImagePath, 4);
+		int nBitmapWidth = BitmapHandler.getBitmapWidth(strImagePath);
+		int nBitmapHeight = BitmapHandler.getBitmapHeight(strImagePath);
+		if (0 >= nBitmapWidth)
+		{
+			nBitmapWidth = 200;
+		}
+
+		if (0 >= nBitmapHeight)
+		{
+			nBitmapHeight = 200;
+		}
+		Bitmap bitmap = BitmapHandler.readBitmap(theActivity, strImagePath, nBitmapWidth / 4, nBitmapHeight / 4);
+		return bitmap;
 	}
 
 	OnTouchListener	onHVTouchListener	= new OnTouchListener()
@@ -1067,7 +1100,6 @@ public class SlideshowView extends RelativeLayout
 		mnHeight = getHeight();
 		setViewCenter();
 		bitmapScale = loadBitmapFromView(SlideshowView.this);
-		//	bitmapScale = loadBitmapFromView(horizontalScrollView);
 		imgScale.setImageBitmap(bitmapScale);
 		imgScale.bringToFront();
 		rLayoutScaleImage.setVisibility(View.VISIBLE);
@@ -1114,8 +1146,8 @@ public class SlideshowView extends RelativeLayout
 			int nOrientation = device.getOrientation();
 			device = null;
 
-			Intent intent = new Intent("interactive.view.slideshow.SlideshowViewActivity.LAUNCH");
-			//		Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
+			//Intent intent = new Intent("interactive.view.slideshow.SlideshowViewActivity.LAUNCH");
+			Intent intent = new Intent(getContext(), SlideshowViewActivity.class);
 			intent.putExtra(EXTRA_CURRENT_ITEM, mnCurrentItem);
 			intent.putExtra(EXTRA_GALLERY_ITEM, listGalleryItem);
 			intent.putExtra(EXTRA_ORIENTATION, nOrientation);

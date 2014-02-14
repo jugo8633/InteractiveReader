@@ -1,6 +1,5 @@
 package interactive.view.json;
 
-import interactive.common.Device;
 import interactive.view.scrollable.ScrollableView;
 import interactive.view.webview.InteractiveWebView;
 
@@ -44,13 +43,14 @@ public class InteractiveScrollable extends InteractiveObject
 				if (jsonHeader.mbIsVisible)
 				{
 					ScrollableView scrollableImageView = new ScrollableView(getContext());
+					scrollableImageView.setPosition(webView.getChapter(), webView.getPage());
 					scrollableImageView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-					scrollableImageView.setImage(strBookPath + jsonHeader.mstrSrc, ScaleSize(jsonBody.imgBBox.mnWidth),
-							ScaleSize(jsonBody.imgBBox.mnHeight), jsonBody.mnOverflow, ScaleSize(jsonBody.offSet.mnX),
-							ScaleSize(jsonBody.offSet.mnY));
+					scrollableImageView.setImage(jsonHeader.mstrName, strBookPath + jsonHeader.mstrSrc,
+							ScaleSize(jsonBody.imgBBox.mnWidth), ScaleSize(jsonBody.imgBBox.mnHeight),
+							jsonBody.mnOverflow, ScaleSize(jsonBody.offSet.mnX), ScaleSize(jsonBody.offSet.mnY),
+							webView);
 					scrollableImageView.initNotifyHandler(webView.getWebHandler());
-					webView.addView(scrollableImageView);
 				}
 			}
 			jsonBody = null;

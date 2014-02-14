@@ -1,12 +1,17 @@
 package interactive.reader;
 
+import interactive.common.ClearCache;
 import interactive.common.ConfigData;
 import interactive.common.Device;
+import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.IntentHandler;
 import interactive.common.Logs;
 import interactive.common.SqliteHandler;
 import interactive.common.Type;
 import interactive.common.SqliteHandler.FavoriteData;
+import interactive.common.VersionHandler;
+import interactive.common.WordHandler;
 import interactive.view.data.PageData;
 import interactive.view.gallery.GalleryView;
 import interactive.view.global.Global;
@@ -15,20 +20,23 @@ import interactive.view.pagereader.PageReader;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ReaderActivity extends Activity
 {
-
 	private PageReader					pageReader			= null;
 	private RelativeLayout				rlLayoutHeader		= null;
 	private ProgressDialog				progressDialog		= null;
@@ -80,6 +88,7 @@ public class ReaderActivity extends Activity
 	protected void onResume()
 	{
 		Logs.showTrace("Reader activity resume");
+		Global.theActivity = this;
 		Global.interactiveHandler.initMediaView(this);
 		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
 		super.onResume();
@@ -98,6 +107,25 @@ public class ReaderActivity extends Activity
 		super.onConfigurationChanged(newConfig);
 	}
 
+	@Override
+	protected void onDestroy()
+	{
+		ClearCache clearCache = new ClearCache();
+		clearCache.clearApplicationData(this);
+		clearCache = null;
+		super.onDestroy();
+	}
+
+	@Override
+	public void onLowMemory()
+	{
+		ClearCache clearCache = new ClearCache();
+		clearCache.trimCache(this);
+		clearCache = null;
+		System.gc();
+		super.onLowMemory();
+	}
+
 	public int getResourceId(String name, String defType)
 	{
 		return getResources().getIdentifier(name, defType, getPackageName());
@@ -109,6 +137,7 @@ public class ReaderActivity extends Activity
 		pageReader = (PageReader) findViewById(nResId);
 		if (null != pageReader)
 		{
+			Global.pageReader = pageReader;
 			pageReader.setOnPageSwitchedListener(new PageReader.OnPageSwitchedListener()
 			{
 				@Override
@@ -177,8 +206,9 @@ public class ReaderActivity extends Activity
 	{
 		if (null == strBookPath)
 		{
-			// TODO show notify dialog
 			closeProgressDialog();
+			Global.showToast("未找到書籍");
+			finish();
 			return;
 		}
 		mstrBookPath = strBookPath;
@@ -192,21 +222,35 @@ public class ReaderActivity extends Activity
 			{
 				loadDisplayPage(configData, mstrBookPath);
 			}
+			else
+			{
+				Logs.showTrace("Orientation check Fail!!");
+			}
 		}
 		else
 		{
-			// TODO show parse fail dialog 
+			Global.showToast("書籍解析失敗");
 		}
 		closeProgressDialog();
 	}
 
+	/**
+	 * 如過checkOrientation return false, 則由configure change去load display
+	 * @param configData
+	 * @return
+	 */
 	private boolean checkOrientation(ConfigData configData)
 	{
 		Device device = new Device(this);
 		int nOrientation = device.getOrientation();
 		device = null;
 
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		String strDefaultOrientation = configData.thePackage.flow.strDefault_orientation;
+		if (strDefaultOrientation.contains("portrait") && strDefaultOrientation.contains("landscape"))
+		{
+			return true;
+		}
+		else if (strDefaultOrientation.contains("portrait"))
 		{
 			if (Configuration.ORIENTATION_PORTRAIT == nOrientation)
 			{
@@ -217,8 +261,7 @@ public class ReaderActivity extends Activity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 		}
-
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		else if (strDefaultOrientation.contains("landscape"))
 		{
 			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
 			{
@@ -228,11 +271,6 @@ public class ReaderActivity extends Activity
 			{
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			}
-		}
-
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
-		{
-			return true;
 		}
 
 		return false;
@@ -257,6 +295,26 @@ public class ReaderActivity extends Activity
 	{
 		TextView txBookName = (TextView) findViewById(getResourceId("textViewBookName", "id"));
 		txBookName.setText(strBookName);
+		txBookName.setOnLongClickListener(new OnLongClickListener()
+		{
+			@Override
+			public boolean onLongClick(View arg0)
+			{
+				String strVersionValue = null;
+				String strVersionName = null;
+				WordHandler word = new WordHandler();
+				strVersionName = word.getString(ReaderActivity.this, "reader_version");
+				word = null;
+				VersionHandler version = new VersionHandler();
+				strVersionValue = version.getVersionName(ReaderActivity.this);
+
+				Toast.makeText(ReaderActivity.this, strVersionName + " : V" + strVersionValue, Toast.LENGTH_LONG)
+						.show();
+				strVersionValue = null;
+				strVersionName = null;
+				return true;
+			}
+		});
 	}
 
 	private void loadDisplayPage(ConfigData configData, String strBookPath)
@@ -265,6 +323,7 @@ public class ReaderActivity extends Activity
 		{
 			return;
 		}
+		Logs.showTrace("Start load display page");
 		PageData.listPageData.clear();
 		SparseArray<SparseArray<DisplayPage>> book = new SparseArray<SparseArray<DisplayPage>>();
 		int nBookOrientation = createDisplayPage(book, configData, strBookPath);
@@ -285,18 +344,11 @@ public class ReaderActivity extends Activity
 			Logs.showTrace("Reader create display page fail: invalid params");
 			return Type.INVALID;
 		}
+
 		int nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
-		{
-			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
-		{
-			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		}
-		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+
+		String strDefaultOrientation = configData.thePackage.flow.strDefault_orientation;
+		if (strDefaultOrientation.contains("portrait") && strDefaultOrientation.contains("landscape"))
 		{
 			nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -314,6 +366,45 @@ public class ReaderActivity extends Activity
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
 		}
+		else if (strDefaultOrientation.contains("portrait"))
+		{
+			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+		else if (strDefaultOrientation.contains("landscape"))
+		{
+			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		}
+
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//		}
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//		}
+		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
+		//		{
+		//			nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
+		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		//
+		//			// we lock first, when wen load page
+		//			Device device = new Device(this);
+		//			int nOrientation = device.getOrientation();
+		//			device = null;
+		//			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//			}
+		//			else
+		//			{
+		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//			}
+		//		}
 
 		SparseArray<PageData.Data> listPageData = null;
 		PageData pageData = null;
@@ -344,8 +435,7 @@ public class ReaderActivity extends Activity
 				}
 				else
 				{
-					// TODO show open book fail dialog
-					//AppCrossApplication.showToast("開啟書本失敗");
+					Global.showToast("開啟書本失敗");
 					return Type.INVALID;
 				}
 				data = null;
@@ -426,6 +516,19 @@ public class ReaderActivity extends Activity
 		device = null;
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		Logs.showTrace("onActivityResult : requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
+		super.onActivityResult(requestCode, resultCode, data);
+		IntentHandler intentHandler = new IntentHandler();
+		Bitmap bitmap = intentHandler.activityResult(this, requestCode, resultCode, data);
+		if (null != bitmap)
+		{
+			EventHandler.notify(Global.handlerPostcard, EventMessage.MSG_ACTIVITY_RESULT, 0, 0, bitmap);
+		}
+	}
+
 	private Handler	activityHandler	= new Handler()
 									{
 										@Override
@@ -439,8 +542,7 @@ public class ReaderActivity extends Activity
 												showProgreeDialog(strTmp);
 												break;
 											case EventMessage.MSG_CHECKED_BOOK:
-												String strBookPath = bookHandler.getBookPath();
-												initBook(strBookPath);
+												initBook(bookHandler.getBookPath());
 												break;
 											case EventMessage.MSG_DOUBLE_CLICK:
 												showOption();
@@ -481,6 +583,9 @@ public class ReaderActivity extends Activity
 												break;
 											case EventMessage.MSG_UNLOCK_VERTICAL:
 												pageReader.lockVerticalScroll(false);
+												break;
+											case EventMessage.MSG_JUMP:
+												pageReader.jumpPage(msg.arg1, msg.arg2);
 												break;
 											}
 											super.handleMessage(msg);

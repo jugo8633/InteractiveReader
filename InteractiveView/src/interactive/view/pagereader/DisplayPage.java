@@ -13,6 +13,7 @@ import interactive.view.json.InteractivePostcard;
 import interactive.view.json.InteractiveScrollable;
 import interactive.view.json.InteractiveSlideshow;
 import interactive.view.json.InteractiveVideo;
+import interactive.view.json.InteractiveWebPage;
 import interactive.view.webview.InteractiveWebView;
 
 import java.io.IOException;
@@ -93,6 +94,7 @@ public class DisplayPage extends RelativeLayout
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
 		exdWebView.setBackgroundImage(pageData.strShapLarge);
+		
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
 		setJson(jsonData);
 
@@ -141,6 +143,13 @@ public class DisplayPage extends RelativeLayout
 			10.	Web view
 			 */
 			jsonAll = new JSONObject(jsonData.toString());
+			if (!jsonAll.isNull(InteractiveObject.JSON_WEB_PAGE))
+			{
+				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(theContext);
+				interactiveWebPage.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveWebPage = null;
+			}
+
 			if (!jsonAll.isNull(InteractiveObject.JSON_POSTCARD))
 			{
 				InteractivePostcard interactivePostcard = new InteractivePostcard(theContext);

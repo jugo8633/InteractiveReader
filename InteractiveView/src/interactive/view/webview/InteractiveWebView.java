@@ -2,6 +2,8 @@ package interactive.view.webview;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.FileHandler;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
@@ -12,8 +14,10 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.MailTo;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -31,6 +35,7 @@ import android.widget.RelativeLayout;
 
 public class InteractiveWebView extends WebView
 {
+	public static final String				EXTRA_URL				= "extra_url";
 	private SparseArray<InteractiveImage>	listInteractiveImage	= null;		// webview clicked then hide
 	private Handler							pageReaderHandler		= null;		//send message to PageReader
 	private boolean							mbOverLoadUrl			= false;
@@ -41,6 +46,7 @@ public class InteractiveWebView extends WebView
 	private SparseArray<ObjectHandle>		listObjHandle			= null;
 	private GestureDetector					gestureDetector			= null;
 	private String							mstrBackgroundImage		= null;
+	private boolean							mbAutoPlay				= false;
 
 	private class InteractiveImage
 	{
@@ -128,16 +134,6 @@ public class InteractiveWebView extends WebView
 		pageReaderHandler = handler;
 	}
 
-	//	public void initDisplayPageHandler(Handler handler)
-	//	{
-	//		displayPageHandler = handler;
-	//	}
-	//
-	//	public Handler getDisplayPageHandler()
-	//	{
-	//		return displayPageHandler;
-	//	}
-
 	public void addObjectHandle(Handler handler, int nObjType, boolean bAutoPlay)
 	{
 		ObjectHandle objHandle = new ObjectHandle();
@@ -174,11 +170,7 @@ public class InteractiveWebView extends WebView
 	{
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
-			if (url.startsWith("http:") || url.startsWith("https:"))
-			{
-				// show web active
-				return true;
-			}
+			/** 跳頁 */
 			File file = new File(url);
 			String strName = file.getName();
 			file = null;
@@ -191,7 +183,26 @@ public class InteractiveWebView extends WebView
 				return true;
 			}
 
-			return false;
+			/** 外部連結 & 內部連結 */
+			String strFilePath = url.substring(7, url.length());
+			if (url.startsWith("http:") || url.startsWith("https:")
+					|| (mbOverLoadUrl && url.startsWith("file:") && FileHandler.isFileExist(strFilePath)))
+			{
+				//Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
+				Intent intent = new Intent(getContext(), WebBrowserActivity.class);
+				intent.putExtra(EXTRA_URL, url);
+				getContext().startActivity(intent);
+				return true;
+			}
+
+			if (url.startsWith("mailto:"))
+			{
+				MailTo mt = MailTo.parse(url);
+				Intent i = newEmailIntent(Global.theActivity, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
+				Global.theActivity.startActivity(i);
+			}
+
+			return mbOverLoadUrl;
 		}
 
 		@Override
@@ -208,12 +219,34 @@ public class InteractiveWebView extends WebView
 			super.onPageStarted(view, url, favicon);
 		}
 
+		private Intent newEmailIntent(Context context, String address, String subject, String body, String cc)
+		{
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+			intent.putExtra(Intent.EXTRA_TEXT, body);
+			intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+			intent.putExtra(Intent.EXTRA_CC, cc);
+			intent.setType("message/rfc822");
+			return intent;
+		}
+
 	}
 
 	public void setPosition(int nChapter, int nPage)
 	{
 		mnChapter = nChapter;
 		mnPage = nPage;
+		Global.addActiveNotify(nChapter, nPage, webHandler);
+	}
+
+	public int getChapter()
+	{
+		return mnChapter;
+	}
+
+	public int getPage()
+	{
+		return mnPage;
 	}
 
 	public void setDisplaySize(int nWidth, int nHeight)
@@ -302,10 +335,6 @@ public class InteractiveWebView extends WebView
 				}
 			}
 		}
-		else
-		{
-			//		EventHandler.notify(displayPageHandler, EventMessage.MSG_WEB, EventMessage.WND_STOP, Type.INVALID, null);
-		}
 	}
 
 	public void setBackgroundImage(String strImage)
@@ -316,6 +345,11 @@ public class InteractiveWebView extends WebView
 	public String getBackgroundImage()
 	{
 		return mstrBackgroundImage;
+	}
+
+	public void setAutoPlay(boolean bAutoPlay)
+	{
+		mbAutoPlay = bAutoPlay;
 	}
 
 	private OnLongClickListener	longClickListener		= new OnLongClickListener()
@@ -435,16 +469,21 @@ public class InteractiveWebView extends WebView
 																			mnPage - 1);
 																	break;
 																case ScrollableView.DOUBLE_CLICK:
-																	//																	EventHandler.notify(displayPageHandler,
-																	//																			EventMessage.MSG_WEB,
-																	//																			EventMessage.MSG_DOUBLE_CLICK,
-																	//																			Type.INVALID, null);
 																	EventHandler.notify(Global.handlerActivity,
 																			EventMessage.MSG_DOUBLE_CLICK,
 																			Type.INVALID, Type.INVALID, null);
 																	break;
 																case EventMessage.MSG_SHOW_ITEM: // button click and show item
 																	hideItem((String) msg.obj);
+																	break;
+																case EventMessage.MSG_CURRENT_ACTIVE:
+																	if (mbAutoPlay)
+																	{
+																		InteractiveWebView.this.reload();
+																	}
+																	Logs.showTrace("Web Page tag="
+																			+ InteractiveWebView.this.getTag()
+																			+ " is active");
 																	break;
 																}
 															}

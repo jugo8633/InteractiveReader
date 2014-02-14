@@ -16,7 +16,7 @@ public class PageReader extends RelativeLayout
 {
 
 	private Context								theContext					= null;
-	private ViewPager							viewPager					= null;
+	private HorizonPageView						viewPager					= null;
 	private ChaptersAdapter						chaptersAdapter				= null;
 	private int									mnTotalPage					= Type.INVALID;
 	private SparseArray<ViewHistory>			listViewHistory				= null;
@@ -72,7 +72,7 @@ public class PageReader extends RelativeLayout
 
 	public void initPageReader(Context context)
 	{
-		viewPager = new ViewPager(context);
+		viewPager = new HorizonPageView(context);
 		viewPager.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		viewPager.setOnPageChangeListener(new ChapterChangeListener(readerHandler));
 		chaptersAdapter = new ChaptersAdapter();
@@ -120,7 +120,7 @@ public class PageReader extends RelativeLayout
 				pagesAdapter.addPageView(listPage.get(nPage));
 				++mnTotalPage;
 			}
-			VerticalViewPager vvp = new VerticalViewPager(theContext);
+			VerticalPageView vvp = new VerticalPageView(theContext);
 			vvp.setAdapter(pagesAdapter);
 			vvp.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			vvp.setOnPageChangeListener(new PageChangeListener(readerHandler));
@@ -138,7 +138,7 @@ public class PageReader extends RelativeLayout
 			viewPager.setCurrentItem(nChapter);
 			if (Type.INVALID != nPage)
 			{
-				VerticalViewPager vvp = (VerticalViewPager) chaptersAdapter.getChildView(nChapter);
+				VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(nChapter);
 				if (null != vvp)
 				{
 					vvp.setCurrentItem(nPage);
@@ -149,7 +149,7 @@ public class PageReader extends RelativeLayout
 		else if (Type.INVALID != nPage)
 		{
 
-			VerticalViewPager vvp = (VerticalViewPager) chaptersAdapter.getChildView(getCurrentChapter());
+			VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(getCurrentChapter());
 			vvp.setCurrentItem(nPage);
 
 		}
@@ -245,7 +245,7 @@ public class PageReader extends RelativeLayout
 		int nOldChapter = Global.currentChapter;
 		int nOldPage = Global.currentPage;
 		Global.currentChapter = viewPager.getCurrentItem();
-		VerticalViewPager vvp = (VerticalViewPager) chaptersAdapter.getChildView(Global.currentChapter);
+		VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(Global.currentChapter);
 		Global.currentPage = vvp.getCurrentItem();
 		addHistory(Global.currentChapter, Global.currentPage);
 		Logs.showTrace("Current position: " + Global.currentChapter + " " + Global.currentPage);
@@ -256,7 +256,10 @@ public class PageReader extends RelativeLayout
 			PageData.listPageData.get(nOldChapter).get(nOldPage).extWebView.setCurrentView(false);
 		}
 		Global.interactiveHandler.removeAllMedia();
+		Global.notifyActive(Global.currentChapter, Global.currentPage);
 		notifyPageSwitched();
+		lockHorizonScroll(false);
+		lockVerticalScroll(false);
 	}
 
 	public int getTotalPage()
@@ -282,14 +285,16 @@ public class PageReader extends RelativeLayout
 
 	public void lockHorizonScroll(boolean bLock)
 	{
-		viewPager.requestDisallowInterceptTouchEvent(bLock);
+		viewPager.setPagingEnabled(!bLock);
+		Logs.showTrace("Page reader lock horizon page: " + bLock);
 	}
 
 	public void lockVerticalScroll(boolean bLock)
 	{
 		for (int i = 0; i < chaptersAdapter.getCount(); ++i)
 		{
-			((VerticalViewPager) chaptersAdapter.getChildView(i)).requestDisallowInterceptTouchEvent(bLock);
+			((VerticalPageView) chaptersAdapter.getChildView(i)).setPagingEnabled(!bLock);
 		}
+		Logs.showTrace("Page reader lock vertical page: " + bLock);
 	}
 }

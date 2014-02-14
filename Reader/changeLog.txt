@@ -1,0 +1,24 @@
+2014/02/14 : 修正Scrollable 橫向捲動或翻頁的判斷機制
+2014/02/14 : 關閉Scrollable的over scroll 狀態
+2014/02/14 : 新增 Web Page auto play機制
+2014/02/14 : 修正Scrollable 橫向 X offset問題, 判斷-X時 將圖檔左邊加空白
+2014/02/14 : 修正Activity的呼叫 , 只會呼叫程式本身library內的Activity , 不會出現Activity選單了
+2014/02/14 : 新增WordHandler , 讀取string.xml內的wording
+2014/02/14 : 修正明信片Thumbnail & Drag bitmap , 新增recyle機制 避免out of memory的發生
+2014/02/13 : 修正讀取圖檔時out of memory的問題,在BitmapHandler class 新增 readBitmap clear cache機制
+2014/02/13 : 修正definition.xml browsing_mode的判斷 , 直橫改用default_orientation來判斷
+2014/02/12 : 修正google play obb檔抓不到的問題,Android 4.2.2 mulite user問題
+2014/02/11 : 修正postcard drag and drop event傳遞錯誤的問題
+2014/02/11 : 新增內部網頁連結與mailto連結
+2014/02/10 : fix scrollable bitmap max texture size bug
+2014/02/10 : fix button down no image bug
+2014/02/05 : add bitmap handler
+2014/01/28 : update scrollable view, fix horizontal view
+2014/01/28 : add cache clear
+2014/01/27 : postcard add text area
+2014/01/27 : postcard drag and drop finish
+2014/01/22 : fix postcard camera get picture bug
+             add postcard picture select function
+             add intent handler for image
+2014/01/21 : add page lock
+2014/01/21 : add postcard camera

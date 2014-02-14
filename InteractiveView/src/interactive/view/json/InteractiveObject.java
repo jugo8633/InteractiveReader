@@ -14,6 +14,7 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
+@SuppressWarnings("unused")
 public abstract class InteractiveObject
 {
 	// main json key
@@ -200,6 +201,34 @@ public abstract class InteractiveObject
 		}
 	}
 
+	public class JsonWebPage
+	{
+		class Options
+		{
+			public boolean	mbAutoplay	= false;
+
+			public Options()
+			{
+
+			}
+		}
+
+		public Options	options	= null;
+
+		public JsonWebPage()
+		{
+			options = new Options();
+		}
+
+		@Override
+		protected void finalize() throws Throwable
+		{
+			options = null;
+			super.finalize();
+		}
+
+	}
+
 	public class JsonSlideshow
 	{
 		public String				mstrBackground	= null;
@@ -216,7 +245,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			listItem.clear();
 			listItem = null;
 			super.finalize();
@@ -259,7 +287,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			offSet = null;
 			imgBBox = null;
 			super.finalize();
@@ -371,6 +398,19 @@ public abstract class InteractiveObject
 			}
 		}
 
+		class TextArea
+		{
+			public int		mnWidth		= Type.INVALID;
+			public int		mnHeight	= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+			public String	mstrSrc		= null;
+
+			public TextArea()
+			{
+			}
+		}
+
 		class Camera
 		{
 			public int		mnWidth		= Type.INVALID;
@@ -414,6 +454,7 @@ public abstract class InteractiveObject
 		public String		mstrSrcBack		= null;
 		public Pen			pen				= null;
 		public Eraser		eraser			= null;
+		public TextArea		textArea		= null;
 		public Camera		camera			= null;
 		public OpenButton	openButton		= null;
 		public MailBox		mailBox			= null;
@@ -422,6 +463,7 @@ public abstract class InteractiveObject
 		{
 			pen = new Pen();
 			eraser = new Eraser();
+			textArea = new TextArea();
 			camera = new Camera();
 			openButton = new OpenButton();
 			mailBox = new MailBox();
@@ -432,6 +474,7 @@ public abstract class InteractiveObject
 		{
 			pen = null;
 			eraser = null;
+			textArea = null;
 			camera = null;
 			openButton = null;
 			mailBox = null;
@@ -452,7 +495,6 @@ public abstract class InteractiveObject
 		@Override
 		protected void finalize() throws Throwable
 		{
-			// TODO Auto-generated method stub
 			listEvent.clear();
 			listEvent = null;
 			super.finalize();
@@ -463,7 +505,6 @@ public abstract class InteractiveObject
 	public InteractiveObject(Context context)
 	{
 		super();
-		// TODO Auto-generated constructor stub
 		theContext = context;
 		metrics = theContext.getResources().getDisplayMetrics();
 		oldKeys = new HashMap<String, String>();
@@ -487,7 +528,6 @@ public abstract class InteractiveObject
 	@Override
 	protected void finalize() throws Throwable
 	{
-		// TODO Auto-generated method stub
 		super.finalize();
 	}
 
@@ -581,6 +621,23 @@ public abstract class InteractiveObject
 	{
 		String strKey = getValidKey(jsonObject, JSON_GESTURE);
 		return strKey;
+	}
+
+	public boolean parseJsonWebPage(JSONObject jsonObject, JsonWebPage jsonWebPage) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonWebPage)
+		{
+			return false;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_OPTIONS);
+		if (null != strKey)
+		{
+			JSONObject joptions = jsonObject.getJSONObject(strKey);
+			jsonWebPage.options.mbAutoplay = getJsonBoolean(joptions, JSON_AUTOPLAY);
+		}
+		return true;
 	}
 
 	public boolean parseJsonSlideshow(JSONObject jsonObject, JsonSlideshow jsonSlideshow) throws JSONException
@@ -758,6 +815,10 @@ public abstract class InteractiveObject
 			jsonPostcard.eraser.mnY = getJsonInt(jsonEraser, JSON_Y);
 			jsonPostcard.eraser.mstrSrc = getJsonString(jsonEraser, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.eraser = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_PEN);
 		if (null != strKey)
@@ -768,6 +829,25 @@ public abstract class InteractiveObject
 			jsonPostcard.pen.mnX = getJsonInt(jsonPen, JSON_X);
 			jsonPostcard.pen.mnY = getJsonInt(jsonPen, JSON_Y);
 			jsonPostcard.pen.mstrSrc = getJsonString(jsonPen, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.pen = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_TEXT_AREA);
+		if (null != strKey)
+		{
+			JSONObject jsonTextArea = jsonObject.getJSONObject(strKey);
+			jsonPostcard.textArea.mnWidth = getJsonInt(jsonTextArea, JSON_WIDTH);
+			jsonPostcard.textArea.mnHeight = getJsonInt(jsonTextArea, JSON_HEIGHT);
+			jsonPostcard.textArea.mnX = getJsonInt(jsonTextArea, JSON_X);
+			jsonPostcard.textArea.mnY = getJsonInt(jsonTextArea, JSON_Y);
+			jsonPostcard.textArea.mstrSrc = getJsonString(jsonTextArea, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.textArea = null;
 		}
 
 		strKey = getValidKey(jsonObject, JSON_CAMERA);
@@ -780,6 +860,10 @@ public abstract class InteractiveObject
 			jsonPostcard.camera.mnY = getJsonInt(jsonCamera, JSON_Y);
 			jsonPostcard.camera.mstrSrc = getJsonString(jsonCamera, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.camera = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_OPEN_BUTTON);
 		if (null != strKey)
@@ -791,6 +875,10 @@ public abstract class InteractiveObject
 			jsonPostcard.openButton.mnY = getJsonInt(jsonOpenButton, JSON_Y);
 			jsonPostcard.openButton.mstrSrc = getJsonString(jsonOpenButton, JSON_SRC);
 		}
+		else
+		{
+			jsonPostcard.openButton = null;
+		}
 
 		strKey = getValidKey(jsonObject, JSON_MAILBOX);
 		if (null != strKey)
@@ -801,6 +889,10 @@ public abstract class InteractiveObject
 			jsonPostcard.mailBox.mnX = getJsonInt(jsonMailBox, JSON_X);
 			jsonPostcard.mailBox.mnY = getJsonInt(jsonMailBox, JSON_Y);
 			jsonPostcard.mailBox.mstrSrc = getJsonString(jsonMailBox, JSON_SRC);
+		}
+		else
+		{
+			jsonPostcard.mailBox = null;
 		}
 
 		return true;
@@ -931,7 +1023,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -952,7 +1043,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -973,7 +1063,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -994,7 +1083,6 @@ public abstract class InteractiveObject
 			}
 			catch (JSONException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

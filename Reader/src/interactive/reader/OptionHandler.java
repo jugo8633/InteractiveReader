@@ -1,9 +1,9 @@
 package interactive.reader;
 
+import interactive.common.BitmapHandler;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.ObjectFactory;
 import interactive.common.Share;
@@ -16,7 +16,6 @@ import interactive.view.gallery.GalleryView.onScrollStopListner;
 import interactive.view.global.Global;
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
@@ -138,11 +137,8 @@ public class OptionHandler
 	public void initChapOption(final Activity activity)
 	{
 
-		Device device = new Device(activity);
-		float nScale = device.getScaleSize();
-		device = null;
-		int nChapItemWidth = (int) Math.floor(145 * nScale);
-		int nChapItemHeight = (int) Math.floor(194 * nScale);
+		int nChapItemWidth = Global.ScaleSize(145);
+		int nChapItemHeight = Global.ScaleSize(194);
 
 		theHeader.mnChapIndex = flipperView.addChild(Global.getResourceId(activity, "reader_chap", "layout"));
 		final GalleryView galleryView = (GalleryView) flipperView.findViewById(Global.getResourceId(activity,
@@ -158,8 +154,8 @@ public class OptionHandler
 			{
 				ImageView img = new ImageView(activity);
 
-				Bitmap bmp = FileHandler.decodeScaledBitmap(PageData.listPageData.get(nChapter).get(nPage).strShapTiny,
-						nChapItemWidth, nChapItemHeight);
+				Bitmap bmp = BitmapHandler.readBitmap(activity,
+						PageData.listPageData.get(nChapter).get(nPage).strShapTiny, nChapItemWidth, nChapItemHeight);
 				img.setImageBitmap(bmp);
 				img.setLayoutParams(new LayoutParams(nChapItemWidth, nChapItemHeight));
 				//	img.setImageURI(Uri.parse(PageData.listPageData.get(nChapter).get(nPage).strShapTiny));

@@ -50,10 +50,9 @@ public class Rotate3d
 		mnDirection = nDirection;
 
 		// 計算中心點
-		final float centerX = view.getWidth() / 2.0f;
-		final float centerY = view.getHeight() / 2.0f;
-
-		Rotate3dAnimation rotation = new Rotate3dAnimation(start, end, centerX, centerY, 310.0f, true);
+		final float centerX = view.getX() + (view.getWidth() / 2.0f);
+		final float centerY = view.getY() + (view.getHeight() / 2.0f);
+		Rotate3dAnimation rotation = new Rotate3dAnimation(start, end, centerX, centerY, (view.getWidth() / 2.0f), true);
 		rotation.setDuration(500);
 		rotation.setFillAfter(true);
 		rotation.setInterpolator(new AccelerateInterpolator());
@@ -105,8 +104,8 @@ public class Rotate3d
 		@Override
 		public void run()
 		{
-			final float centerX = mView.getWidth() / 2.0f;
-			final float centerY = mView.getHeight() / 2.0f;
+			final float centerX = mView.getX() + (mView.getWidth() / 2.0f);
+			final float centerY = mView.getY() + (mView.getHeight() / 2.0f);
 			Rotate3dAnimation rotation = null;
 
 			mView.requestFocus();
@@ -114,14 +113,14 @@ public class Rotate3d
 			switch (mnDirection)
 			{
 			case ROTATE_LEFT:
-				rotation = new Rotate3dAnimation(90, 0, centerX, centerY, 310.0f, false);
+				rotation = new Rotate3dAnimation(90, 0, centerX, centerY, (mView.getWidth() / 2.0f), false);
 				break;
 			case ROTATE_RIGHT:
-				rotation = new Rotate3dAnimation(-90, 0, centerX, centerY, 310.0f, false);
+				rotation = new Rotate3dAnimation(-90, 0, centerX, centerY, (mView.getWidth() / 2.0f), false);
 				break;
 			}
 
-			rotation.setDuration(500);
+			rotation.setDuration(300);
 			rotation.setFillAfter(true);
 			rotation.setInterpolator(new DecelerateInterpolator());
 			// 開始動畫

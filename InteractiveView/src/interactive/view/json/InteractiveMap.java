@@ -1,6 +1,5 @@
 package interactive.view.json;
 
-import interactive.common.Device;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveEvent;
 import interactive.view.map.GoogleMapView;

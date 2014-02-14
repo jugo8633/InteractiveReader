@@ -1,6 +1,5 @@
 package interactive.view.image;
 
-import interactive.common.Logs;
 import interactive.common.Type;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,11 +17,11 @@ public class ScalableImageView extends ImageView
 {
 
 	public static final int			IMAGE_CLICK_TYPE_LONG_PRESS	= 100;
-	public static final int			IMAGE_SCALE_EVENT_SPREAD	= 201;			
-	public static final int			IMAGE_SCALE_EVENT_PINCH		= 202;			
-	public static final int			IMAGE_DISPLAY_PARTIAL		= 0;			
-	public static final int			IMAGE_DISPLAY_POPUP			= 1;			
-	public static final int			IMAGE_DISPLAY_FULL			= 2;			
+	public static final int			IMAGE_SCALE_EVENT_SPREAD	= 201;
+	public static final int			IMAGE_SCALE_EVENT_PINCH		= 202;
+	public static final int			IMAGE_DISPLAY_PARTIAL		= 0;
+	public static final int			IMAGE_DISPLAY_POPUP			= 1;
+	public static final int			IMAGE_DISPLAY_FULL			= 2;
 
 	private int						mnClickType					= Type.INVALID;
 	private int						mnScaleEvent				= Type.INVALID;
@@ -380,8 +379,6 @@ public class ScalableImageView extends ImageView
 		mnClickType = nClickType;
 		mnScaleEvent = nScaleEvent;
 		mnDisplay = nDisplay;
-
-		Logs.showTrace("set image scale mode type=" + mnClickType + " scale=" + mnScaleEvent + " display=" + mnDisplay);
 	}
 
 	public void setDisplay(int nX, int nY, int nWidth, int nHeight)

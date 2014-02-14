@@ -1,11 +1,15 @@
 package interactive.view.button;
 
+import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.FileHandler;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.type.InteractiveType;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
@@ -24,6 +28,8 @@ public class ButtonView extends ImageView
 	private String				mstrGroupId		= null;
 	private Handler				notifyHandler	= null;
 	private SparseArray<Event>	listEvent		= null;
+	private int					mnDisplayWidth	= 0;
+	private int					mnDisplayHeight	= 0;
 
 	class ImageSrc
 	{
@@ -93,7 +99,9 @@ public class ButtonView extends ImageView
 	{
 		imageSrc = null;
 		imageSrc = new ImageSrc(strSrc, strTouchDown, strTouchUp);
-		setImageURI(Uri.parse(imageSrc.mstrSrc));
+		Bitmap bitmap = BitmapHandler.readBitmap(imageSrc.mstrSrc, mnDisplayWidth, mnDisplayHeight);
+		this.setImageBitmap(bitmap);
+		//setImageURI(Uri.parse(imageSrc.mstrSrc));
 	}
 
 	public void setGroupId(String strGroupId)
@@ -116,6 +124,8 @@ public class ButtonView extends ImageView
 		this.setX(nX);
 		this.setY(nY);
 		this.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
+		mnDisplayWidth = nWidth;
+		mnDisplayHeight = nHeight;
 	}
 
 	private void setButtonClickType(int nClickType)
@@ -196,19 +206,33 @@ public class ButtonView extends ImageView
 															switch (event.getAction())
 															{
 															case MotionEvent.ACTION_DOWN:
-																if (null != imageSrc.mstrTouchDown)
+																if (null != imageSrc.mstrTouchDown
+																		&& FileHandler
+																				.isFileExist(imageSrc.mstrTouchDown))
 																{
 																	setImageURI(Uri.parse(imageSrc.mstrTouchDown));
 																}
+																else
+																{
+																	setColorFilter(Color.parseColor("#70000000"));
+																}
 																break;
 															case MotionEvent.ACTION_UP:
-																if (null != imageSrc.mstrTouchUp)
+																setColorFilter(Color.TRANSPARENT);
+																if (null != imageSrc.mstrTouchUp
+																		&& FileHandler
+																				.isFileExist(imageSrc.mstrTouchUp))
 																{
 																	setImageURI(Uri.parse(imageSrc.mstrTouchUp));
+																}
+																else
+																{
+																	setImageURI(Uri.parse(imageSrc.mstrSrc));
 																}
 																startEvent();
 																break;
 															case MotionEvent.ACTION_CANCEL:
+																setColorFilter(Color.TRANSPARENT);
 																setImageURI(Uri.parse(imageSrc.mstrSrc));
 																break;
 															}

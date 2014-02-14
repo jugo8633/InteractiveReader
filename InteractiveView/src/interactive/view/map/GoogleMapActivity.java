@@ -1,6 +1,7 @@
 package interactive.view.map;
 
 import interactive.common.Logs;
+import interactive.view.global.Global;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,6 +29,8 @@ public class GoogleMapActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Global.theActivity = this;
+
 		RelativeLayout rlMain = new RelativeLayout(this);
 		rlMain.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		rlMain.setAlpha(0.80f);
