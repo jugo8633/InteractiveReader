@@ -584,6 +584,9 @@ public class ReaderActivity extends Activity
 											case EventMessage.MSG_UNLOCK_VERTICAL:
 												pageReader.lockVerticalScroll(false);
 												break;
+											case EventMessage.MSG_JUMP:
+												pageReader.jumpPage(msg.arg1, msg.arg2);
+												break;
 											}
 											super.handleMessage(msg);
 										}

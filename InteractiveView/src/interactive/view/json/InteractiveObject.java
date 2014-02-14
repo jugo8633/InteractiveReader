@@ -201,6 +201,34 @@ public abstract class InteractiveObject
 		}
 	}
 
+	public class JsonWebPage
+	{
+		class Options
+		{
+			public boolean	mbAutoplay	= false;
+
+			public Options()
+			{
+
+			}
+		}
+
+		public Options	options	= null;
+
+		public JsonWebPage()
+		{
+			options = new Options();
+		}
+
+		@Override
+		protected void finalize() throws Throwable
+		{
+			options = null;
+			super.finalize();
+		}
+
+	}
+
 	public class JsonSlideshow
 	{
 		public String				mstrBackground	= null;
@@ -593,6 +621,23 @@ public abstract class InteractiveObject
 	{
 		String strKey = getValidKey(jsonObject, JSON_GESTURE);
 		return strKey;
+	}
+
+	public boolean parseJsonWebPage(JSONObject jsonObject, JsonWebPage jsonWebPage) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonWebPage)
+		{
+			return false;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_OPTIONS);
+		if (null != strKey)
+		{
+			JSONObject joptions = jsonObject.getJSONObject(strKey);
+			jsonWebPage.options.mbAutoplay = getJsonBoolean(joptions, JSON_AUTOPLAY);
+		}
+		return true;
 	}
 
 	public boolean parseJsonSlideshow(JSONObject jsonObject, JsonSlideshow jsonSlideshow) throws JSONException

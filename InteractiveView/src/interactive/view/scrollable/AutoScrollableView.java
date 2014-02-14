@@ -46,14 +46,19 @@ public class AutoScrollableView extends HorizontalScrollView
 	private void init(Context context)
 	{
 		theContext = context;
-		setHorizontalScrollBarEnabled(false);
-		setVerticalScrollBarEnabled(false);
+		this.setVerticalScrollBarEnabled(false);
+		this.setVerticalFadingEdgeEnabled(false);
+		this.setHorizontalFadingEdgeEnabled(false);
+		this.setHorizontalScrollBarEnabled(false);
+		this.setOverScrollMode(OVER_SCROLL_NEVER);
 
 		verticalScrollView = new ScrollView(context);
 		verticalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		verticalScrollView.setHorizontalScrollBarEnabled(false);
 		verticalScrollView.setVerticalScrollBarEnabled(false);
-		verticalScrollView.setFadingEdgeLength(10);
+		verticalScrollView.setVerticalFadingEdgeEnabled(false);
+		verticalScrollView.setHorizontalFadingEdgeEnabled(false);
+		verticalScrollView.setOverScrollMode(OVER_SCROLL_NEVER);
 
 		addView(verticalScrollView);
 	}

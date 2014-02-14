@@ -1,6 +1,5 @@
 package interactive.view.json;
 
-import interactive.common.Logs;
 import interactive.view.button.ButtonView;
 import interactive.view.global.Global;
 import interactive.view.webview.InteractiveWebView;

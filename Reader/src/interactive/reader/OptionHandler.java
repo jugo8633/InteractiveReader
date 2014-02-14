@@ -137,11 +137,8 @@ public class OptionHandler
 	public void initChapOption(final Activity activity)
 	{
 
-		//		Device device = new Device(activity);
-		//		float nScale = device.getScaleSize();
-		//		device = null;
-		int nChapItemWidth = Global.ScaleSize(145);//(int) Math.floor(145 * nScale);
-		int nChapItemHeight = Global.ScaleSize(194);//(int) Math.floor(194 * nScale);
+		int nChapItemWidth = Global.ScaleSize(145);
+		int nChapItemHeight = Global.ScaleSize(194);
 
 		theHeader.mnChapIndex = flipperView.addChild(Global.getResourceId(activity, "reader_chap", "layout"));
 		final GalleryView galleryView = (GalleryView) flipperView.findViewById(Global.getResourceId(activity,

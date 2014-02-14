@@ -3,6 +3,7 @@ package interactive.view.webview;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
@@ -45,6 +46,7 @@ public class InteractiveWebView extends WebView
 	private SparseArray<ObjectHandle>		listObjHandle			= null;
 	private GestureDetector					gestureDetector			= null;
 	private String							mstrBackgroundImage		= null;
+	private boolean							mbAutoPlay				= false;
 
 	private class InteractiveImage
 	{
@@ -234,6 +236,7 @@ public class InteractiveWebView extends WebView
 	{
 		mnChapter = nChapter;
 		mnPage = nPage;
+		Global.addActiveNotify(nChapter, nPage, webHandler);
 	}
 
 	public int getChapter()
@@ -342,6 +345,11 @@ public class InteractiveWebView extends WebView
 	public String getBackgroundImage()
 	{
 		return mstrBackgroundImage;
+	}
+
+	public void setAutoPlay(boolean bAutoPlay)
+	{
+		mbAutoPlay = bAutoPlay;
 	}
 
 	private OnLongClickListener	longClickListener		= new OnLongClickListener()
@@ -467,6 +475,15 @@ public class InteractiveWebView extends WebView
 																	break;
 																case EventMessage.MSG_SHOW_ITEM: // button click and show item
 																	hideItem((String) msg.obj);
+																	break;
+																case EventMessage.MSG_CURRENT_ACTIVE:
+																	if (mbAutoPlay)
+																	{
+																		InteractiveWebView.this.reload();
+																	}
+																	Logs.showTrace("Web Page tag="
+																			+ InteractiveWebView.this.getTag()
+																			+ " is active");
 																	break;
 																}
 															}

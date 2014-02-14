@@ -18,8 +18,6 @@ public class VerticalScrollableView extends ScrollView
 {
 
 	private int		mnOffsetY	= 0;
-	private int		mnChapter	= Type.INVALID;
-	private int		mnPage		= Type.INVALID;
 	private int		mnWidth		= Type.INVALID;
 	private Context	theContext	= null;
 
@@ -50,18 +48,16 @@ public class VerticalScrollableView extends ScrollView
 	private void init(Context context)
 	{
 		theContext = context;
-		setVerticalScrollBarEnabled(false);
+		this.setVerticalScrollBarEnabled(false);
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setHorizontalScrollBarEnabled(false);
-		this.setPadding(0, 0, 0, 0);
+		this.setOverScrollMode(OVER_SCROLL_NEVER);
 	}
 
 	public void setPosition(int nChapter, int nPage)
 	{
-		mnChapter = nChapter;
-		mnPage = nPage;
-		Global.addActiveNotify(mnChapter, mnPage, notifyHandler);
+		Global.addActiveNotify(nChapter, nPage, notifyHandler);
 	}
 
 	private void initOffset()

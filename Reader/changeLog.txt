@@ -1,3 +1,7 @@
+2014/02/14 : 修正Scrollable 橫向捲動或翻頁的判斷機制
+2014/02/14 : 關閉Scrollable的over scroll 狀態
+2014/02/14 : 新增 Web Page auto play機制
+2014/02/14 : 修正Scrollable 橫向 X offset問題, 判斷-X時 將圖檔左邊加空白
 2014/02/14 : 修正Activity的呼叫 , 只會呼叫程式本身library內的Activity , 不會出現Activity選單了
 2014/02/14 : 新增WordHandler , 讀取string.xml內的wording
 2014/02/14 : 修正明信片Thumbnail & Drag bitmap , 新增recyle機制 避免out of memory的發生
