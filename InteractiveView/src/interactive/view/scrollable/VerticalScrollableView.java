@@ -4,12 +4,16 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.global.Global;
+import interactive.view.scroll.ScrollHandler;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.ImageView.ScaleType;
@@ -17,9 +21,11 @@ import android.widget.ImageView.ScaleType;
 public class VerticalScrollableView extends ScrollView
 {
 
-	private int		mnOffsetY	= 0;
-	private int		mnWidth		= Type.INVALID;
-	private Context	theContext	= null;
+	private int				mnOffsetY		= 0;
+	private int				mnWidth			= Type.INVALID;
+	private int				mnHeight		= Type.INVALID;
+	private Context			theContext		= null;
+	private ScrollHandler	scrollHandler	= null;
 
 	public VerticalScrollableView(Context context)
 	{
@@ -42,6 +48,7 @@ public class VerticalScrollableView extends ScrollView
 	@Override
 	protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY)
 	{
+		scrollHandler.setOverScrolled(scrollX, scrollY, clampedX, clampedY);
 		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
 	}
 
@@ -52,12 +59,15 @@ public class VerticalScrollableView extends ScrollView
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setHorizontalScrollBarEnabled(false);
-		this.setOverScrollMode(OVER_SCROLL_NEVER);
+		//		this.setOverScrollMode(OVER_SCROLL_NEVER);
+		this.setOnTouchListener(touchListener);
+		scrollHandler = new ScrollHandler(ScrollHandler.VERTICAL);
 	}
 
 	public void setPosition(int nChapter, int nPage)
 	{
 		Global.addActiveNotify(nChapter, nPage, notifyHandler);
+		scrollHandler.setPosition(nChapter, nPage);
 	}
 
 	private void initOffset()
@@ -71,6 +81,7 @@ public class VerticalScrollableView extends ScrollView
 		setY(nY);
 		setLayoutParams(new LayoutParams(nWidth, nHeight));
 		mnWidth = nWidth;
+		mnHeight = nHeight;
 	}
 
 	private ImageView getImageView(Bitmap bitmap, int nWidth, int nHeight)
@@ -94,6 +105,16 @@ public class VerticalScrollableView extends ScrollView
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, (0 - nOffsetY));
 			bitmapBack.recycle();
 			bitmapFront.recycle();
+		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
+		}
+		else if (0 < nOffsetY && (nHeight - nOffsetY) < mnHeight)
+		{
+			Bitmap bitmapBack = Bitmap.createBitmap(nWidth, nHeight + nOffsetY, Config.ARGB_8888);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
+			bitmapBack.recycle();
+			bitmapFront.recycle();
+		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
 		}
 		else
 		{
@@ -136,18 +157,27 @@ public class VerticalScrollableView extends ScrollView
 		mnOffsetY = nY;
 	}
 
-	private Handler	notifyHandler	= new Handler()
-									{
-										@Override
-										public void handleMessage(Message msg)
-										{
-											switch (msg.what)
+	private Handler			notifyHandler	= new Handler()
 											{
-											case EventMessage.MSG_CURRENT_ACTIVE:
-												initOffset();
-												break;
-											}
-											super.handleMessage(msg);
-										}
-									};
+												@Override
+												public void handleMessage(Message msg)
+												{
+													switch (msg.what)
+													{
+													case EventMessage.MSG_CURRENT_ACTIVE:
+														initOffset();
+														break;
+													}
+													super.handleMessage(msg);
+												}
+											};
+
+	private OnTouchListener	touchListener	= new OnTouchListener()
+											{
+												@Override
+												public boolean onTouch(View v, MotionEvent event)
+												{
+													return scrollHandler.setTouchEvent(v, event);
+												}
+											};
 }

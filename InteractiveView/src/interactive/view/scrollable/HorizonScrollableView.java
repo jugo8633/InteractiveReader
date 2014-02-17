@@ -1,10 +1,10 @@
 package interactive.view.scrollable;
 
 import interactive.common.BitmapHandler;
-import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.global.Global;
+import interactive.view.scroll.ScrollHandler;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -19,13 +19,10 @@ import android.widget.ImageView.ScaleType;
 
 public class HorizonScrollableView extends HorizontalScrollView
 {
-	private int		mnOffsetX		= 0;
-	private int		mnWidth			= Type.INVALID;
-	private Context	theContext		= null;
-	private boolean	mbOverScrolled	= false;
-	private float	mnX				= Type.INVALID;
-	private int		mnScrollX		= Type.INVALID;
-	private int		mnChapter		= Type.INVALID;
+	private int				mnOffsetX		= 0;
+	private int				mnWidth			= Type.INVALID;
+	private Context			theContext		= null;
+	private ScrollHandler	scrollHandler	= null;
 
 	public HorizonScrollableView(Context context)
 	{
@@ -48,15 +45,7 @@ public class HorizonScrollableView extends HorizontalScrollView
 	@Override
 	protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY)
 	{
-		mbOverScrolled = clampedX;
-		if (mbOverScrolled)
-		{
-			mnScrollX = scrollX;
-		}
-		else
-		{
-			mnScrollX = Type.INVALID;
-		}
+		scrollHandler.setOverScrolled(scrollX, scrollY, clampedX, clampedY);
 		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
 	}
 
@@ -67,8 +56,9 @@ public class HorizonScrollableView extends HorizontalScrollView
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setHorizontalScrollBarEnabled(false);
-		this.setOverScrollMode(OVER_SCROLL_NEVER);
+		//this.setOverScrollMode(OVER_SCROLL_NEVER);
 		this.setOnTouchListener(touchListener);
+		scrollHandler = new ScrollHandler(ScrollHandler.HORIZON);
 	}
 
 	public void setDisplay(int nX, int nY, int nWidth, int nHeight)
@@ -101,6 +91,7 @@ public class HorizonScrollableView extends HorizontalScrollView
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
+		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
 		}
 		else if (0 > nOffsetX)
 		{
@@ -109,6 +100,7 @@ public class HorizonScrollableView extends HorizontalScrollView
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, (0 - nOffsetX), 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
+		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
 		}
 		else
 		{
@@ -144,8 +136,8 @@ public class HorizonScrollableView extends HorizontalScrollView
 
 	public void setPosition(int nChapter, int nPage)
 	{
-		mnChapter = nChapter;
 		Global.addActiveNotify(nChapter, nPage, notifyHandler);
+		scrollHandler.setPosition(nChapter, nPage);
 	}
 
 	private void initOffset()
@@ -170,53 +162,10 @@ public class HorizonScrollableView extends HorizontalScrollView
 
 	private OnTouchListener	touchListener	= new OnTouchListener()
 											{
-
 												@Override
 												public boolean onTouch(View v, MotionEvent event)
 												{
-													switch (event.getAction())
-													{
-													case MotionEvent.ACTION_DOWN:
-														if (!mbOverScrolled)
-														{
-															mnX = Type.INVALID;
-															EventHandler.notify(Global.handlerActivity,
-																	EventMessage.MSG_LOCK_HORIZON, 0, 0, null);
-														}
-														else
-														{
-															mnX = event.getRawX();
-														}
-														break;
-													case MotionEvent.ACTION_CANCEL:
-													case MotionEvent.ACTION_UP:
-														EventHandler.notify(Global.handlerActivity,
-																EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
-														if (Type.INVALID != mnX)
-														{
-															float nX = event.getRawX();
-															int nMove = (int) Math.abs(mnX - nX);
-															if (10 <= nMove)
-															{
-																if (0 == mnScrollX)
-																{
-																	EventHandler.notify(Global.handlerActivity,
-																			EventMessage.MSG_JUMP, mnChapter - 1,
-																			Type.INVALID, null);
-																}
-																if (0 < mnScrollX)
-																{
-																	EventHandler.notify(Global.handlerActivity,
-																			EventMessage.MSG_JUMP, mnChapter + 1,
-																			Type.INVALID, null);
-																}
-															}
-														}
-														mnX = Type.INVALID;
-
-														break;
-													}
-													return false;
+													return scrollHandler.setTouchEvent(v, event);
 												}
 											};
 

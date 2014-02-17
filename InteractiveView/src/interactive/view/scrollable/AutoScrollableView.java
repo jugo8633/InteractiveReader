@@ -53,7 +53,7 @@ public class AutoScrollableView extends HorizontalScrollView
 		this.setOverScrollMode(OVER_SCROLL_NEVER);
 
 		verticalScrollView = new ScrollView(context);
-		verticalScrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		verticalScrollView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		verticalScrollView.setHorizontalScrollBarEnabled(false);
 		verticalScrollView.setVerticalScrollBarEnabled(false);
 		verticalScrollView.setVerticalFadingEdgeEnabled(false);
@@ -76,7 +76,7 @@ public class AutoScrollableView extends HorizontalScrollView
 		ImageView imageView = new ImageView(theContext);
 		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setAdjustViewBounds(true);
-		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
+		imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		imageView.setImageBitmap(bitmap);
 		return imageView;
 	}
@@ -91,6 +91,14 @@ public class AutoScrollableView extends HorizontalScrollView
 					.createBitmap(nWidth + (mnWidth - (nWidth - nOffsetX)), nHeight, Config.ARGB_8888);
 			Bitmap bitmapFront = BitmapHandler.readBitmap(strImagePath, nWidth, nHeight);
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
+			bitmapBack.recycle();
+			bitmapFront.recycle();
+		}
+		else if (0 > nOffsetX)
+		{
+			Bitmap bitmapBack = Bitmap.createBitmap(nWidth + (0 - nOffsetX), nHeight, Config.ARGB_8888);
+			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
+			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, (0 - nOffsetX), 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
 		}

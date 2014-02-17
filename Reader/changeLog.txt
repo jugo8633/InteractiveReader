@@ -1,3 +1,4 @@
+2014/02/17 : 修正Scrollable offset的判斷行為
 2014/02/14 : 修正Scrollable 橫向捲動或翻頁的判斷機制
 2014/02/14 : 關閉Scrollable的over scroll 狀態
 2014/02/14 : 新增 Web Page auto play機制
