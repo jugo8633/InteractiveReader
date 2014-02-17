@@ -3,7 +3,6 @@ package interactive.view.pagereader;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import android.content.Context;
 import android.os.Handler;
@@ -242,19 +241,12 @@ public class PageReader extends RelativeLayout
 
 	private void setCurrentPosition()
 	{
-		int nOldChapter = Global.currentChapter;
-		int nOldPage = Global.currentPage;
 		Global.currentChapter = viewPager.getCurrentItem();
 		VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(Global.currentChapter);
 		Global.currentPage = vvp.getCurrentItem();
 		addHistory(Global.currentChapter, Global.currentPage);
 		Logs.showTrace("Current position: " + Global.currentChapter + " " + Global.currentPage);
 
-		if (null != PageData.listPageData)
-		{
-			PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).extWebView.setCurrentView(true);
-			PageData.listPageData.get(nOldChapter).get(nOldPage).extWebView.setCurrentView(false);
-		}
 		Global.interactiveHandler.removeAllMedia();
 		Global.notifyActive(Global.currentChapter, Global.currentPage);
 		notifyPageSwitched();

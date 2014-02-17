@@ -48,13 +48,13 @@ public class InteractiveButton extends InteractiveObject
 					acButton.setGroupId(jsonHeader.mstrGroupId);
 					acButton.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
 					acButton.setImageSrc(strBookPath + jsonHeader.mstrSrc, strBookPath + jsonBody.mstrTouchDown,
-							strBookPath + jsonBody.mstrTouchUp);
+							strBookPath + jsonBody.mstrTouchUp, ScaleSize(jsonHeader.mnWidth),
+							ScaleSize(jsonHeader.mnHeight));
 					for (int j = 0; j < jsonBody.listEvent.size(); ++j)
 					{
 						Event event = jsonBody.listEvent.get(j);
 						acButton.addEvent(event.mnType, event.mstrTypeName, event.mnEvent, event.mstrEventName,
 								event.mnTargetType, event.mstrTargetId, event.mnDisplay);
-						webView.setItemHide(event.mstrTargetId, jsonHeader.mstrGroupId);
 						event = null;
 					}
 					webView.addView(acButton);

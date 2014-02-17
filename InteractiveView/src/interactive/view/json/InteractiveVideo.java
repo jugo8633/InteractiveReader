@@ -80,15 +80,16 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay(ScaleSize(jsonHeader.mnX),ScaleSize(jsonHeader.mnY),
-				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+		player.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
+				ScaleSize(jsonHeader.mnHeight));
 		player.setVideo(strBookPath + jsonBody.mstrVideoSrc);
 		player.setLoop(jsonBody.options.mbLoop);
+		player.setAutoplay(jsonBody.options.mbAutoPlay);
 		player.showController(jsonBody.appearance.mbPlayerControls);
+		player.setPosition(webView.getChapter(), webView.getPage());
 		webView.addView(player);
 		if (jsonBody.options.mbAutoPlay)
 		{
-			webView.addObjectHandle(player.getHandler(), InteractiveEvent.OBJECT_CATEGORY_VIDEO, true);
 			player.play();
 		}
 		player = null;
@@ -98,8 +99,8 @@ public class InteractiveVideo extends InteractiveObject
 			String strBookPath)
 	{
 		YoutubeFrameLayout youtubeLayout = new YoutubeFrameLayout(getContext());
-		youtubeLayout.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+		youtubeLayout.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
+				ScaleSize(jsonHeader.mnHeight));
 		youtubeLayout.setBackground(strBookPath + jsonHeader.mstrSrc);
 		youtubeLayout.setTag(jsonHeader.mstrName);
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
@@ -112,15 +113,15 @@ public class InteractiveVideo extends InteractiveObject
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
-		player.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-				ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+		player.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
+				ScaleSize(jsonHeader.mnHeight));
 		player.setVideo(jsonBody.mstrUrl);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);
+		player.setPosition(webView.getChapter(), webView.getPage());
 		webView.addView(player);
 		if (jsonBody.options.mbAutoPlay)
 		{
-			webView.addObjectHandle(player.getHandler(), InteractiveEvent.OBJECT_CATEGORY_VIDEO, true);
 			player.play();
 		}
 		player = null;
@@ -163,14 +164,11 @@ public class InteractiveVideo extends InteractiveObject
 					break;
 				}
 
-				listVideoData.put(
-						listVideoData.size(),
-						new InteractiveVideoData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth), 
-								ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), 
-								ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonBody.mnVideoType,
-								strMediaSrc, jsonBody.options.mnStart, jsonBody.options.mnEnd,
-								jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop,
-								jsonBody.appearance.mbPlayerControls));
+				listVideoData.put(listVideoData.size(), new InteractiveVideoData(jsonHeader.mstrName,
+						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX),
+						ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonBody.mnVideoType, strMediaSrc,
+						jsonBody.options.mnStart, jsonBody.options.mnEnd, jsonBody.options.mbAutoPlay,
+						jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls));
 			}
 		}
 		return true;

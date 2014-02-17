@@ -50,7 +50,6 @@ public class InteractiveScrollable extends InteractiveObject
 							ScaleSize(jsonBody.imgBBox.mnWidth), ScaleSize(jsonBody.imgBBox.mnHeight),
 							jsonBody.mnOverflow, ScaleSize(jsonBody.offSet.mnX), ScaleSize(jsonBody.offSet.mnY),
 							webView);
-					scrollableImageView.initNotifyHandler(webView.getWebHandler());
 				}
 			}
 			jsonBody = null;

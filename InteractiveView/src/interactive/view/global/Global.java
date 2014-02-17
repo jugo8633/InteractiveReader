@@ -3,6 +3,7 @@ package interactive.view.global;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.handler.InteractiveHandler;
 import interactive.view.pagereader.PageReader;
@@ -25,6 +26,7 @@ public class Global
 	public static PageReader				pageReader			= null;
 	public static Handler					handlerPostcard		= null;
 	public static SparseArray<ActiveNotify>	listActiveNotify	= new SparseArray<ActiveNotify>();
+	public static SparseArray<ActiveNotify>	listUnActiveNotify	= new SparseArray<ActiveNotify>();
 	public static int						mnUserId			= 2048;
 
 	public static class ActiveNotify
@@ -62,6 +64,12 @@ public class Global
 		listActiveNotify.put(listActiveNotify.size(), new Global.ActiveNotify(nChapter, nPage, handler));
 	}
 
+	/** notify when page is not current page*/
+	public static void addUnActiveNotify(int nChapter, int nPage, Handler handler)
+	{
+		listUnActiveNotify.put(listUnActiveNotify.size(), new Global.ActiveNotify(nChapter, nPage, handler));
+	}
+
 	public static void notifyActive(int nChapter, int nPage)
 	{
 		for (int i = 0; i < listActiveNotify.size(); ++i)
@@ -69,6 +77,15 @@ public class Global
 			if (listActiveNotify.get(i).mnChapter == nChapter && listActiveNotify.get(i).mnPage == nPage)
 			{
 				EventHandler.notify(listActiveNotify.get(i).mHandler, EventMessage.MSG_CURRENT_ACTIVE, 0, 0, null);
+			}
+		}
+
+		for (int j = 0; j < listUnActiveNotify.size(); ++j)
+		{
+			if (listUnActiveNotify.get(j).mnChapter != nChapter || listUnActiveNotify.get(j).mnPage != nPage)
+			{
+				EventHandler
+						.notify(listUnActiveNotify.get(j).mHandler, EventMessage.MSG_NOT_CURRENT_ACTIVE, 0, 0, null);
 			}
 		}
 	}

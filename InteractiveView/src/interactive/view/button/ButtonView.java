@@ -4,14 +4,12 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
-import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.type.InteractiveType;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -28,20 +26,31 @@ public class ButtonView extends ImageView
 	private String				mstrGroupId		= null;
 	private Handler				notifyHandler	= null;
 	private SparseArray<Event>	listEvent		= null;
-	private int					mnDisplayWidth	= 0;
-	private int					mnDisplayHeight	= 0;
+	private int					mnChapter		= Type.INVALID;
+	private int					mnPage			= Type.INVALID;
 
 	class ImageSrc
 	{
-		public String	mstrSrc			= null;
-		public String	mstrTouchDown	= null;
-		public String	mstrTouchUp		= null;
+		public Bitmap	mBitmapSrc	= null;
+		public Bitmap	mBitmapDown	= null;
+		public Bitmap	mBitmapUp	= null;
 
-		public ImageSrc(String strSrc, String strTouchDown, String strTouchUp)
+		public ImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
 		{
-			mstrSrc = strSrc;
-			mstrTouchDown = strTouchDown;
-			mstrTouchUp = strTouchUp;
+			if (null != strSrc && FileHandler.isFileExist(strSrc))
+			{
+				mBitmapSrc = BitmapHandler.readBitmap(strSrc, nWidth, nHeight);
+			}
+
+			if (null != strTouchDown && FileHandler.isFileExist(strTouchDown))
+			{
+				mBitmapDown = BitmapHandler.readBitmap(strTouchDown, nWidth, nHeight);
+			}
+
+			if (null != strTouchUp && FileHandler.isFileExist(strTouchUp))
+			{
+				mBitmapUp = BitmapHandler.readBitmap(strTouchUp, nWidth, nHeight);
+			}
 		}
 	}
 
@@ -86,6 +95,13 @@ public class ButtonView extends ImageView
 		initButton();
 	}
 
+	public void setPosition(int nChapter, int nPage)
+	{
+		mnChapter = nChapter;
+		mnPage = nPage;
+		Global.addActiveNotify(nChapter, nPage, buttonHandler);
+	}
+
 	private void initButton()
 	{
 		this.setFocusable(true);
@@ -95,13 +111,11 @@ public class ButtonView extends ImageView
 		listEvent = new SparseArray<Event>();
 	}
 
-	public void setImageSrc(String strSrc, String strTouchDown, String strTouchUp)
+	public void setImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
 	{
 		imageSrc = null;
-		imageSrc = new ImageSrc(strSrc, strTouchDown, strTouchUp);
-		Bitmap bitmap = BitmapHandler.readBitmap(imageSrc.mstrSrc, mnDisplayWidth, mnDisplayHeight);
-		this.setImageBitmap(bitmap);
-		//setImageURI(Uri.parse(imageSrc.mstrSrc));
+		imageSrc = new ImageSrc(strSrc, strTouchDown, strTouchUp, nWidth, nHeight);
+		this.setImageBitmap(imageSrc.mBitmapSrc);
 	}
 
 	public void setGroupId(String strGroupId)
@@ -124,8 +138,6 @@ public class ButtonView extends ImageView
 		this.setX(nX);
 		this.setY(nY);
 		this.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
-		mnDisplayWidth = nWidth;
-		mnDisplayHeight = nHeight;
 	}
 
 	private void setButtonClickType(int nClickType)
@@ -206,11 +218,10 @@ public class ButtonView extends ImageView
 															switch (event.getAction())
 															{
 															case MotionEvent.ACTION_DOWN:
-																if (null != imageSrc.mstrTouchDown
-																		&& FileHandler
-																				.isFileExist(imageSrc.mstrTouchDown))
+																if (null != imageSrc.mBitmapDown)
 																{
-																	setImageURI(Uri.parse(imageSrc.mstrTouchDown));
+																	ButtonView.this
+																			.setImageBitmap(imageSrc.mBitmapDown);
 																}
 																else
 																{
@@ -219,21 +230,19 @@ public class ButtonView extends ImageView
 																break;
 															case MotionEvent.ACTION_UP:
 																setColorFilter(Color.TRANSPARENT);
-																if (null != imageSrc.mstrTouchUp
-																		&& FileHandler
-																				.isFileExist(imageSrc.mstrTouchUp))
+																if (null != imageSrc.mBitmapUp)
 																{
-																	setImageURI(Uri.parse(imageSrc.mstrTouchUp));
+																	ButtonView.this.setImageBitmap(imageSrc.mBitmapUp);
 																}
 																else
 																{
-																	setImageURI(Uri.parse(imageSrc.mstrSrc));
+																	ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
 																}
 																startEvent();
 																break;
 															case MotionEvent.ACTION_CANCEL:
 																setColorFilter(Color.TRANSPARENT);
-																setImageURI(Uri.parse(imageSrc.mstrSrc));
+																ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
 																break;
 															}
 															return true;
@@ -259,7 +268,11 @@ public class ButtonView extends ImageView
 															switch (msg.what)
 															{
 															case EventMessage.MSG_IMAGE_CLICK:
-																setImageURI(Uri.parse(imageSrc.mstrSrc));
+																ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
+																break;
+															case EventMessage.MSG_CURRENT_ACTIVE:
+																setColorFilter(Color.TRANSPARENT);
+																ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
 																break;
 															}
 														}

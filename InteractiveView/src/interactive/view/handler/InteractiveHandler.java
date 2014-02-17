@@ -426,7 +426,7 @@ public class InteractiveHandler
 			{
 				interimg.webView.removeView(view);
 			}
-			interimg.webView.hideItem(strTagName);
+			//		interimg.webView.hideItem(strTagName);
 			interimg.webView.addView(imgview);
 			imgview.bringToFront();
 		}

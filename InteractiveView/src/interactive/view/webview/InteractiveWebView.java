@@ -7,8 +7,6 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.global.Global;
-import interactive.view.scrollable.ScrollableView;
-import interactive.view.type.InteractiveType;
 
 import java.io.File;
 
@@ -21,13 +19,11 @@ import android.net.MailTo;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebSettings.LayoutAlgorithm;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -35,41 +31,16 @@ import android.widget.RelativeLayout;
 
 public class InteractiveWebView extends WebView
 {
-	public static final String				EXTRA_URL				= "extra_url";
-	private SparseArray<InteractiveImage>	listInteractiveImage	= null;		// webview clicked then hide
-	private Handler							pageReaderHandler		= null;		//send message to PageReader
-	private boolean							mbOverLoadUrl			= false;
-	private int								mnJumpChapter			= Type.INVALID;
-	private int								mnJumpPage				= Type.INVALID;
-	private int								mnChapter				= Type.INVALID; // self chapter
-	private int								mnPage					= Type.INVALID; // self page
-	private SparseArray<ObjectHandle>		listObjHandle			= null;
-	private GestureDetector					gestureDetector			= null;
-	private String							mstrBackgroundImage		= null;
-	private boolean							mbAutoPlay				= false;
-
-	private class InteractiveImage
-	{
-		public String	mstrImageTag	= null;
-		public String	mstrGroupId		= null;
-
-		public InteractiveImage(String strImageTag, String strGroupId)
-		{
-			mstrImageTag = strImageTag;
-			mstrGroupId = strGroupId;
-		}
-	}
-
-	public class ObjectHandle
-	{
-		public Handler	handler			= null;
-		public int		mnObjectType	= Type.INVALID;
-		public boolean	mbAutoPlay		= false;
-
-		public ObjectHandle()
-		{
-		}
-	}
+	public static final String	EXTRA_URL			= "extra_url";
+	private Handler				pageReaderHandler	= null;		//send message to PageReader
+	private boolean				mbOverLoadUrl		= false;
+	private int					mnJumpChapter		= Type.INVALID;
+	private int					mnJumpPage			= Type.INVALID;
+	private int					mnChapter			= Type.INVALID; // self chapter
+	private int					mnPage				= Type.INVALID; // self page
+	private GestureDetector		gestureDetector		= null;
+	private String				mstrBackgroundImage	= null;
+	private boolean				mbAutoPlay			= false;
 
 	public InteractiveWebView(Context context)
 	{
@@ -89,7 +60,6 @@ public class InteractiveWebView extends WebView
 		init();
 	}
 
-	@SuppressWarnings("deprecation")
 	@SuppressLint("SetJavaScriptEnabled")
 	private void init()
 	{
@@ -97,7 +67,7 @@ public class InteractiveWebView extends WebView
 		this.getSettings().setUseWideViewPort(false);
 		this.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 		this.getSettings().setJavaScriptEnabled(true);
-		this.getSettings().setPluginState(PluginState.ON);
+		//		this.getSettings().setPluginState(PluginState.ON);
 		this.getSettings().setBuiltInZoomControls(true);
 		this.getSettings().setSupportZoom(false);
 		this.getSettings().setAllowContentAccess(false);
@@ -106,7 +76,7 @@ public class InteractiveWebView extends WebView
 		this.getSettings().setDefaultTextEncodingName("utf-8");
 		this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		this.getSettings().setDomStorageEnabled(true);
-		this.getSettings().setPluginState(PluginState.ON_DEMAND);
+		//		this.getSettings().setPluginState(PluginState.ON_DEMAND);
 
 		this.setHorizontalScrollBarEnabled(false);
 		this.setVerticalScrollBarEnabled(false);
@@ -123,8 +93,6 @@ public class InteractiveWebView extends WebView
 		setWebViewClient(new myWebViewClient());
 		setWebChromeClient(new WebChromeClient());
 
-		listObjHandle = new SparseArray<ObjectHandle>();
-
 		gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
 
 	}
@@ -132,16 +100,6 @@ public class InteractiveWebView extends WebView
 	public void initPageReaderHandler(Handler handler)
 	{
 		pageReaderHandler = handler;
-	}
-
-	public void addObjectHandle(Handler handler, int nObjType, boolean bAutoPlay)
-	{
-		ObjectHandle objHandle = new ObjectHandle();
-		objHandle.handler = handler;
-		objHandle.mnObjectType = nObjType;
-		objHandle.mbAutoPlay = bAutoPlay;
-		listObjHandle.put(listObjHandle.size(), objHandle);
-		objHandle = null;
 	}
 
 	private boolean isPageExist(String strPageName)
@@ -254,88 +212,60 @@ public class InteractiveWebView extends WebView
 		this.setLayoutParams(new RelativeLayout.LayoutParams(nWidth, nHeight));
 	}
 
-	public void setItemHide(String strTag, String strGroupId)
-	{
-		if (null == listInteractiveImage)
-		{
-			listInteractiveImage = new SparseArray<InteractiveImage>();
-		}
-		listInteractiveImage.put(listInteractiveImage.size(), new InteractiveImage(strTag, strGroupId));
-	}
+	//	public void setItemHide(String strTag, String strGroupId)
+	//	{
+	//		if (null == listInteractiveImage)
+	//		{
+	//			listInteractiveImage = new SparseArray<InteractiveImage>();
+	//		}
+	//		listInteractiveImage.put(listInteractiveImage.size(), new InteractiveImage(strTag, strGroupId));
+	//	}
 
-	private String getGroupId(String strTag)
-	{
-		for (int i = 0; i < listInteractiveImage.size(); ++i)
-		{
-			if (listInteractiveImage.get(i).mstrImageTag.equals(strTag))
-			{
-				return listInteractiveImage.get(i).mstrGroupId;
-			}
-		}
-		return null;
-	}
+	//	private String getGroupId(String strTag)
+	//	{
+	//		for (int i = 0; i < listInteractiveImage.size(); ++i)
+	//		{
+	//			if (listInteractiveImage.get(i).mstrImageTag.equals(strTag))
+	//			{
+	//				return listInteractiveImage.get(i).mstrGroupId;
+	//			}
+	//		}
+	//		return null;
+	//	}
 
-	public void hideItem(String strExpItem)
-	{
-		if (null == listInteractiveImage)
-		{
-			return;
-		}
-		String strGroupId = getGroupId(strExpItem);
-		for (int i = 0; i < listInteractiveImage.size(); ++i)
-		{
-			for (int j = 0; j < this.getChildCount(); ++j)
-			{
-				if (null == this.getChildAt(j).getTag()
-						|| (null != strExpItem && this.getChildAt(j).getTag().equals(strExpItem)))
-				{
-					continue;
-				}
-				if (this.getChildAt(j).getTag().equals(listInteractiveImage.get(i).mstrImageTag))
-				{
-					if (null == strGroupId)
-					{
-						this.getChildAt(j).setVisibility(View.GONE);
-					}
-					else
-					{
-						if (listInteractiveImage.get(i).mstrGroupId.equals(strGroupId))
-						{
-							this.getChildAt(j).setVisibility(View.GONE);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public void setCurrentView(boolean bCurrent)
-	{
-		scrollTo(0, 0);
-		if (bCurrent)
-		{
-			if (null != listObjHandle)
-			{
-				for (int i = 0; i < listObjHandle.size(); ++i)
-				{
-					ObjectHandle objHandle = listObjHandle.get(i);
-					switch (objHandle.mnObjectType)
-					{
-					case InteractiveType.OBJECT_CATEGORY_VIDEO:
-						if (objHandle.mbAutoPlay)
-						{
-							/**
-							 * notify video to play, if video have autoplay
-							 */
-							EventHandler.notify(objHandle.handler, EventMessage.MSG_WEB, EventMessage.MSG_VIDEO_PLAY,
-									0, null);
-						}
-						break;
-					}
-				}
-			}
-		}
-	}
+	//	public void hideItem(String strExpItem)
+	//	{
+	//		if (null == listInteractiveImage)
+	//		{
+	//			return;
+	//		}
+	//		String strGroupId = getGroupId(strExpItem);
+	//		for (int i = 0; i < listInteractiveImage.size(); ++i)
+	//		{
+	//			for (int j = 0; j < this.getChildCount(); ++j)
+	//			{
+	//				if (null == this.getChildAt(j).getTag()
+	//						|| (null != strExpItem && this.getChildAt(j).getTag().equals(strExpItem)))
+	//				{
+	//					continue;
+	//				}
+	//				if (this.getChildAt(j).getTag().equals(listInteractiveImage.get(i).mstrImageTag))
+	//				{
+	//					if (null == strGroupId)
+	//					{
+	//						this.getChildAt(j).setVisibility(View.GONE);
+	//					}
+	//					else
+	//					{
+	//						if (listInteractiveImage.get(i).mstrGroupId.equals(strGroupId))
+	//						{
+	//							this.getChildAt(j).setVisibility(View.GONE);
+	//						}
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
 
 	public void setBackgroundImage(String strImage)
 	{
@@ -444,38 +374,6 @@ public class InteractiveWebView extends WebView
 															{
 																switch (msg.what)
 																{
-																case ScrollableView.SCROLL_LEFT_END:
-																	EventHandler.notify(pageReaderHandler,
-																			EventMessage.MSG_WEB,
-																			EventMessage.MSG_JUMP, mnChapter + 1,
-																			Type.INVALID);
-																	break;
-																case ScrollableView.SCROLL_RIGHT_END:
-																	EventHandler.notify(pageReaderHandler,
-																			EventMessage.MSG_WEB,
-																			EventMessage.MSG_JUMP, mnChapter - 1,
-																			Type.INVALID);
-																	break;
-																case ScrollableView.SCROLL_TOP_END:
-																	EventHandler.notify(pageReaderHandler,
-																			EventMessage.MSG_WEB,
-																			EventMessage.MSG_JUMP, Type.INVALID,
-																			mnPage + 1);
-																	break;
-																case ScrollableView.SCROLL_DOWN_END:
-																	EventHandler.notify(pageReaderHandler,
-																			EventMessage.MSG_WEB,
-																			EventMessage.MSG_JUMP, Type.INVALID,
-																			mnPage - 1);
-																	break;
-																case ScrollableView.DOUBLE_CLICK:
-																	EventHandler.notify(Global.handlerActivity,
-																			EventMessage.MSG_DOUBLE_CLICK,
-																			Type.INVALID, Type.INVALID, null);
-																	break;
-																case EventMessage.MSG_SHOW_ITEM: // button click and show item
-																	hideItem((String) msg.obj);
-																	break;
 																case EventMessage.MSG_CURRENT_ACTIVE:
 																	if (mbAutoPlay)
 																	{

@@ -2,6 +2,7 @@ package interactive.view.video;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
@@ -22,9 +23,11 @@ public class VideoPlayer extends RelativeLayout
 {
 	private VideoView		videoView			= null;
 	private boolean			mbIsLoop			= false;
+	private boolean			mbAutoplay			= false;
 	private boolean			mbShowController	= false;
 	private MediaController	videoController		= null;
 	private GestureDetector	gestureDetector		= null;
+	private String			mstrVideoPath		= null;
 
 	public VideoPlayer(Context context)
 	{
@@ -92,8 +95,20 @@ public class VideoPlayer extends RelativeLayout
 		this.addView(videoController);
 	}
 
+	public void setPosition(int nChapter, int nPage)
+	{
+		Global.addActiveNotify(nChapter, nPage, playerHandler);
+		Global.addUnActiveNotify(nChapter, nPage, playerHandler);
+	}
+
+	public void setAutoplay(boolean bAutoplay)
+	{
+		mbAutoplay = bAutoplay;
+	}
+
 	public void setVideo(String strVideoPath)
 	{
+		mstrVideoPath = strVideoPath;
 		videoView.setVideoPath(strVideoPath);
 	}
 
@@ -107,6 +122,7 @@ public class VideoPlayer extends RelativeLayout
 		if (!videoView.isPlaying())
 		{
 			videoView.start();
+			Logs.showTrace("Local video play");
 		}
 	}
 
@@ -129,6 +145,7 @@ public class VideoPlayer extends RelativeLayout
 		if (videoView.isPlaying())
 		{
 			videoView.stopPlayback();
+			Logs.showTrace("Local video stop");
 		}
 	}
 
@@ -201,22 +218,6 @@ public class VideoPlayer extends RelativeLayout
 		return playerHandler;
 	}
 
-	private void handleWebMsg(int nEvent, int nPosition)
-	{
-		switch (nEvent)
-		{
-		case EventMessage.MSG_VIDEO_PLAY:
-			play();
-			break;
-		case EventMessage.MSG_VIDEO_PAUSE:
-			pause();
-			break;
-		case EventMessage.MSG_VIDEO_STOP:
-			stop();
-			break;
-		}
-	}
-
 	private Handler			playerHandler			= new Handler()
 													{
 														@Override
@@ -224,8 +225,15 @@ public class VideoPlayer extends RelativeLayout
 														{
 															switch (msg.what)
 															{
-															case EventMessage.MSG_WEB:
-																handleWebMsg(msg.arg1, msg.arg2);
+															case EventMessage.MSG_CURRENT_ACTIVE:
+																if (mbAutoplay && null != mstrVideoPath)
+																{
+																	play(mstrVideoPath);
+																	Logs.showTrace("video play:" + mstrVideoPath);
+																}
+																break;
+															case EventMessage.MSG_NOT_CURRENT_ACTIVE:
+																stop();
 																break;
 															}
 														}
