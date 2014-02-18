@@ -28,8 +28,8 @@ public class InteractiveVideo extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_VIDEO))
 		{
@@ -55,7 +55,7 @@ public class InteractiveVideo extends InteractiveObject
 					switch (jsonBody.mnVideoType)
 					{
 					case InteractiveDefine.VIDEO_TYPE_LOCAL:
-						playLocalVideo(jsonHeader, jsonBody, webView, strBookPath);
+						playLocalVideo(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
 						break;
 					case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
 						playYoutubeVideo(jsonHeader, jsonBody, webView, strBookPath);
@@ -76,7 +76,7 @@ public class InteractiveVideo extends InteractiveObject
 	}
 
 	private void playLocalVideo(JsonHeader jsonHeader, JsonVideo jsonBody, InteractiveWebView webView,
-			String strBookPath)
+			String strBookPath, int nChapter, int nPage)
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
@@ -86,7 +86,7 @@ public class InteractiveVideo extends InteractiveObject
 		player.setLoop(jsonBody.options.mbLoop);
 		player.setAutoplay(jsonBody.options.mbAutoPlay);
 		player.showController(jsonBody.appearance.mbPlayerControls);
-		player.setPosition(webView.getChapter(), webView.getPage());
+		player.setPosition(nChapter, nPage);
 		webView.addView(player);
 		if (jsonBody.options.mbAutoPlay)
 		{

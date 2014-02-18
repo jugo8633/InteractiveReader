@@ -25,72 +25,72 @@ import android.widget.RelativeLayout;
 
 public class InteractiveHandler
 {
-	private Runnable								runRemoveImage;
-	private String									mstrRemoveImage		= null;
+	//	private Runnable								runRemoveImage;
+	//	private String									mstrRemoveImage		= null;
 	private static YoutubeView						youtubeView			= null;
 	private static VideoPlayer						videoView			= null;
 	private SparseArray<Postcard>					listPostcard		= null;
 	private SparseArray<InteractiveGoogleMapData>	listGoogleMap		= null;
-	private SparseArray<InteractiveImage>			listImage			= null;
+	//	private SparseArray<InteractiveImage>			listImage			= null;
 	private SparseArray<InteractiveYoutubeData>		listYoutube			= null;
 	private SparseArray<InteractiveVideoData>		listLocalVideo		= null;
 	private String									mstrPostcardDragTag	= null;
 	private boolean									mbDraging			= false;
 	private InteractiveButtonHandler				buttonHandler		= null;
 
-	class InteractiveImage
-	{
-		public String				mstrTag			= null;
-		public String				mstrImagePath	= null;
-		public String				mstrGroupId		= null;
-		public int					mnX				= 0;
-		public int					mnY				= 0;
-		public int					mnWidth			= LayoutParams.WRAP_CONTENT;
-		public int					mnHeight		= LayoutParams.WRAP_CONTENT;
-		public Handler				notifyHandler	= null;						// image
-																					// close
-																					// notify
-		public InteractiveWebView	webView			= null;
-
-		public InteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX, int nY,
-				int nWidth, int nHeight, String strGroupId)
-		{
-			mstrTag = strTag;
-			webView = interactiveWeb;
-			mstrImagePath = strImagePath;
-			mnX = nX;
-			mnY = nY;
-			mnWidth = nWidth;
-			mnHeight = nHeight;
-			mstrGroupId = strGroupId;
-		}
-
-		public InteractiveImage(String strTag, Handler handler)
-		{
-			mstrTag = strTag;
-			notifyHandler = handler;
-		}
-	}
+	//	class InteractiveImage
+	//	{
+	//		public String				mstrTag			= null;
+	//		public String				mstrImagePath	= null;
+	//		public String				mstrGroupId		= null;
+	//		public int					mnX				= 0;
+	//		public int					mnY				= 0;
+	//		public int					mnWidth			= LayoutParams.WRAP_CONTENT;
+	//		public int					mnHeight		= LayoutParams.WRAP_CONTENT;
+	//		public Handler				notifyHandler	= null;						// image
+	//																					// close
+	//																					// notify
+	//		public InteractiveWebView	webView			= null;
+	//
+	//		public InteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX, int nY,
+	//				int nWidth, int nHeight, String strGroupId)
+	//		{
+	//			mstrTag = strTag;
+	//			webView = interactiveWeb;
+	//			mstrImagePath = strImagePath;
+	//			mnX = nX;
+	//			mnY = nY;
+	//			mnWidth = nWidth;
+	//			mnHeight = nHeight;
+	//			mstrGroupId = strGroupId;
+	//		}
+	//
+	//		public InteractiveImage(String strTag, Handler handler)
+	//		{
+	//			mstrTag = strTag;
+	//			notifyHandler = handler;
+	//		}
+	//	}
 
 	public InteractiveHandler()
 	{
 		super();
 
 		listGoogleMap = new SparseArray<InteractiveGoogleMapData>();
-		listImage = new SparseArray<InteractiveImage>();
+		//		listImage = new SparseArray<InteractiveImage>();
 		listYoutube = new SparseArray<InteractiveYoutubeData>();
 		listLocalVideo = new SparseArray<InteractiveVideoData>();
 		listPostcard = new SparseArray<Postcard>();
 		buttonHandler = new InteractiveButtonHandler();
 
-		runRemoveImage = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				removeInteractiveImageView(mstrRemoveImage);
-			}
-		};
+		//		runRemoveImage = new Runnable()
+		//		{
+		//			@Override
+		//			public void run()
+		//			{
+		//				removeInteractiveImageView(mstrRemoveImage);
+		//			}
+		//		};
 	}
 
 	@Override
@@ -113,6 +113,14 @@ public class InteractiveHandler
 		buttonHandler.addImageData(strButtonTag, strImageTag, nWidth, nHeight, nX, nY, strSrc, strGroupId, bIsVisible);
 	}
 
+	public void addButtonMap(String strButtonTag, String strMapTag, int nMapType, double dLatitude, double dLongitude,
+			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage,
+			boolean bIsVisible)
+	{
+		buttonHandler.addMapData(strButtonTag, strMapTag, nMapType, dLatitude, dLongitude, nZoomLevel, strMarker, nX,
+				nY, nWidth, nHeight, strBackgroundImage, bIsVisible);
+	}
+
 	public void addButtonEvent(String strButtonTag, int nType, String strTypeName, int nEvent, String strEventName,
 			int nTargetType, String strTargetID, int nDisplay)
 	{
@@ -120,27 +128,26 @@ public class InteractiveHandler
 				nDisplay);
 	}
 
-	private void handleButtonEvent(String strTag)
+	synchronized private void handleButtonEvent(String strTag)
 	{
-		if (null == strTag)
+		if (null != strTag)
 		{
-			return;
+			buttonHandler.handleButtonEvent(strTag);
 		}
-		buttonHandler.handleButtonEvent(strTag);
 	}
 
-	private void showItem(int nCategory, String strTagName)
-	{
-		switch (nCategory)
-		{
-		case InteractiveDefine.OBJECT_CATEGORY_MAP:
-			showGoogleMapActivity(strTagName);
-			break;
-		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
-			showInteractiveImage(strTagName);
-			break;
-		}
-	}
+	//	private void showItem(int nCategory, String strTagName)
+	//	{
+	//		switch (nCategory)
+	//		{
+	//		case InteractiveDefine.OBJECT_CATEGORY_MAP:
+	//			showGoogleMapActivity(strTagName);
+	//			break;
+	//		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
+	//			showInteractiveImage(strTagName);
+	//			break;
+	//		}
+	//	}
 
 	/** Postcard Interactive handler ********************************/
 	public int addPostcard(Postcard postcard)
@@ -328,10 +335,10 @@ public class InteractiveHandler
 
 	/** Google map Interactive handler ********************************/
 	public void addGoogleMap(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
-			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage)
+			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage, boolean bIsVisible)
 	{
 		listGoogleMap.put(listGoogleMap.size(), new InteractiveGoogleMapData(strTag, nMapType, dLatitude, dLongitude,
-				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, strBackgroundImage));
+				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, strBackgroundImage, bIsVisible));
 	}
 
 	public void showGoogleMapActivity(String strTag)
@@ -427,43 +434,43 @@ public class InteractiveHandler
 		return selfHandler;
 	}
 
-	private void showInteractiveImage(String strTagName)
-	{
-		InteractiveImage interimg = getInteractiveImage(strTagName);
-		if (null != interimg && null != interimg.mstrImagePath)
-		{
-			InteractiveImageView imgview = new InteractiveImageView(Global.theActivity);
-			imgview.setTag(interimg.mstrTag);
-			imgview.setImageURI(Uri.parse(interimg.mstrImagePath));
-			imgview.setDisplay(interimg.mnX, interimg.mnY, interimg.mnWidth, interimg.mnHeight);
-			imgview.setNotifyHandler(selfHandler);
-			View view = interimg.webView.findViewWithTag(strTagName);
-			if (null != view)
-			{
-				interimg.webView.removeView(view);
-			}
-			//		interimg.webView.hideItem(strTagName);
-			interimg.webView.addView(imgview);
-			imgview.bringToFront();
-		}
-	}
+	//	private void showInteractiveImage(String strTagName)
+	//	{
+	//		InteractiveImage interimg = getInteractiveImage(strTagName);
+	//		if (null != interimg && null != interimg.mstrImagePath)
+	//		{
+	//			InteractiveImageView imgview = new InteractiveImageView(Global.theActivity);
+	//			imgview.setTag(interimg.mstrTag);
+	//			imgview.setImageURI(Uri.parse(interimg.mstrImagePath));
+	//			imgview.setDisplay(interimg.mnX, interimg.mnY, interimg.mnWidth, interimg.mnHeight);
+	//			imgview.setNotifyHandler(selfHandler);
+	//			View view = interimg.webView.findViewWithTag(strTagName);
+	//			if (null != view)
+	//			{
+	//				interimg.webView.removeView(view);
+	//			}
+	//			//		interimg.webView.hideItem(strTagName);
+	//			interimg.webView.addView(imgview);
+	//			imgview.bringToFront();
+	//		}
+	//	}
 
-	private void removeInteractiveImageView(String strTag)
-	{
-		if (null != strTag)
-		{
-			InteractiveImage interimg = getInteractiveImage(strTag);
-			if (null != interimg)
-			{
-				EventHandler.notify(interimg.notifyHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, null);
-				View view = interimg.webView.findViewWithTag(strTag);
-				if (null != view)
-				{
-					interimg.webView.removeView(view);
-				}
-			}
-		}
-	}
+	//	private void removeInteractiveImageView(String strTag)
+	//	{
+	//		if (null != strTag)
+	//		{
+	//			InteractiveImage interimg = getInteractiveImage(strTag);
+	//			if (null != interimg)
+	//			{
+	//				EventHandler.notify(interimg.notifyHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, null);
+	//				View view = interimg.webView.findViewWithTag(strTag);
+	//				if (null != view)
+	//				{
+	//					interimg.webView.removeView(view);
+	//				}
+	//			}
+	//		}
+	//	}
 
 	private void playVideo(int nVideoType, String strTag)
 	{
@@ -486,61 +493,61 @@ public class InteractiveHandler
 		removeYoutube();
 	}
 
-	public void addInteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX,
-			int nY, int nWidth, int nHeight, String strGroupId)
-	{
-		InteractiveImage interimg = getInteractiveImage(strTag);
-		if (null != interimg)
-		{
-			if (null != interactiveWeb)
-			{
-				interimg.webView = interactiveWeb;
-				interimg.mstrImagePath = strImagePath;
-				interimg.mnX = nX;
-				interimg.mnY = nY;
-				interimg.mnWidth = nWidth;
-				interimg.mnHeight = nHeight;
-				interimg.mstrGroupId = strGroupId;
-			}
-		}
-		else
-		{
-			listImage.put(listImage.size(), new InteractiveImage(interactiveWeb, strTag, strImagePath, nX, nY, nWidth,
-					nHeight, strGroupId));
-		}
-	}
+	//	public void addInteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX,
+	//			int nY, int nWidth, int nHeight, String strGroupId)
+	//	{
+	//		InteractiveImage interimg = getInteractiveImage(strTag);
+	//		if (null != interimg)
+	//		{
+	//			if (null != interactiveWeb)
+	//			{
+	//				interimg.webView = interactiveWeb;
+	//				interimg.mstrImagePath = strImagePath;
+	//				interimg.mnX = nX;
+	//				interimg.mnY = nY;
+	//				interimg.mnWidth = nWidth;
+	//				interimg.mnHeight = nHeight;
+	//				interimg.mstrGroupId = strGroupId;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			listImage.put(listImage.size(), new InteractiveImage(interactiveWeb, strTag, strImagePath, nX, nY, nWidth,
+	//					nHeight, strGroupId));
+	//		}
+	//	}
 
-	public void addInteractiveImageNotify(String strTag, Handler handler)
-	{
-		InteractiveImage interimg = getInteractiveImage(strTag);
-		if (null != interimg)
-		{
-			if (null != handler)
-			{
-				interimg.notifyHandler = handler;
-			}
-		}
-		else
-		{
-			listImage.put(listImage.size(), new InteractiveImage(strTag, handler));
-		}
-	}
+	//	public void addInteractiveImageNotify(String strTag, Handler handler)
+	//	{
+	//		InteractiveImage interimg = getInteractiveImage(strTag);
+	//		if (null != interimg)
+	//		{
+	//			if (null != handler)
+	//			{
+	//				interimg.notifyHandler = handler;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			listImage.put(listImage.size(), new InteractiveImage(strTag, handler));
+	//		}
+	//	}
 
-	private InteractiveImage getInteractiveImage(String strTag)
-	{
-		if (null == strTag)
-		{
-			return null;
-		}
-		for (int i = 0; i < listImage.size(); ++i)
-		{
-			if (listImage.get(i).mstrTag.equals(strTag))
-			{
-				return listImage.get(i);
-			}
-		}
-		return null;
-	}
+	//	private InteractiveImage getInteractiveImage(String strTag)
+	//	{
+	//		if (null == strTag)
+	//		{
+	//			return null;
+	//		}
+	//		for (int i = 0; i < listImage.size(); ++i)
+	//		{
+	//			if (listImage.get(i).mstrTag.equals(strTag))
+	//			{
+	//				return listImage.get(i);
+	//			}
+	//		}
+	//		return null;
+	//	}
 
 	private void handleReset(int nObjectType, String strTag)
 	{
@@ -571,13 +578,13 @@ public class InteractiveHandler
 									{
 										switch (msg.what)
 										{
-										case EventMessage.MSG_SHOW_ITEM:
-											showItem(msg.arg1, (String) msg.obj);
-											break;
-										case EventMessage.MSG_IMAGE_CLICK:
-											mstrRemoveImage = (String) msg.obj;
-											postDelayed(runRemoveImage, 100);
-											break;
+										//										case EventMessage.MSG_SHOW_ITEM:
+										//											showItem(msg.arg1, (String) msg.obj);
+										//											break;
+										//										case EventMessage.MSG_IMAGE_CLICK:
+										//											mstrRemoveImage = (String) msg.obj;
+										//											postDelayed(runRemoveImage, 100);
+										//											break;
 										case EventMessage.MSG_VIDEO_PLAY:
 											playVideo(msg.arg1, (String) msg.obj);
 											break;

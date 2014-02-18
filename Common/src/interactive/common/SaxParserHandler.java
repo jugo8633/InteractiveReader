@@ -4,11 +4,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+@SuppressWarnings("unused")
 public class SaxParserHandler extends DefaultHandler
 {
-
 	private boolean		mbPackage			= false;
-
 	private boolean		mbMetaData			= false;
 	private boolean		mbEditor			= false;
 	private boolean		mbVersion_id		= false;
@@ -17,22 +16,16 @@ public class SaxParserHandler extends DefaultHandler
 	private boolean		mbPublisher			= false;
 	private boolean		mbPlugin			= false;
 	private boolean		mbPlugin_version	= false;
-
 	private boolean		mbManifest			= false;
 	private boolean		mbLandscape			= false;
 	private boolean		mbPortrait			= false;
 	private boolean		mbResources			= false;
-
 	private boolean		mbFlow				= false;
 	private boolean		mbChapter			= false;
 	private boolean		mbPage				= false;
-
 	private boolean		mbUncharted			= false;
-
 	private boolean		mbItem				= false;
-
 	private ConfigData	theConfigData		= null;
-
 	private int			mnChapterKey		= Type.INVALID;
 
 	public SaxParserHandler()

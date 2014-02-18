@@ -113,7 +113,8 @@ public class GoogleMapView extends RelativeLayout
 		}
 		ft.add(0, googleMapFragment, strTag);
 
-		ft.commit();
+		//ft.commit();
+		ft.commitAllowingStateLoss();
 
 		mdLatitude = dLatitude;
 		mdLongitude = dLongitude;

@@ -26,7 +26,7 @@ public class InteractivePostcard extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll,int nChapter, int nPage)
 			throws JSONException
 	{
 		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_POSTCARD))

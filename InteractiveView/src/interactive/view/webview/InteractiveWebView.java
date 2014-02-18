@@ -39,7 +39,7 @@ public class InteractiveWebView extends WebView
 	private int					mnChapter			= Type.INVALID; // self chapter
 	private int					mnPage				= Type.INVALID; // self page
 	private GestureDetector		gestureDetector		= null;
-	private String				mstrBackgroundImage	= null;
+//	private String				mstrBackgroundImage	= null;
 	private boolean				mbAutoPlay			= false;
 
 	public InteractiveWebView(Context context)
@@ -146,7 +146,6 @@ public class InteractiveWebView extends WebView
 			if (url.startsWith("http:") || url.startsWith("https:")
 					|| (mbOverLoadUrl && url.startsWith("file:") && FileHandler.isFileExist(strFilePath)))
 			{
-				//Intent intent = new Intent("interactive.view.webview.WebBrowserActivity.LAUNCH");
 				Intent intent = new Intent(getContext(), WebBrowserActivity.class);
 				intent.putExtra(EXTRA_URL, url);
 				getContext().startActivity(intent);
@@ -194,7 +193,7 @@ public class InteractiveWebView extends WebView
 	{
 		mnChapter = nChapter;
 		mnPage = nPage;
-		Global.addActiveNotify(nChapter, nPage, webHandler);
+		Global.addActiveNotify(nChapter, nPage, selfHandler);
 	}
 
 	public int getChapter()
@@ -212,70 +211,15 @@ public class InteractiveWebView extends WebView
 		this.setLayoutParams(new RelativeLayout.LayoutParams(nWidth, nHeight));
 	}
 
-	//	public void setItemHide(String strTag, String strGroupId)
+	//	public void setBackgroundImage(String strImage)
 	//	{
-	//		if (null == listInteractiveImage)
-	//		{
-	//			listInteractiveImage = new SparseArray<InteractiveImage>();
-	//		}
-	//		listInteractiveImage.put(listInteractiveImage.size(), new InteractiveImage(strTag, strGroupId));
+	//		mstrBackgroundImage = strImage;
 	//	}
-
-	//	private String getGroupId(String strTag)
+	//
+	//	public String getBackgroundImage()
 	//	{
-	//		for (int i = 0; i < listInteractiveImage.size(); ++i)
-	//		{
-	//			if (listInteractiveImage.get(i).mstrImageTag.equals(strTag))
-	//			{
-	//				return listInteractiveImage.get(i).mstrGroupId;
-	//			}
-	//		}
-	//		return null;
+	//		return mstrBackgroundImage;
 	//	}
-
-	//	public void hideItem(String strExpItem)
-	//	{
-	//		if (null == listInteractiveImage)
-	//		{
-	//			return;
-	//		}
-	//		String strGroupId = getGroupId(strExpItem);
-	//		for (int i = 0; i < listInteractiveImage.size(); ++i)
-	//		{
-	//			for (int j = 0; j < this.getChildCount(); ++j)
-	//			{
-	//				if (null == this.getChildAt(j).getTag()
-	//						|| (null != strExpItem && this.getChildAt(j).getTag().equals(strExpItem)))
-	//				{
-	//					continue;
-	//				}
-	//				if (this.getChildAt(j).getTag().equals(listInteractiveImage.get(i).mstrImageTag))
-	//				{
-	//					if (null == strGroupId)
-	//					{
-	//						this.getChildAt(j).setVisibility(View.GONE);
-	//					}
-	//					else
-	//					{
-	//						if (listInteractiveImage.get(i).mstrGroupId.equals(strGroupId))
-	//						{
-	//							this.getChildAt(j).setVisibility(View.GONE);
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
-	public void setBackgroundImage(String strImage)
-	{
-		mstrBackgroundImage = strImage;
-	}
-
-	public String getBackgroundImage()
-	{
-		return mstrBackgroundImage;
-	}
 
 	public void setAutoPlay(boolean bAutoPlay)
 	{
@@ -367,7 +311,7 @@ public class InteractiveWebView extends WebView
 
 														};
 
-	private Handler				webHandler				= new Handler()
+	private Handler				selfHandler				= new Handler()
 														{
 															@Override
 															public void handleMessage(Message msg)
@@ -389,7 +333,7 @@ public class InteractiveWebView extends WebView
 
 	public Handler getWebHandler()
 	{
-		return webHandler;
+		return selfHandler;
 	}
 
 }

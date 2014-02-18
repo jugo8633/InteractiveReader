@@ -2,10 +2,7 @@ package interactive.view.animation.flipcard;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 
 public class Rotate3dAnimation extends Animation

@@ -30,8 +30,8 @@ public class InteractiveSlideshow extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_SLIDESHOW))
 		{
@@ -96,9 +96,9 @@ public class InteractiveSlideshow extends InteractiveObject
 					}
 
 					SlideshowView slideshow = createSlideshow(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
-							ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX),
-							ScaleSize(jsonHeader.mnY), jsonBody.mstrBackground, jsonBody.mnStyle,
-							jsonBody.mbFullScreen, jsonBody.mnItemCount, listViewItem);
+							ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+							jsonBody.mstrBackground, jsonBody.mnStyle, jsonBody.mbFullScreen, jsonBody.mnItemCount,
+							listViewItem);
 
 					webView.addView(slideshow);
 

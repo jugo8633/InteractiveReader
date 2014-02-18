@@ -377,35 +377,6 @@ public class ReaderActivity extends Activity
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		}
 
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical"))
-		//		{
-		//			nBookOrientation = Configuration.ORIENTATION_PORTRAIT;
-		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		//		}
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("horizontal"))
-		//		{
-		//			nBookOrientation = Configuration.ORIENTATION_LANDSCAPE;
-		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		//		}
-		//		if (configData.thePackage.flow.strBrowsing_mode.equalsIgnoreCase("vertical/horizontal"))
-		//		{
-		//			nBookOrientation = Configuration.ORIENTATION_UNDEFINED;
-		//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-		//
-		//			// we lock first, when wen load page
-		//			Device device = new Device(this);
-		//			int nOrientation = device.getOrientation();
-		//			device = null;
-		//			if (Configuration.ORIENTATION_LANDSCAPE == nOrientation)
-		//			{
-		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		//			}
-		//			else
-		//			{
-		//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		//			}
-		//		}
-
 		SparseArray<PageData.Data> listPageData = null;
 		PageData pageData = null;
 		for (int nChapter = 0; nChapter < configData.thePackage.flow.chaptersSize(); ++nChapter)
@@ -430,7 +401,7 @@ public class ReaderActivity extends Activity
 							data.bIsFavorite = true;
 						}
 					}
-					dpage.setPageData(pageReader.getHandler(), data);
+					dpage.setPageData(pageReader.getHandler(), data, nChapter, nPage);
 					listPageData.put(nPage, data);
 				}
 				else

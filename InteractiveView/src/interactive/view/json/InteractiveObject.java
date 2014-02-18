@@ -531,8 +531,8 @@ public abstract class InteractiveObject
 		super.finalize();
 	}
 
-	public abstract boolean createInteractive(final InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException;
+	public abstract boolean createInteractive(final InteractiveWebView webView, String strBookPath, JSONObject jsonAll,
+			int nChapter, int nPage) throws JSONException;
 
 	public Context getContext()
 	{

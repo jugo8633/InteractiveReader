@@ -20,8 +20,8 @@ public class InteractiveWebPage extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		String strKey = null;
 		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_WEB_PAGE))

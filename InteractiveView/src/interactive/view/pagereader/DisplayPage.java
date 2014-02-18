@@ -35,6 +35,9 @@ public class DisplayPage extends RelativeLayout
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
 	private DisplayMetrics		metrics			= null;
+	private int					mnChapter		= Type.INVALID;
+	private int					mnPage			= Type.INVALID;
+	private String				mstrBackground	= null;
 
 	public DisplayPage(Context context)
 	{
@@ -66,7 +69,7 @@ public class DisplayPage extends RelativeLayout
 		mstrBookPath = strPath;
 	}
 
-	public void setPageData(final Handler handler, PageData.Data pageData)
+	public void setPageData(final Handler handler, PageData.Data pageData, int nChapter, int nPage)
 	{
 		Device device = new Device(theContext);
 		int nDisplayWidth = device.getDeviceWidth();
@@ -75,6 +78,7 @@ public class DisplayPage extends RelativeLayout
 
 		int nWebWidth = pageData.nWidth;
 		int nWebHeight = pageData.nHeight;
+		mstrBackground = pageData.strShapLarge;
 
 		if (Type.INVALID != nDisplayWidth && nDisplayWidth < pageData.nWidth)
 		{
@@ -93,10 +97,9 @@ public class DisplayPage extends RelativeLayout
 		exdWebView.setDisplaySize(getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
-		exdWebView.setBackgroundImage(pageData.strShapLarge);
-		
+
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
-		setJson(jsonData);
+		setJson(jsonData, nChapter, nPage);
 
 		pageData.extWebView = exdWebView;
 
@@ -108,7 +111,7 @@ public class DisplayPage extends RelativeLayout
 		return exdWebView;
 	}
 
-	public void setJson(String strJsonPath)
+	public void setJson(String strJsonPath, int nChapter, int nPage)
 	{
 		if (!FileHandler.isFileExist(strJsonPath))
 		{
@@ -146,56 +149,58 @@ public class DisplayPage extends RelativeLayout
 			if (!jsonAll.isNull(InteractiveObject.JSON_WEB_PAGE))
 			{
 				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(theContext);
-				interactiveWebPage.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveWebPage.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveWebPage = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_POSTCARD))
 			{
 				InteractivePostcard interactivePostcard = new InteractivePostcard(theContext);
-				interactivePostcard.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactivePostcard.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactivePostcard = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_SLIDESHOW))
 			{
 				InteractiveSlideshow interactiveSlideshow = new InteractiveSlideshow(theContext);
-				interactiveSlideshow.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveSlideshow.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveSlideshow = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_MAP))
 			{
 				InteractiveMap interactiveMap = new InteractiveMap(theContext);
-				interactiveMap.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveMap.setBackground(mstrBackground);
+				interactiveMap.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveMap = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_VIDEO))
 			{
 				InteractiveVideo interactiveVideo = new InteractiveVideo(theContext);
-				interactiveVideo.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveVideo.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveVideo = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_IMAGE))
 			{
 				InteractiveImage interactiveImage = new InteractiveImage(theContext);
-				interactiveImage.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveImage.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveImage = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_SCROLLABLE))
 			{
 				InteractiveScrollable interactiveScrollable = new InteractiveScrollable(theContext);
-				interactiveScrollable.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveScrollable.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveScrollable = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_BUTTON))
 			{
 				InteractiveButton interactiveButton = new InteractiveButton(theContext);
-				interactiveButton.createInteractive(exdWebView, mstrBookPath, jsonAll);
+				interactiveButton.setBackground(mstrBackground);
+				interactiveButton.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveButton = null;
 			}
 

@@ -24,8 +24,8 @@ public class InteractiveScrollable extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_SCROLLABLE))
 		{
@@ -43,7 +43,7 @@ public class InteractiveScrollable extends InteractiveObject
 				if (jsonHeader.mbIsVisible)
 				{
 					ScrollableView scrollableImageView = new ScrollableView(getContext());
-					scrollableImageView.setPosition(webView.getChapter(), webView.getPage());
+					scrollableImageView.setPosition(nChapter, nPage);
 					scrollableImageView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 					scrollableImageView.setImage(jsonHeader.mstrName, strBookPath + jsonHeader.mstrSrc,

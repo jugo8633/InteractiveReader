@@ -1,5 +1,6 @@
 package interactive.view.json;
 
+import interactive.common.BitmapHandler;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.InteractiveImageView;
 import interactive.view.image.ScalableImageView;
@@ -10,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.SparseArray;
 import android.view.View;
@@ -28,8 +30,8 @@ public class InteractiveImage extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll)
-			throws JSONException
+	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		String strKey = null;
 
@@ -50,56 +52,51 @@ public class InteractiveImage extends InteractiveObject
 			JsonHeader jsonHeader = new JsonHeader();
 			if (parseJsonHeader(jsonImage, jsonHeader))
 			{
-				strKey = checkJsonGesture(jsonImage);
-				if (null != strKey)
+				if (jsonHeader.mbIsVisible)
 				{
-					// image include gesture
-					ScalableImageView imgView = new ScalableImageView(getContext());
-					imgView.setTag(jsonHeader.mstrName);
-					imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
-					imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-					imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-					JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
-					for (int j = 0; j < jsonArrayGesture.length(); ++j)
+					strKey = checkJsonGesture(jsonImage);
+					if (null != strKey)
 					{
-						JsonGesture jsonGesture = new JsonGesture();
-						JSONObject gesture = jsonArrayGesture.getJSONObject(j);
-						if (parseJsonGesture(gesture, jsonGesture))
+						/** image include gesture , Event Image */
+						ScalableImageView imgView = new ScalableImageView(getContext());
+						imgView.setTag(jsonHeader.mstrName);
+						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
+						imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
+						for (int j = 0; j < jsonArrayGesture.length(); ++j)
 						{
-							imgView.setImageScaleMode(jsonGesture.mnType, jsonGesture.mnEvent, jsonGesture.mnDisplay);
+							JsonGesture jsonGesture = new JsonGesture();
+							JSONObject gesture = jsonArrayGesture.getJSONObject(j);
+							if (parseJsonGesture(gesture, jsonGesture))
+							{
+								imgView.setImageScaleMode(jsonGesture.mnType, jsonGesture.mnEvent,
+										jsonGesture.mnDisplay);
+							}
+							jsonGesture = null;
 						}
-						jsonGesture = null;
-					}
-					webView.addView(imgView);
-					if (!jsonHeader.mbIsVisible)
-					{
-						imgView.setVisibility(View.GONE);
-					}
-					imgView = null;
-				}
-				else
-				{
-					if (!jsonHeader.mbIsVisible)
-					{
-						//						Global.interactiveHandler.addInteractiveImage(webView, jsonHeader.mstrName,
-						//								(strBookPath + jsonHeader.mstrSrc), ScaleSize(jsonHeader.mnX),
-						//								ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
-						//								ScaleSize(jsonHeader.mnHeight), jsonHeader.mstrGroupId);
-
+						webView.addView(imgView);
+						if (!jsonHeader.mbIsVisible)
+						{
+							imgView.setVisibility(View.GONE);
+						}
+						imgView = null;
 					}
 					else
 					{
 						InteractiveImageView imgView = new InteractiveImageView(getContext());
 						imgView.setTag(jsonHeader.mstrName);
-						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
+						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
+								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						imgView.setImageBitmap(bitmap);
+						//imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
 						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 						imgView.setGroupId(jsonHeader.mstrGroupId);
 						webView.addView(imgView);
 						imgView = null;
 					}
-
 				}
 			}
 			jsonHeader = null;

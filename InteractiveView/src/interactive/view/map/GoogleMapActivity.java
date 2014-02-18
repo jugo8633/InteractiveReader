@@ -1,9 +1,12 @@
 package interactive.view.map;
 
+import interactive.common.BitmapHandler;
+import interactive.common.Device;
 import interactive.common.Logs;
 import interactive.view.global.Global;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
@@ -24,6 +27,7 @@ public class GoogleMapActivity extends Activity
 	public static final String	EXTRA_WIDTH				= "Width";
 	public static final String	EXTRA_HEIGHT			= "Height";
 	public static final String	EXTRA_BACKGROUND_IMAGE	= "Background";
+	private Bitmap				mBitmapBackground		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -54,9 +58,14 @@ public class GoogleMapActivity extends Activity
 		// add background image
 		if (null != strBackgroundImage)
 		{
+			Device device = new Device(this);
+			int nDisplayWidth = device.getDeviceWidth();
+			int nDisplayHeight = device.getDeviceHeight();
+			device = null;
 			ImageView backImage = new ImageView(this);
 			backImage.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			backImage.setImageURI(Uri.parse(strBackgroundImage));
+			mBitmapBackground = BitmapHandler.readBitmap(this, strBackgroundImage, nDisplayWidth, nDisplayHeight);
+			backImage.setImageBitmap(mBitmapBackground);
 			backImage.setAlpha(0.30f);
 			rlMain.addView(backImage);
 		}
@@ -78,5 +87,20 @@ public class GoogleMapActivity extends Activity
 				GoogleMapActivity.this.finish();
 			}
 		});
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		if (null != mBitmapBackground)
+		{
+			if (!mBitmapBackground.isRecycled())
+			{
+				mBitmapBackground.recycle();
+			}
+			mBitmapBackground = null;
+		}
+		Logs.showTrace("Google map activity destroy");
+		super.onDestroy();
 	}
 }

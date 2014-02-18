@@ -4,7 +4,10 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
+import interactive.view.global.Global;
+import interactive.view.map.GoogleMapActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
@@ -71,6 +74,18 @@ public class InteractiveButtonHandler
 		}
 	}
 
+	public void addMapData(String strButtonTag, String strMapTag, int nMapType, double dLatitude, double dLongitude,
+			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage,
+			boolean bIsVisible)
+	{
+		InteractiveButtonData buttonData = getButtonData(strButtonTag);
+		if (null != buttonData)
+		{
+			buttonData.addMapData(strMapTag, nMapType, dLatitude, dLongitude, nZoomLevel, strMarker, nX, nY, nWidth,
+					nHeight, strBackgroundImage, bIsVisible);
+		}
+	}
+
 	public void addEventData(String strButtonTag, int nType, String strTypeName, int nEvent, String strEventName,
 			int nTargetType, String strTargetID, int nDisplay)
 	{
@@ -102,7 +117,7 @@ public class InteractiveButtonHandler
 		return null;
 	}
 
-	public void handleButtonEvent(String strButtonTag)
+	synchronized public void handleButtonEvent(String strButtonTag)
 	{
 		InteractiveButtonData buttonData = getButtonData(strButtonTag);
 		if (null == buttonData)
@@ -143,7 +158,7 @@ public class InteractiveButtonHandler
 		return null;
 	}
 
-	private void resetButton(String strButtonTag, String strGroupId)
+	synchronized private void resetButton(String strButtonTag, String strGroupId)
 	{
 		for (int i = 0; i < listButton.size(); ++i)
 		{
@@ -215,6 +230,7 @@ public class InteractiveButtonHandler
 			showImage(buttonData, strItemTag);
 			break;
 		case InteractiveDefine.OBJECT_CATEGORY_MAP:
+			showMap(buttonData, strItemTag);
 			break;
 		case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
 			break;
@@ -228,37 +244,91 @@ public class InteractiveButtonHandler
 			return;
 		}
 		Logs.showTrace("Button event show image tag=" + strImageTag);
+
+		InteractiveImageData imageData = getImageData(buttonData, strImageTag);
+		if (null != imageData && null == imageData.mImageView)
+		{
+			imageData.mBitmapSrc = BitmapHandler.readBitmap(buttonData.getContext(), imageData.mstrSrc,
+					imageData.mnWidth, imageData.mnHeight);
+			imageData.mImageView = new ImageView(buttonData.getContext());
+			imageData.mImageView.setTag(imageData.mstrName);
+			imageData.mImageView.setScaleType(ScaleType.CENTER_CROP);
+			imageData.mImageView.setImageBitmap(imageData.mBitmapSrc);
+			imageData.mImageView.setX(imageData.mnX);
+			imageData.mImageView.setY(imageData.mnY);
+			buttonData.getContainer().addView(imageData.mImageView);
+			imageData.mImageView.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					EventHandler.notify(selfHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, new Tags(buttonData.mstrTag,
+							(String) view.getTag()));
+					resetButton(buttonData.mstrTag);
+				}
+			});
+		}
+	}
+
+	private void showMap(final InteractiveButtonData buttonData, String strMapTag)
+	{
+		if (null == buttonData.listMapData)
+		{
+			return;
+		}
+		Logs.showTrace("Button event show map tag=" + strMapTag);
+
+		if (null == Global.theActivity)
+		{
+			Logs.showTrace("Invalid Activity");
+			return;
+		}
+		InteractiveGoogleMapData googleMap = getMapData(buttonData, strMapTag);
+		if (null != googleMap)
+		{
+			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
+			intent.putExtra(GoogleMapActivity.EXTRA_TAG, googleMap.mstrTag);
+			intent.putExtra(GoogleMapActivity.EXTRA_MAP_TYPE, googleMap.mnMapType);
+			intent.putExtra(GoogleMapActivity.EXTRA_LATITUDE, googleMap.mdLatitude);
+			intent.putExtra(GoogleMapActivity.EXTRA_LONGITUDE, googleMap.mdLongitude);
+			intent.putExtra(GoogleMapActivity.EXTRA_ZOOM_LEVEL, googleMap.mnZoomLevel);
+			intent.putExtra(GoogleMapActivity.EXTRA_MARKER, googleMap.mstrMarker);
+			intent.putExtra(GoogleMapActivity.EXTRA_X, googleMap.mnX);
+			intent.putExtra(GoogleMapActivity.EXTRA_Y, googleMap.mnY);
+			intent.putExtra(GoogleMapActivity.EXTRA_WIDTH, googleMap.mnWidth);
+			intent.putExtra(GoogleMapActivity.EXTRA_HEIGHT, googleMap.mnHeight);
+			intent.putExtra(GoogleMapActivity.EXTRA_BACKGROUND_IMAGE, googleMap.mstrBackgroundImage);
+			Global.theActivity.startActivity(intent);
+		}
+	}
+
+	private InteractiveGoogleMapData getMapData(InteractiveButtonData buttonData, String strMapTag)
+	{
+		for (int i = 0; i < buttonData.listMapData.size(); ++i)
+		{
+			if (buttonData.listMapData.get(i).mstrTag.equals(strMapTag))
+			{
+				return buttonData.listMapData.get(i);
+			}
+		}
+		return null;
+	}
+
+	private InteractiveImageData getImageData(InteractiveButtonData buttonData, String strImageTag)
+	{
+		if (null == buttonData || null == strImageTag || null == buttonData.listImageData)
+		{
+			return null;
+		}
+
 		for (int i = 0; i < buttonData.listImageData.size(); ++i)
 		{
 			if (buttonData.listImageData.get(i).mstrName.equals(strImageTag))
 			{
-				if (null != buttonData.listImageData.get(i).mImageView)
-				{
-					continue;
-				}
-				buttonData.listImageData.get(i).mBitmapSrc = BitmapHandler.readBitmap(buttonData.getContext(),
-						buttonData.listImageData.get(i).mstrSrc, buttonData.listImageData.get(i).mnWidth,
-						buttonData.listImageData.get(i).mnHeight);
-				buttonData.listImageData.get(i).mImageView = new ImageView(buttonData.getContext());
-				buttonData.listImageData.get(i).mImageView.setTag(buttonData.listImageData.get(i).mstrName);
-				buttonData.listImageData.get(i).mImageView.setScaleType(ScaleType.CENTER_CROP);
-				buttonData.listImageData.get(i).mImageView.setImageBitmap(buttonData.listImageData.get(i).mBitmapSrc);
-				buttonData.listImageData.get(i).mImageView.setX(buttonData.listImageData.get(i).mnX);
-				buttonData.listImageData.get(i).mImageView.setY(buttonData.listImageData.get(i).mnY);
-				buttonData.getContainer().addView(buttonData.listImageData.get(i).mImageView);
-				buttonData.listImageData.get(i).mImageView.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View view)
-					{
-						EventHandler.notify(selfHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, new Tags(
-								buttonData.mstrTag, (String) view.getTag()));
-						resetButton(buttonData.mstrTag);
-						resetButton(buttonData.mstrTag, buttonData.mstrGroupId);
-					}
-				});
+				return buttonData.listImageData.get(i);
 			}
 		}
+		return null;
 	}
 
 	synchronized private void removeImage(String strButtonTag, String strImageTag)
@@ -271,21 +341,19 @@ public class InteractiveButtonHandler
 			return;
 		}
 
-		for (int i = 0; i < buttonData.listImageData.size(); ++i)
+		InteractiveImageData imageData = getImageData(buttonData, strImageTag);
+		if (null != imageData)
 		{
-			if (buttonData.listImageData.get(i).mstrName.equals(strImageTag))
+			buttonData.getContainer().removeView(imageData.mImageView);
+			if (null != imageData.mBitmapSrc)
 			{
-				buttonData.getContainer().removeView(buttonData.listImageData.get(i).mImageView);
-				if (null != buttonData.listImageData.get(i).mBitmapSrc)
+				if (!imageData.mBitmapSrc.isRecycled())
 				{
-					if (!buttonData.listImageData.get(i).mBitmapSrc.isRecycled())
-					{
-						buttonData.listImageData.get(i).mBitmapSrc.recycle();
-					}
-					buttonData.listImageData.get(i).mBitmapSrc = null;
+					imageData.mBitmapSrc.recycle();
 				}
-				buttonData.listImageData.get(i).mImageView = null;
+				imageData.mBitmapSrc = null;
 			}
+			imageData.mImageView = null;
 		}
 	}
 
