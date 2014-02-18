@@ -3,7 +3,6 @@ package interactive.view.handler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
-import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.image.InteractiveImageView;
 import interactive.view.map.GoogleMapActivity;
@@ -24,79 +23,17 @@ import android.widget.RelativeLayout;
 
 public class InteractiveHandler
 {
-	private Runnable				runRemoveImage;
-	private String					mstrRemoveImage		= null;
-	private static YoutubeView		youtubeView			= null;
-	private static VideoPlayer		videoView			= null;
-	private SparseArray<Postcard>	listPostcard		= null;
-	private String					mstrPostcardDragTag	= null;
-	private boolean					mbDraging			= false;
-
-	public class Button
-	{
-		public String								mstrTag			= null;
-		public String								mstrGroupId		= null;
-		public SparseArray<InteractiveImageData>	listImageData	= null;
-
-		public Button()
-		{
-			listImageData = new SparseArray<InteractiveImageData>();
-		}
-	}
-
-	public class Event
-	{
-		public int		mnType			= Type.INVALID;
-		public String	mstrTypeName	= null;
-		public int		mnEvent			= Type.INVALID;
-		public String	mstrEventName	= null;
-		public int		mnTargetType	= Type.INVALID;
-		public String	mstrTargetID	= null;
-		public int		mnDisplay		= Type.INVALID;
-
-		public Event(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
-				String strTargetID, int nDisplay)
-		{
-			mnType = nType;
-			mstrTypeName = strTypeName;
-			mnEvent = nEvent;
-			mstrEventName = strEventName;
-			mnTargetType = nTargetType;
-			mstrTargetID = strTargetID;
-			mnDisplay = nDisplay;
-		}
-	}
-
-	public class GoogleMap
-	{
-		public String	mstrTag				= null;
-		public int		mnMapType			= Type.INVALID;
-		public double	mdLatitude			= 0f;
-		public double	mdLongitude			= 0f;
-		public int		mnZoomLevel			= Type.INVALID;
-		public String	mstrMarker			= null;
-		public int		mnX					= 0;
-		public int		mnY					= 0;
-		public int		mnWidth				= LayoutParams.MATCH_PARENT;
-		public int		mnHeight			= LayoutParams.MATCH_PARENT;
-		public String	mstrBackgroundImage	= null;
-
-		public GoogleMap(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
-				String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage)
-		{
-			mstrTag = strTag;
-			mnMapType = nMapType;
-			mdLatitude = dLatitude;
-			mdLongitude = dLongitude;
-			mnZoomLevel = nZoomLevel;
-			mstrMarker = strMarker;
-			mnX = nX;
-			mnY = nY;
-			mnWidth = nWidth;
-			mnHeight = nHeight;
-			mstrBackgroundImage = strBackgroundImage;
-		}
-	}
+	private Runnable								runRemoveImage;
+	private String									mstrRemoveImage		= null;
+	private static YoutubeView						youtubeView			= null;
+	private static VideoPlayer						videoView			= null;
+	private SparseArray<Postcard>					listPostcard		= null;
+	private SparseArray<InteractiveGoogleMapData>	listGoogleMap		= null;
+	private SparseArray<InteractiveImage>			listImage			= null;
+	private SparseArray<InteractiveYoutubeData>		listYoutube			= null;
+	private SparseArray<InteractiveVideoData>		listLocalVideo		= null;
+	private String									mstrPostcardDragTag	= null;
+	private boolean									mbDraging			= false;
 
 	class InteractiveImage
 	{
@@ -132,60 +69,13 @@ public class InteractiveHandler
 		}
 	}
 
-	class YoutubeVideo
-	{
-		public RelativeLayout	mYoutubeLayout		= null;
-		public String			mstrTag				= null;
-		public boolean			mbIsCurrentPlayer	= false;
-		public String			mstrVideoSrc		= null;
-		public boolean			mbIsLoop			= false;
-		public boolean			mbShowController	= false;
-
-		public YoutubeVideo(RelativeLayout YoutubeLayout, String strTag, boolean bCurrentPlayer, String strVideoSrc,
-				boolean bLoop, boolean bController)
-		{
-			mYoutubeLayout = YoutubeLayout;
-			mstrTag = strTag;
-			mbIsCurrentPlayer = bCurrentPlayer;
-			mstrVideoSrc = strVideoSrc;
-			mbIsLoop = bLoop;
-			mbShowController = bController;
-		}
-	}
-
-	class LocalVideo
-	{
-		public RelativeLayout	mVideoLayout		= null;
-		public String			mstrTag				= null;
-		public boolean			mbIsCurrentPlayer	= false;
-		public String			mstrVideoSrc		= null;
-		public boolean			mbIsLoop			= false;
-		public boolean			mbShowController	= false;
-
-		public LocalVideo(RelativeLayout VideoLayout, String strTag, boolean bCurrentPlayer, String strVideoSrc,
-				boolean bLoop, boolean bController)
-		{
-			mVideoLayout = VideoLayout;
-			mstrTag = strTag;
-			mbIsCurrentPlayer = bCurrentPlayer;
-			mstrVideoSrc = strVideoSrc;
-			mbIsLoop = bLoop;
-			mbShowController = bController;
-		}
-	}
-
-	private SparseArray<GoogleMap>			listGoogleMap	= null;
-	private SparseArray<InteractiveImage>	listImage		= null;
-	private SparseArray<YoutubeVideo>		listYoutube		= null;
-	private SparseArray<LocalVideo>			listLocalVideo	= null;
-
 	public InteractiveHandler()
 	{
 		super();
-		listGoogleMap = new SparseArray<GoogleMap>();
+		listGoogleMap = new SparseArray<InteractiveGoogleMapData>();
 		listImage = new SparseArray<InteractiveImage>();
-		listYoutube = new SparseArray<YoutubeVideo>();
-		listLocalVideo = new SparseArray<LocalVideo>();
+		listYoutube = new SparseArray<InteractiveYoutubeData>();
+		listLocalVideo = new SparseArray<InteractiveVideoData>();
 		listPostcard = new SparseArray<Postcard>();
 		runRemoveImage = new Runnable()
 		{
@@ -297,8 +187,8 @@ public class InteractiveHandler
 	public void addGoogleMap(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
 			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage)
 	{
-		listGoogleMap.put(listGoogleMap.size(), new GoogleMap(strTag, nMapType, dLatitude, dLongitude, nZoomLevel,
-				strMarker, nX, nY, nWidth, nHeight, strBackgroundImage));
+		listGoogleMap.put(listGoogleMap.size(), new InteractiveGoogleMapData(strTag, nMapType, dLatitude, dLongitude,
+				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, strBackgroundImage));
 	}
 
 	public void addInteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX,
@@ -354,7 +244,8 @@ public class InteractiveHandler
 				break;
 			}
 		}
-		listLocalVideo.put(nKey, new LocalVideo(VideoLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop, bController));
+		listLocalVideo.put(nKey, new InteractiveVideoData(VideoLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
+				bController));
 	}
 
 	public void addYoutubeVideo(RelativeLayout YoutubeLayout, String strTag, boolean bCurrentPlayer,
@@ -370,7 +261,8 @@ public class InteractiveHandler
 				break;
 			}
 		}
-		listYoutube.put(nKey, new YoutubeVideo(YoutubeLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop, bController));
+		listYoutube.put(nKey, new InteractiveYoutubeData(YoutubeLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
+				bController));
 	}
 
 	private InteractiveImage getInteractiveImage(String strTag)
@@ -396,7 +288,7 @@ public class InteractiveHandler
 			Logs.showTrace("Invalid Activity");
 			return;
 		}
-		GoogleMap googleMap = findGoogleMap(strTag);
+		InteractiveGoogleMapData googleMap = findGoogleMap(strTag);
 		if (null != googleMap)
 		{
 			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
@@ -416,7 +308,7 @@ public class InteractiveHandler
 		}
 	}
 
-	private GoogleMap findGoogleMap(String strTag)
+	private InteractiveGoogleMapData findGoogleMap(String strTag)
 	{
 		for (int i = 0; i < listGoogleMap.size(); ++i)
 		{
