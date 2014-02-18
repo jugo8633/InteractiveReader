@@ -1,6 +1,6 @@
 package interactive.view.handler;
 
-public class InteractiveEvent
+public class InteractiveDefine
 {
 	// �Ϥ��զ欰(�D��)
 	public static final int	IMAGE_GESTURE_LONG_PRESS			= 100;	// ���
@@ -64,7 +64,7 @@ public class InteractiveEvent
 	public static final int	VIDEO_TYPE_TOUTUBE					= 1;	// youtube
 	public static final int	VIDEO_TYPE_URL						= 2;	// �����v��
 
-	public InteractiveEvent()
+	public InteractiveDefine()
 	{
 		super();
 		// TODO Auto-generated constructor stub

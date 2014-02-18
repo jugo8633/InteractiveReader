@@ -26,8 +26,6 @@ public class ButtonView extends ImageView
 	private String				mstrGroupId		= null;
 	private Handler				notifyHandler	= null;
 	private SparseArray<Event>	listEvent		= null;
-	private int					mnChapter		= Type.INVALID;
-	private int					mnPage			= Type.INVALID;
 
 	class ImageSrc
 	{
@@ -97,8 +95,6 @@ public class ButtonView extends ImageView
 
 	public void setPosition(int nChapter, int nPage)
 	{
-		mnChapter = nChapter;
-		mnPage = nPage;
 		Global.addActiveNotify(nChapter, nPage, buttonHandler);
 	}
 
@@ -113,6 +109,12 @@ public class ButtonView extends ImageView
 
 	public void setImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
 	{
+		if (null != imageSrc)
+		{
+			imageSrc.mBitmapSrc.recycle();
+			imageSrc.mBitmapDown.recycle();
+			imageSrc.mBitmapUp.recycle();
+		}
 		imageSrc = null;
 		imageSrc = new ImageSrc(strSrc, strTouchDown, strTouchUp, nWidth, nHeight);
 		this.setImageBitmap(imageSrc.mBitmapSrc);
@@ -140,7 +142,7 @@ public class ButtonView extends ImageView
 		this.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 	}
 
-	private void setButtonClickType(int nClickType)
+	public void setButtonClickType(int nClickType)
 	{
 		switch (nClickType)
 		{
@@ -162,7 +164,6 @@ public class ButtonView extends ImageView
 		{
 			Global.interactiveHandler.addInteractiveImageNotify(strTargetID, buttonHandler);
 		}
-		setButtonClickType(nType);
 	}
 
 	public void setShowItem(String strTagName)

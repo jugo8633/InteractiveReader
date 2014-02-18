@@ -1,7 +1,7 @@
 package interactive.view.json;
 
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveEvent;
+import interactive.view.handler.InteractiveDefine;
 import interactive.view.map.GoogleMapView;
 import interactive.view.webview.InteractiveWebView;
 
@@ -46,13 +46,13 @@ public class InteractiveMap extends InteractiveObject
 				int nType = GoogleMap.MAP_TYPE_NORMAL;
 				switch (jsonBody.appearance.mnMapType)
 				{
-				case InteractiveEvent.MAP_TYPE_NORMAL:
+				case InteractiveDefine.MAP_TYPE_NORMAL:
 					nType = GoogleMap.MAP_TYPE_NORMAL;
 					break;
-				case InteractiveEvent.MAP_TYPE_SATELLITE:
+				case InteractiveDefine.MAP_TYPE_SATELLITE:
 					nType = GoogleMap.MAP_TYPE_SATELLITE;
 					break;
-				case InteractiveEvent.MAP_TYPE_MIX:
+				case InteractiveDefine.MAP_TYPE_MIX:
 					nType = GoogleMap.MAP_TYPE_HYBRID;
 					break;
 				}

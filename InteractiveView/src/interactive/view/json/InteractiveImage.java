@@ -1,6 +1,6 @@
 package interactive.view.json;
 
-import interactive.view.global.Global;
+import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.InteractiveImageView;
 import interactive.view.image.ScalableImageView;
 import interactive.view.webview.InteractiveWebView;
@@ -82,10 +82,10 @@ public class InteractiveImage extends InteractiveObject
 				{
 					if (!jsonHeader.mbIsVisible)
 					{
-						Global.interactiveHandler.addInteractiveImage(webView, jsonHeader.mstrName,
-								(strBookPath + jsonHeader.mstrSrc), ScaleSize(jsonHeader.mnX),
-								ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
-								ScaleSize(jsonHeader.mnHeight), jsonHeader.mstrGroupId);
+						//						Global.interactiveHandler.addInteractiveImage(webView, jsonHeader.mstrName,
+						//								(strBookPath + jsonHeader.mstrSrc), ScaleSize(jsonHeader.mnX),
+						//								ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
+						//								ScaleSize(jsonHeader.mnHeight), jsonHeader.mstrGroupId);
 
 					}
 					else
@@ -129,9 +129,9 @@ public class InteractiveImage extends InteractiveObject
 			if (parseJsonHeader(jsonImage, jsonHeader))
 			{
 				listImageData.put(listImageData.size(), new InteractiveImageData(jsonHeader.mstrName,
-						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight),
-						ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc,
-						jsonHeader.mstrGroupId));
+						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX),
+						ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonHeader.mstrGroupId,
+						jsonHeader.mbIsVisible));
 			}
 		}
 		return true;

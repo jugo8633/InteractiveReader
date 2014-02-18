@@ -2,7 +2,7 @@ package interactive.view.json;
 
 import interactive.common.Logs;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveEvent;
+import interactive.view.handler.InteractiveDefine;
 import interactive.view.video.VideoPlayer;
 import interactive.view.webview.InteractiveWebView;
 import interactive.view.youtube.YoutubeFrameLayout;
@@ -54,13 +54,13 @@ public class InteractiveVideo extends InteractiveObject
 				{
 					switch (jsonBody.mnVideoType)
 					{
-					case InteractiveEvent.VIDEO_TYPE_LOCAL:
+					case InteractiveDefine.VIDEO_TYPE_LOCAL:
 						playLocalVideo(jsonHeader, jsonBody, webView, strBookPath);
 						break;
-					case InteractiveEvent.VIDEO_TYPE_TOUTUBE:
+					case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
 						playYoutubeVideo(jsonHeader, jsonBody, webView, strBookPath);
 						break;
-					case InteractiveEvent.VIDEO_TYPE_URL:
+					case InteractiveDefine.VIDEO_TYPE_URL:
 						playUrlVideo(jsonHeader, jsonBody, webView, strBookPath);
 						break;
 					default:
@@ -150,13 +150,13 @@ public class InteractiveVideo extends InteractiveObject
 			{
 				switch (jsonBody.mnVideoType)
 				{
-				case InteractiveEvent.VIDEO_TYPE_LOCAL:
+				case InteractiveDefine.VIDEO_TYPE_LOCAL:
 					strMediaSrc = strBookPath + jsonBody.mstrVideoSrc;
 					break;
-				case InteractiveEvent.VIDEO_TYPE_TOUTUBE:
+				case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
 					strMediaSrc = jsonBody.mstrVideoSrc;
 					break;
-				case InteractiveEvent.VIDEO_TYPE_URL:
+				case InteractiveDefine.VIDEO_TYPE_URL:
 					strMediaSrc = jsonBody.mstrVideoSrc;
 					break;
 				default:

@@ -2,7 +2,8 @@ package interactive.view.json;
 
 import interactive.common.Type;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveEvent;
+import interactive.view.handler.InteractiveDefine;
+import interactive.view.handler.InteractiveImageData;
 import interactive.view.slideshow.SlideshowView;
 import interactive.view.slideshow.SlideshowViewItem;
 import interactive.view.webview.InteractiveWebView;
@@ -70,7 +71,7 @@ public class InteractiveSlideshow extends InteractiveObject
 
 						switch (item.mnType)
 						{
-						case InteractiveEvent.OBJECT_CATEGORY_IMAGE:
+						case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
 							nItemType = SlideshowViewItem.TYPE_IMAGE;
 							InteractiveImageData imageData = getImageData(listImageData, item.mstrTargetID);
 							if (null != imageData)
@@ -78,7 +79,7 @@ public class InteractiveSlideshow extends InteractiveObject
 								viewItem.setSlideImage(imageData.mstrName, imageData.mstrSrc, imageData.mstrGroupId);
 							}
 							break;
-						case InteractiveEvent.OBJECT_CATEGORY_VIDEO:
+						case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
 							nItemType = SlideshowViewItem.TYPE_VIDEO;
 							InteractiveVideoData videoData = getVideoData(listVideoData, item.mstrTargetID);
 							if (null != videoData)
@@ -131,13 +132,13 @@ public class InteractiveSlideshow extends InteractiveObject
 		slideshowview.setTag(strName);
 		switch (nStyle)
 		{
-		case InteractiveEvent.SLIDESHOW_TYPE_NO_THUMBNAIL:
+		case InteractiveDefine.SLIDESHOW_TYPE_NO_THUMBNAIL:
 			slideshowview.setShowThumbnail(false);
 			break;
-		case InteractiveEvent.SLIDESHOW_TYPE_PAGE_CONTROL:
+		case InteractiveDefine.SLIDESHOW_TYPE_PAGE_CONTROL:
 			slideshowview.setIndicatorShow(true);
 			break;
-		case InteractiveEvent.SLIDESHOW_TYPE_THUMBNAIL:
+		case InteractiveDefine.SLIDESHOW_TYPE_THUMBNAIL:
 			slideshowview.setShowThumbnail(true);
 			break;
 		}

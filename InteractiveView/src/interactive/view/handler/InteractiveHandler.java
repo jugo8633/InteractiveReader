@@ -32,6 +32,41 @@ public class InteractiveHandler
 	private String					mstrPostcardDragTag	= null;
 	private boolean					mbDraging			= false;
 
+	public class Button
+	{
+		public String								mstrTag			= null;
+		public String								mstrGroupId		= null;
+		public SparseArray<InteractiveImageData>	listImageData	= null;
+
+		public Button()
+		{
+			listImageData = new SparseArray<InteractiveImageData>();
+		}
+	}
+
+	public class Event
+	{
+		public int		mnType			= Type.INVALID;
+		public String	mstrTypeName	= null;
+		public int		mnEvent			= Type.INVALID;
+		public String	mstrEventName	= null;
+		public int		mnTargetType	= Type.INVALID;
+		public String	mstrTargetID	= null;
+		public int		mnDisplay		= Type.INVALID;
+
+		public Event(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
+				String strTargetID, int nDisplay)
+		{
+			mnType = nType;
+			mstrTypeName = strTypeName;
+			mnEvent = nEvent;
+			mstrEventName = strEventName;
+			mnTargetType = nTargetType;
+			mstrTargetID = strTargetID;
+			mnDisplay = nDisplay;
+		}
+	}
+
 	public class GoogleMap
 	{
 		public String	mstrTag				= null;
@@ -397,10 +432,10 @@ public class InteractiveHandler
 	{
 		switch (nCategory)
 		{
-		case InteractiveEvent.OBJECT_CATEGORY_MAP:
+		case InteractiveDefine.OBJECT_CATEGORY_MAP:
 			showGoogleMapActivity(strTagName);
 			break;
-		case InteractiveEvent.OBJECT_CATEGORY_IMAGE:
+		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
 			showInteractiveImage(strTagName);
 			break;
 		}
@@ -515,13 +550,13 @@ public class InteractiveHandler
 	{
 		switch (nVideoType)
 		{
-		case InteractiveEvent.VIDEO_TYPE_LOCAL:
+		case InteractiveDefine.VIDEO_TYPE_LOCAL:
 			playVideo(strTag);
 			break;
-		case InteractiveEvent.VIDEO_TYPE_TOUTUBE:
+		case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
 			playYoutube(strTag);
 			break;
-		case InteractiveEvent.VIDEO_TYPE_URL:
+		case InteractiveDefine.VIDEO_TYPE_URL:
 			break;
 		}
 	}
@@ -548,7 +583,7 @@ public class InteractiveHandler
 	{
 		switch (nObject)
 		{
-		case InteractiveEvent.OBJECT_CATEGORY_POSTCARD:
+		case InteractiveDefine.OBJECT_CATEGORY_POSTCARD:
 			if (null != getPostcardDragTag())
 			{
 				Postcard postcard = getPostcard(getPostcardDragTag());

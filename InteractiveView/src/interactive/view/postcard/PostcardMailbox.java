@@ -5,7 +5,7 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveEvent;
+import interactive.view.handler.InteractiveDefine;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -75,7 +75,7 @@ public class PostcardMailbox extends RelativeLayout
 			{
 			case DragEvent.ACTION_DRAG_STARTED:
 				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_DRAG_START,
-						InteractiveEvent.OBJECT_CATEGORY_POSTCARD, 0, null);
+						InteractiveDefine.OBJECT_CATEGORY_POSTCARD, 0, null);
 				Logs.showTrace("ACTION_DRAG_STARTED");
 				break;
 			case DragEvent.ACTION_DRAG_ENTERED:
@@ -98,7 +98,7 @@ public class PostcardMailbox extends RelativeLayout
 				Logs.showTrace("ACTION_DRAG_ENDED");
 				imageView.setBackgroundColor(Color.TRANSPARENT);
 				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_DRAG_END,
-						InteractiveEvent.OBJECT_CATEGORY_POSTCARD, 0, null);
+						InteractiveDefine.OBJECT_CATEGORY_POSTCARD, 0, null);
 			default:
 				Logs.showTrace("DragEvent=" + event.getAction());
 				break;
