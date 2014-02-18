@@ -1,16 +1,21 @@
 package interactive.view.handler;
 
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+
 public class InteractiveImageData
 {
 
-	public String	mstrName	= null;
-	public int		mnWidth		= 0;
-	public int		mnHeight	= 0;
-	public int		mnX			= 0;
-	public int		mnY			= 0;
-	public String	mstrSrc		= null;
-	public String	mstrGroupId	= null;
-	public boolean	mbIsVisible	= true;
+	public String		mstrName	= null;
+	public int			mnWidth		= 0;
+	public int			mnHeight	= 0;
+	public int			mnX			= 0;
+	public int			mnY			= 0;
+	public String		mstrSrc		= null;
+	public String		mstrGroupId	= null;
+	public boolean		mbIsVisible	= true;
+	public Bitmap		mBitmapSrc	= null;
+	public ImageView	mImageView	= null;
 
 	public InteractiveImageData()
 	{

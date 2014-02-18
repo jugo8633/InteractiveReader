@@ -2,6 +2,7 @@ package interactive.view.json;
 
 import interactive.view.button.ButtonView;
 import interactive.view.global.Global;
+import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.webview.InteractiveWebView;
 
@@ -64,19 +65,29 @@ public class InteractiveButton extends InteractiveObject
 					acButton.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 							ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 					acButton.setPosition(webView.getChapter(), webView.getPage());
-					acButton.setGroupId(jsonHeader.mstrGroupId);
+					//acButton.setGroupId(jsonHeader.mstrGroupId);
 					acButton.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
 					acButton.setImageSrc(strBookPath + jsonHeader.mstrSrc, strBookPath + jsonBody.mstrTouchDown,
 							strBookPath + jsonBody.mstrTouchUp, ScaleSize(jsonHeader.mnWidth),
 							ScaleSize(jsonHeader.mnHeight));
+
+					Global.interactiveHandler.addButton(getContext(), jsonHeader.mstrName, jsonHeader.mstrGroupId,
+							webView, acButton.getButtonHandler());
+
 					for (int j = 0; j < jsonBody.listEvent.size(); ++j)
 					{
 						Event event = jsonBody.listEvent.get(j);
-
 						acButton.setButtonClickType(event.mnType);
-
-						acButton.addEvent(event.mnType, event.mstrTypeName, event.mnEvent, event.mstrEventName,
-								event.mnTargetType, event.mstrTargetId, event.mnDisplay);
+						Global.interactiveHandler.addButtonEvent(jsonHeader.mstrName, event.mnType, event.mstrTypeName,
+								event.mnEvent, event.mstrEventName, event.mnTargetType, event.mstrTargetId,
+								event.mnDisplay);
+						if (InteractiveDefine.BUTTON_EVENT_SHOW_ITEM == event.mnEvent
+								&& InteractiveDefine.OBJECT_CATEGORY_IMAGE == event.mnTargetType)
+						{
+							addButtonImage(listImageData, jsonHeader.mstrName, event.mstrTargetId);
+						}
+						//						acButton.addEvent(event.mnType, event.mstrTypeName, event.mnEvent, event.mstrEventName,
+						//								event.mnTargetType, event.mstrTargetId, event.mnDisplay);
 						event = null;
 					}
 					webView.addView(acButton);
@@ -104,5 +115,24 @@ public class InteractiveButton extends InteractiveObject
 		bResult = interactiveImage.getInteractiveImage(strBookPath, jsonAll, listImageData);
 		interactiveImage = null;
 		return bResult;
+	}
+
+	private void addButtonImage(SparseArray<InteractiveImageData> listImageData, String strButtonTag, String strImageTag)
+	{
+		if (null == listImageData || null == strButtonTag || null == strImageTag)
+		{
+			return;
+		}
+
+		for (int i = 0; i < listImageData.size(); ++i)
+		{
+			if (listImageData.get(i).mstrName.equals(strImageTag))
+			{
+				Global.interactiveHandler.addButtonImage(strButtonTag, strImageTag, listImageData.get(i).mnWidth,
+						listImageData.get(i).mnHeight, listImageData.get(i).mnX, listImageData.get(i).mnY,
+						listImageData.get(i).mstrSrc, listImageData.get(i).mstrGroupId,
+						listImageData.get(i).mbIsVisible);
+			}
+		}
 	}
 }

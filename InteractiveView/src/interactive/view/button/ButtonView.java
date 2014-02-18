@@ -6,6 +6,7 @@ import interactive.common.EventMessage;
 import interactive.common.FileHandler;
 import interactive.common.Type;
 import interactive.view.global.Global;
+import interactive.view.handler.InteractiveDefine;
 import interactive.view.type.InteractiveType;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,11 +22,12 @@ import android.widget.ImageView;
 
 public class ButtonView extends ImageView
 {
-	private SparseArray<String>	arShowItem		= null;
-	private ImageSrc			imageSrc		= null;
-	private String				mstrGroupId		= null;
-	private Handler				notifyHandler	= null;
-	private SparseArray<Event>	listEvent		= null;
+	//	private SparseArray<String>	arShowItem		= null;
+	private ImageSrc	imageSrc		= null;
+	//	private String		mstrGroupId		= null;
+	private Handler		notifyHandler	= null;
+
+	//	private SparseArray<Event>	listEvent		= null;
 
 	class ImageSrc
 	{
@@ -52,28 +54,28 @@ public class ButtonView extends ImageView
 		}
 	}
 
-	public class Event
-	{
-		public int		mnType			= Type.INVALID;
-		public String	mstrTypeName	= null;
-		public int		mnEvent			= Type.INVALID;
-		public String	mstrEventName	= null;
-		public int		mnTargetType	= Type.INVALID;
-		public String	mstrTargetID	= null;
-		public int		mnDisplay		= Type.INVALID;
-
-		public Event(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
-				String strTargetID, int nDisplay)
-		{
-			mnType = nType;
-			mstrTypeName = strTypeName;
-			mnEvent = nEvent;
-			mstrEventName = strEventName;
-			mnTargetType = nTargetType;
-			mstrTargetID = strTargetID;
-			mnDisplay = nDisplay;
-		}
-	}
+	//	public class Event
+	//	{
+	//		public int		mnType			= Type.INVALID;
+	//		public String	mstrTypeName	= null;
+	//		public int		mnEvent			= Type.INVALID;
+	//		public String	mstrEventName	= null;
+	//		public int		mnTargetType	= Type.INVALID;
+	//		public String	mstrTargetID	= null;
+	//		public int		mnDisplay		= Type.INVALID;
+	//
+	//		public Event(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
+	//				String strTargetID, int nDisplay)
+	//		{
+	//			mnType = nType;
+	//			mstrTypeName = strTypeName;
+	//			mnEvent = nEvent;
+	//			mstrEventName = strEventName;
+	//			mnTargetType = nTargetType;
+	//			mstrTargetID = strTargetID;
+	//			mnDisplay = nDisplay;
+	//		}
+	//	}
 
 	public ButtonView(Context context)
 	{
@@ -104,7 +106,7 @@ public class ButtonView extends ImageView
 		this.setClickable(true);
 		this.setScaleType(ScaleType.FIT_CENTER);
 		this.setBackgroundColor(Color.TRANSPARENT);
-		listEvent = new SparseArray<Event>();
+		//		listEvent = new SparseArray<Event>();
 	}
 
 	public void setImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
@@ -120,15 +122,15 @@ public class ButtonView extends ImageView
 		this.setImageBitmap(imageSrc.mBitmapSrc);
 	}
 
-	public void setGroupId(String strGroupId)
-	{
-		mstrGroupId = strGroupId;
-	}
+	//	public void setGroupId(String strGroupId)
+	//	{
+	//		mstrGroupId = strGroupId;
+	//	}
 
-	public String getGroupId()
-	{
-		return mstrGroupId;
-	}
+	//	public String getGroupId()
+	//	{
+	//		return mstrGroupId;
+	//	}
 
 	public void setNotifyHandler(Handler handler)
 	{
@@ -155,66 +157,82 @@ public class ButtonView extends ImageView
 		}
 	}
 
-	public void addEvent(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
-			String strTargetID, int nDisplay)
-	{
-		listEvent.put(listEvent.size(), new Event(nType, strTypeName, nEvent, strEventName, nTargetType, strTargetID,
-				nDisplay));
-		if (InteractiveType.OBJECT_CATEGORY_IMAGE == nTargetType)
-		{
-			Global.interactiveHandler.addInteractiveImageNotify(strTargetID, buttonHandler);
-		}
-	}
+	//	public void addEvent(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,
+	//			String strTargetID, int nDisplay)
+	//	{
+	//		listEvent.put(listEvent.size(), new Event(nType, strTypeName, nEvent, strEventName, nTargetType, strTargetID,
+	//				nDisplay));
+	//		if (InteractiveType.OBJECT_CATEGORY_IMAGE == nTargetType)
+	//		{
+	//			Global.interactiveHandler.addInteractiveImageNotify(strTargetID, buttonHandler);
+	//		}
+	//	}
 
-	public void setShowItem(String strTagName)
-	{
-		if (null == arShowItem)
-		{
-			arShowItem = new SparseArray<String>();
-		}
-		arShowItem.put(arShowItem.size(), strTagName);
-	}
+	//	public void setShowItem(String strTagName)
+	//	{
+	//		if (null == arShowItem)
+	//		{
+	//			arShowItem = new SparseArray<String>();
+	//		}
+	//		arShowItem.put(arShowItem.size(), strTagName);
+	//	}
 
-	private void showItem(Event event)
-	{
-		switch (event.mnTargetType)
-		{
-		case InteractiveType.OBJECT_CATEGORY_IMAGE:
-			EventHandler.notify(notifyHandler, EventMessage.MSG_SHOW_ITEM, InteractiveType.OBJECT_CATEGORY_IMAGE, 0,
-					event.mstrTargetID);
-			break;
-		case InteractiveType.OBJECT_CATEGORY_MAP:
-			EventHandler.notify(notifyHandler, EventMessage.MSG_SHOW_ITEM, InteractiveType.OBJECT_CATEGORY_MAP, 0,
-					event.mstrTargetID);
-			break;
-		}
-	}
+	//	private void showItem(Event event)
+	//	{
+	//		switch (event.mnTargetType)
+	//		{
+	//		case InteractiveType.OBJECT_CATEGORY_IMAGE:
+	//			EventHandler.notify(notifyHandler, EventMessage.MSG_SHOW_ITEM, InteractiveType.OBJECT_CATEGORY_IMAGE, 0,
+	//					event.mstrTargetID);
+	//			break;
+	//		case InteractiveType.OBJECT_CATEGORY_MAP:
+	//			EventHandler.notify(notifyHandler, EventMessage.MSG_SHOW_ITEM, InteractiveType.OBJECT_CATEGORY_MAP, 0,
+	//					event.mstrTargetID);
+	//			break;
+	//		}
+	//	}
+
+	//	private void startEvent()
+	//	{
+	//		for (int i = 0; i < listEvent.size(); ++i)
+	//		{
+	//			Event event = listEvent.get(i);
+	//			switch (event.mnEvent)
+	//			{
+	//			case InteractiveType.BUTTON_EVENT_SHOW_ITEM:
+	//				showItem(event);
+	//				break;
+	//			case InteractiveType.BUTTON_EVENT_DRAG:
+	//				break;
+	//			case InteractiveType.BUTTON_EVENT_VIDEO_PAUSE:
+	//				break;
+	//			case InteractiveType.BUTTON_EVENT_VIDEO_PLAY:
+	//				break;
+	//			}
+	//			event = null;
+	//		}
+	//	}
 
 	private void startEvent()
 	{
-		for (int i = 0; i < listEvent.size(); ++i)
-		{
-			Event event = listEvent.get(i);
-			switch (event.mnEvent)
-			{
-			case InteractiveType.BUTTON_EVENT_SHOW_ITEM:
-				showItem(event);
-				break;
-			case InteractiveType.BUTTON_EVENT_DRAG:
-				break;
-			case InteractiveType.BUTTON_EVENT_VIDEO_PAUSE:
-				break;
-			case InteractiveType.BUTTON_EVENT_VIDEO_PLAY:
-				break;
-			}
-			event = null;
-		}
+		EventHandler.notify(notifyHandler, EventMessage.MSG_BUTTON_EVENT, 0, 0, getTag());
+	}
+
+	public Handler getButtonHandler()
+	{
+		return buttonHandler;
+	}
+
+	public void reset()
+	{
+		setColorFilter(Color.TRANSPARENT);
+		ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
 	}
 
 	private OnTouchListener		onTouchListener		= new OnTouchListener()
 													{
 														@Override
-														public boolean onTouch(View v, MotionEvent event)
+														public boolean onTouch(View view, MotionEvent event)
 														{
 															switch (event.getAction())
 															{
@@ -271,9 +289,16 @@ public class ButtonView extends ImageView
 															case EventMessage.MSG_IMAGE_CLICK:
 																ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
 																break;
+															case EventMessage.MSG_RESET:
+																reset();
+																break;
 															case EventMessage.MSG_CURRENT_ACTIVE:
-																setColorFilter(Color.TRANSPARENT);
-																ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
+																EventHandler.notify(
+																		Global.interactiveHandler.getNotifyHandler(),
+																		EventMessage.MSG_RESET,
+																		InteractiveDefine.OBJECT_CATEGORY_BUTTON, 0,
+																		ButtonView.this.getTag());
+																reset();
 																break;
 															}
 														}

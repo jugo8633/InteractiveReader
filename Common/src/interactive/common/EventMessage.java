@@ -41,6 +41,8 @@ public class EventMessage
 	public static final int	MSG_DRAG_START				= MSG_CUSTOM + 31;
 	public static final int	MSG_SEND_POSTCARD			= MSG_CUSTOM + 32;
 	public static final int	MSG_NOT_CURRENT_ACTIVE		= MSG_CUSTOM + 33;
+	public static final int	MSG_BUTTON_EVENT			= MSG_CUSTOM + 34;
+	public static final int	MSG_RESET					= MSG_CUSTOM + 35;
 
 	/**
 	 * @author jugo

@@ -12,12 +12,14 @@ import interactive.view.video.VideoPlayer;
 import interactive.view.webview.InteractiveWebView;
 import interactive.view.youtube.YoutubeView;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
@@ -34,6 +36,7 @@ public class InteractiveHandler
 	private SparseArray<InteractiveVideoData>		listLocalVideo		= null;
 	private String									mstrPostcardDragTag	= null;
 	private boolean									mbDraging			= false;
+	private InteractiveButtonHandler				buttonHandler		= null;
 
 	class InteractiveImage
 	{
@@ -72,11 +75,14 @@ public class InteractiveHandler
 	public InteractiveHandler()
 	{
 		super();
+
 		listGoogleMap = new SparseArray<InteractiveGoogleMapData>();
 		listImage = new SparseArray<InteractiveImage>();
 		listYoutube = new SparseArray<InteractiveYoutubeData>();
 		listLocalVideo = new SparseArray<InteractiveVideoData>();
 		listPostcard = new SparseArray<Postcard>();
+		buttonHandler = new InteractiveButtonHandler();
+
 		runRemoveImage = new Runnable()
 		{
 			@Override
@@ -87,6 +93,56 @@ public class InteractiveHandler
 		};
 	}
 
+	@Override
+	protected void finalize() throws Throwable
+	{
+		buttonHandler = null;
+		super.finalize();
+	}
+
+	/** Button Interactive handler *************************/
+	public void addButton(Context context, String strTag, String strGroupId, ViewGroup viewParent, Handler handler)
+	{
+		buttonHandler.addButton(context, strTag, strGroupId, handler);
+		buttonHandler.setContainer(strTag, viewParent);
+	}
+
+	public void addButtonImage(String strButtonTag, String strImageTag, int nWidth, int nHeight, int nX, int nY,
+			String strSrc, String strGroupId, boolean bIsVisible)
+	{
+		buttonHandler.addImageData(strButtonTag, strImageTag, nWidth, nHeight, nX, nY, strSrc, strGroupId, bIsVisible);
+	}
+
+	public void addButtonEvent(String strButtonTag, int nType, String strTypeName, int nEvent, String strEventName,
+			int nTargetType, String strTargetID, int nDisplay)
+	{
+		buttonHandler.addEventData(strButtonTag, nType, strTypeName, nEvent, strEventName, nTargetType, strTargetID,
+				nDisplay);
+	}
+
+	private void handleButtonEvent(String strTag)
+	{
+		if (null == strTag)
+		{
+			return;
+		}
+		buttonHandler.handleButtonEvent(strTag);
+	}
+
+	private void showItem(int nCategory, String strTagName)
+	{
+		switch (nCategory)
+		{
+		case InteractiveDefine.OBJECT_CATEGORY_MAP:
+			showGoogleMapActivity(strTagName);
+			break;
+		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
+			showInteractiveImage(strTagName);
+			break;
+		}
+	}
+
+	/** Postcard Interactive handler ********************************/
 	public int addPostcard(Postcard postcard)
 	{
 		int nKey = listPostcard.size();
@@ -145,6 +201,43 @@ public class InteractiveHandler
 		return mbDraging;
 	}
 
+	private void sendPostcard()
+	{
+		if (null != getPostcardDragTag())
+		{
+			Postcard postcard = getPostcard(getPostcardDragTag());
+			if (null != postcard)
+			{
+				postcard.sendPostcard();
+			}
+		}
+	}
+
+	private void DragEnd(int nObject)
+	{
+		switch (nObject)
+		{
+		case InteractiveDefine.OBJECT_CATEGORY_POSTCARD:
+			if (null != getPostcardDragTag())
+			{
+				Postcard postcard = getPostcard(getPostcardDragTag());
+				if (null != postcard)
+				{
+					Logs.showTrace("Show postcard tag=" + getPostcardDragTag());
+					postcard.hidePostcard(false);
+					postcard.endDrag();
+				}
+				clearPostcardDragTag();
+			}
+			else
+			{
+				Logs.showTrace("No postcard drag tag");
+			}
+			break;
+		}
+	}
+
+	/** Youtube Interactive handler ********************************/
 	public void initMediaView(Activity activity)
 	{
 		if (null != videoView)
@@ -184,11 +277,213 @@ public class InteractiveHandler
 		}
 	}
 
+	public void addYoutubeVideo(RelativeLayout YoutubeLayout, String strTag, boolean bCurrentPlayer,
+			String strVideoSrc, boolean bLoop, boolean bController)
+	{
+		int nKey = listYoutube.size();
+		for (int i = 0; i < nKey; ++i)
+		{
+			if (null != listYoutube.get(i) && listYoutube.get(i).mstrTag.equals(strTag))
+			{
+				nKey = i;
+				removeYoutube();
+				break;
+			}
+		}
+		listYoutube.put(nKey, new InteractiveYoutubeData(YoutubeLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
+				bController));
+	}
+
+	private void playYoutube(String strTag)
+	{
+		removeAllMedia();
+		for (int i = 0; i < listYoutube.size(); ++i)
+		{
+			if (null != listYoutube.get(i) && listYoutube.get(i).mstrTag.equals(strTag))
+			{
+				youtubeView.bringToFront();
+				listYoutube.get(i).mbIsCurrentPlayer = true;
+				youtubeView.initVideo(listYoutube.get(i).mstrVideoSrc, listYoutube.get(i).mbIsLoop,
+						listYoutube.get(i).mbShowController);
+				listYoutube.get(i).mYoutubeLayout.addView(youtubeView);
+				youtubeView.play(listYoutube.get(i).mstrVideoSrc);
+				break;
+			}
+		}
+	}
+
+	private void removeYoutube()
+	{
+		if (null == youtubeView)
+		{
+			return;
+		}
+		youtubeView.pause();
+		for (int i = 0; i < listYoutube.size(); ++i)
+		{
+			listYoutube.get(i).mbIsCurrentPlayer = false;
+			listYoutube.get(i).mYoutubeLayout.removeView(youtubeView);
+		}
+	}
+
+	/** Google map Interactive handler ********************************/
 	public void addGoogleMap(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
 			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage)
 	{
 		listGoogleMap.put(listGoogleMap.size(), new InteractiveGoogleMapData(strTag, nMapType, dLatitude, dLongitude,
 				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, strBackgroundImage));
+	}
+
+	public void showGoogleMapActivity(String strTag)
+	{
+		if (null == Global.theActivity)
+		{
+			Logs.showTrace("Invalid Activity");
+			return;
+		}
+		InteractiveGoogleMapData googleMap = findGoogleMap(strTag);
+		if (null != googleMap)
+		{
+			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
+			intent.putExtra(GoogleMapActivity.EXTRA_TAG, googleMap.mstrTag);
+			intent.putExtra(GoogleMapActivity.EXTRA_MAP_TYPE, googleMap.mnMapType);
+			intent.putExtra(GoogleMapActivity.EXTRA_LATITUDE, googleMap.mdLatitude);
+			intent.putExtra(GoogleMapActivity.EXTRA_LONGITUDE, googleMap.mdLongitude);
+			intent.putExtra(GoogleMapActivity.EXTRA_ZOOM_LEVEL, googleMap.mnZoomLevel);
+			intent.putExtra(GoogleMapActivity.EXTRA_MARKER, googleMap.mstrMarker);
+			intent.putExtra(GoogleMapActivity.EXTRA_X, googleMap.mnX);
+			intent.putExtra(GoogleMapActivity.EXTRA_Y, googleMap.mnY);
+			intent.putExtra(GoogleMapActivity.EXTRA_WIDTH, googleMap.mnWidth);
+			intent.putExtra(GoogleMapActivity.EXTRA_HEIGHT, googleMap.mnHeight);
+			intent.putExtra(GoogleMapActivity.EXTRA_BACKGROUND_IMAGE, googleMap.mstrBackgroundImage);
+			Global.theActivity.startActivity(intent);
+		}
+	}
+
+	private InteractiveGoogleMapData findGoogleMap(String strTag)
+	{
+		for (int i = 0; i < listGoogleMap.size(); ++i)
+		{
+			if (listGoogleMap.get(i).mstrTag.equals(strTag))
+			{
+				return listGoogleMap.get(i);
+			}
+		}
+		return null;
+	}
+
+	/** Video Interactive handler ********************************/
+	public void addLocalVideo(RelativeLayout VideoLayout, String strTag, boolean bCurrentPlayer, String strVideoSrc,
+			boolean bLoop, boolean bController)
+	{
+		int nKey = listLocalVideo.size();
+		for (int i = 0; i < listLocalVideo.size(); ++i)
+		{
+			if (null != listLocalVideo.get(i) && listLocalVideo.get(i).mstrTag.equals(strTag))
+			{
+				nKey = i;
+				removeVideo();
+				break;
+			}
+		}
+		listLocalVideo.put(nKey, new InteractiveVideoData(VideoLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
+				bController));
+	}
+
+	private void playVideo(String strTag)
+	{
+		removeAllMedia();
+		for (int i = 0; i < listLocalVideo.size(); ++i)
+		{
+			if (null != listLocalVideo.get(i) && listLocalVideo.get(i).mstrTag.equals(strTag))
+			{
+				listLocalVideo.get(i).mbIsCurrentPlayer = true;
+				listLocalVideo.get(i).mVideoLayout.addView(videoView);
+				videoView.play(listLocalVideo.get(i).mstrVideoSrc);
+				Logs.showTrace("local video play:" + listLocalVideo.get(i).mstrVideoSrc);
+				break;
+			}
+		}
+	}
+
+	private void removeVideo()
+	{
+		if (null == videoView)
+		{
+			return;
+		}
+		videoView.stop();
+		for (int i = 0; i < listLocalVideo.size(); ++i)
+		{
+			listLocalVideo.get(i).mbIsCurrentPlayer = false;
+			listLocalVideo.get(i).mVideoLayout.removeView(videoView);
+		}
+	}
+
+	/********************************************************************************/
+
+	public Handler getNotifyHandler()
+	{
+		return selfHandler;
+	}
+
+	private void showInteractiveImage(String strTagName)
+	{
+		InteractiveImage interimg = getInteractiveImage(strTagName);
+		if (null != interimg && null != interimg.mstrImagePath)
+		{
+			InteractiveImageView imgview = new InteractiveImageView(Global.theActivity);
+			imgview.setTag(interimg.mstrTag);
+			imgview.setImageURI(Uri.parse(interimg.mstrImagePath));
+			imgview.setDisplay(interimg.mnX, interimg.mnY, interimg.mnWidth, interimg.mnHeight);
+			imgview.setNotifyHandler(selfHandler);
+			View view = interimg.webView.findViewWithTag(strTagName);
+			if (null != view)
+			{
+				interimg.webView.removeView(view);
+			}
+			//		interimg.webView.hideItem(strTagName);
+			interimg.webView.addView(imgview);
+			imgview.bringToFront();
+		}
+	}
+
+	private void removeInteractiveImageView(String strTag)
+	{
+		if (null != strTag)
+		{
+			InteractiveImage interimg = getInteractiveImage(strTag);
+			if (null != interimg)
+			{
+				EventHandler.notify(interimg.notifyHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, null);
+				View view = interimg.webView.findViewWithTag(strTag);
+				if (null != view)
+				{
+					interimg.webView.removeView(view);
+				}
+			}
+		}
+	}
+
+	private void playVideo(int nVideoType, String strTag)
+	{
+		switch (nVideoType)
+		{
+		case InteractiveDefine.VIDEO_TYPE_LOCAL:
+			playVideo(strTag);
+			break;
+		case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
+			playYoutube(strTag);
+			break;
+		case InteractiveDefine.VIDEO_TYPE_URL:
+			break;
+		}
+	}
+
+	public void removeAllMedia()
+	{
+		removeVideo();
+		removeYoutube();
 	}
 
 	public void addInteractiveImage(InteractiveWebView interactiveWeb, String strTag, String strImagePath, int nX,
@@ -231,40 +526,6 @@ public class InteractiveHandler
 		}
 	}
 
-	public void addLocalVideo(RelativeLayout VideoLayout, String strTag, boolean bCurrentPlayer, String strVideoSrc,
-			boolean bLoop, boolean bController)
-	{
-		int nKey = listLocalVideo.size();
-		for (int i = 0; i < listLocalVideo.size(); ++i)
-		{
-			if (null != listLocalVideo.get(i) && listLocalVideo.get(i).mstrTag.equals(strTag))
-			{
-				nKey = i;
-				removeVideo();
-				break;
-			}
-		}
-		listLocalVideo.put(nKey, new InteractiveVideoData(VideoLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
-				bController));
-	}
-
-	public void addYoutubeVideo(RelativeLayout YoutubeLayout, String strTag, boolean bCurrentPlayer,
-			String strVideoSrc, boolean bLoop, boolean bController)
-	{
-		int nKey = listYoutube.size();
-		for (int i = 0; i < nKey; ++i)
-		{
-			if (null != listYoutube.get(i) && listYoutube.get(i).mstrTag.equals(strTag))
-			{
-				nKey = i;
-				removeYoutube();
-				break;
-			}
-		}
-		listYoutube.put(nKey, new InteractiveYoutubeData(YoutubeLayout, strTag, bCurrentPlayer, strVideoSrc, bLoop,
-				bController));
-	}
-
 	private InteractiveImage getInteractiveImage(String strTag)
 	{
 		if (null == strTag)
@@ -281,248 +542,62 @@ public class InteractiveHandler
 		return null;
 	}
 
-	public void showGoogleMapActivity(String strTag)
+	private void handleReset(int nObjectType, String strTag)
 	{
-		if (null == Global.theActivity)
+		switch (nObjectType)
 		{
-			Logs.showTrace("Invalid Activity");
-			return;
-		}
-		InteractiveGoogleMapData googleMap = findGoogleMap(strTag);
-		if (null != googleMap)
-		{
-			Intent intent = new Intent(Global.theActivity, GoogleMapActivity.class);
-			//Intent intent = new Intent("interactive.view.map.GoogleMapActivity.LAUNCH");
-			intent.putExtra(GoogleMapActivity.EXTRA_TAG, googleMap.mstrTag);
-			intent.putExtra(GoogleMapActivity.EXTRA_MAP_TYPE, googleMap.mnMapType);
-			intent.putExtra(GoogleMapActivity.EXTRA_LATITUDE, googleMap.mdLatitude);
-			intent.putExtra(GoogleMapActivity.EXTRA_LONGITUDE, googleMap.mdLongitude);
-			intent.putExtra(GoogleMapActivity.EXTRA_ZOOM_LEVEL, googleMap.mnZoomLevel);
-			intent.putExtra(GoogleMapActivity.EXTRA_MARKER, googleMap.mstrMarker);
-			intent.putExtra(GoogleMapActivity.EXTRA_X, googleMap.mnX);
-			intent.putExtra(GoogleMapActivity.EXTRA_Y, googleMap.mnY);
-			intent.putExtra(GoogleMapActivity.EXTRA_WIDTH, googleMap.mnWidth);
-			intent.putExtra(GoogleMapActivity.EXTRA_HEIGHT, googleMap.mnHeight);
-			intent.putExtra(GoogleMapActivity.EXTRA_BACKGROUND_IMAGE, googleMap.mstrBackgroundImage);
-			Global.theActivity.startActivity(intent);
-		}
-	}
-
-	private InteractiveGoogleMapData findGoogleMap(String strTag)
-	{
-		for (int i = 0; i < listGoogleMap.size(); ++i)
-		{
-			if (listGoogleMap.get(i).mstrTag.equals(strTag))
-			{
-				return listGoogleMap.get(i);
-			}
-		}
-		return null;
-	}
-
-	private void showItem(int nCategory, String strTagName)
-	{
-		switch (nCategory)
-		{
-		case InteractiveDefine.OBJECT_CATEGORY_MAP:
-			showGoogleMapActivity(strTagName);
+		case InteractiveDefine.OBJECT_CATEGORY_BUTTON:
+			buttonHandler.initButton(strTag);
 			break;
 		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
-			showInteractiveImage(strTagName);
 			break;
-		}
-	}
-
-	public Handler getNotifyHandler()
-	{
-		return notifyHandler;
-	}
-
-	private void showInteractiveImage(String strTagName)
-	{
-		InteractiveImage interimg = getInteractiveImage(strTagName);
-		if (null != interimg && null != interimg.mstrImagePath)
-		{
-			InteractiveImageView imgview = new InteractiveImageView(Global.theActivity);
-			imgview.setTag(interimg.mstrTag);
-			imgview.setImageURI(Uri.parse(interimg.mstrImagePath));
-			imgview.setDisplay(interimg.mnX, interimg.mnY, interimg.mnWidth, interimg.mnHeight);
-			imgview.setNotifyHandler(notifyHandler);
-			View view = interimg.webView.findViewWithTag(strTagName);
-			if (null != view)
-			{
-				interimg.webView.removeView(view);
-			}
-			//		interimg.webView.hideItem(strTagName);
-			interimg.webView.addView(imgview);
-			imgview.bringToFront();
-		}
-	}
-
-	private void removeInteractiveImageView(String strTag)
-	{
-		if (null != strTag)
-		{
-			InteractiveImage interimg = getInteractiveImage(strTag);
-			if (null != interimg)
-			{
-				EventHandler.notify(interimg.notifyHandler, EventMessage.MSG_IMAGE_CLICK, 0, 0, null);
-				View view = interimg.webView.findViewWithTag(strTag);
-				if (null != view)
-				{
-					interimg.webView.removeView(view);
-				}
-			}
-		}
-	}
-
-	private void playYoutube(String strTag)
-	{
-		removeAllMedia();
-		for (int i = 0; i < listYoutube.size(); ++i)
-		{
-			if (null != listYoutube.get(i) && listYoutube.get(i).mstrTag.equals(strTag))
-			{
-				youtubeView.bringToFront();
-				listYoutube.get(i).mbIsCurrentPlayer = true;
-				youtubeView.initVideo(listYoutube.get(i).mstrVideoSrc, listYoutube.get(i).mbIsLoop,
-						listYoutube.get(i).mbShowController);
-				listYoutube.get(i).mYoutubeLayout.addView(youtubeView);
-				youtubeView.play(listYoutube.get(i).mstrVideoSrc);
-				break;
-			}
-		}
-	}
-
-	private void playVideo(String strTag)
-	{
-		removeAllMedia();
-		for (int i = 0; i < listLocalVideo.size(); ++i)
-		{
-			if (null != listLocalVideo.get(i) && listLocalVideo.get(i).mstrTag.equals(strTag))
-			{
-				listLocalVideo.get(i).mbIsCurrentPlayer = true;
-				listLocalVideo.get(i).mVideoLayout.addView(videoView);
-				videoView.play(listLocalVideo.get(i).mstrVideoSrc);
-				Logs.showTrace("local video play:" + listLocalVideo.get(i).mstrVideoSrc);
-				break;
-			}
-		}
-	}
-
-	private void removeYoutube()
-	{
-		if (null == youtubeView)
-		{
-			return;
-		}
-		youtubeView.pause();
-		for (int i = 0; i < listYoutube.size(); ++i)
-		{
-			listYoutube.get(i).mbIsCurrentPlayer = false;
-			listYoutube.get(i).mYoutubeLayout.removeView(youtubeView);
-		}
-	}
-
-	private void removeVideo()
-	{
-		if (null == videoView)
-		{
-			return;
-		}
-		videoView.stop();
-		for (int i = 0; i < listLocalVideo.size(); ++i)
-		{
-			listLocalVideo.get(i).mbIsCurrentPlayer = false;
-			listLocalVideo.get(i).mVideoLayout.removeView(videoView);
-		}
-	}
-
-	private void playVideo(int nVideoType, String strTag)
-	{
-		switch (nVideoType)
-		{
-		case InteractiveDefine.VIDEO_TYPE_LOCAL:
-			playVideo(strTag);
+		case InteractiveDefine.OBJECT_CATEGORY_MAP:
 			break;
-		case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
-			playYoutube(strTag);
-			break;
-		case InteractiveDefine.VIDEO_TYPE_URL:
-			break;
-		}
-	}
-
-	public void removeAllMedia()
-	{
-		removeVideo();
-		removeYoutube();
-	}
-
-	private void sendPostcard()
-	{
-		if (null != getPostcardDragTag())
-		{
-			Postcard postcard = getPostcard(getPostcardDragTag());
-			if (null != postcard)
-			{
-				postcard.sendPostcard();
-			}
-		}
-	}
-
-	private void DragEnd(int nObject)
-	{
-		switch (nObject)
-		{
 		case InteractiveDefine.OBJECT_CATEGORY_POSTCARD:
-			if (null != getPostcardDragTag())
-			{
-				Postcard postcard = getPostcard(getPostcardDragTag());
-				if (null != postcard)
-				{
-					Logs.showTrace("Show postcard tag=" + getPostcardDragTag());
-					postcard.hidePostcard(false);
-					postcard.endDrag();
-				}
-				clearPostcardDragTag();
-			}
-			else
-			{
-				Logs.showTrace("No postcard drag tag");
-			}
+			break;
+		case InteractiveDefine.OBJECT_CATEGORY_SLIDE_SHOW:
+			break;
+		case InteractiveDefine.OBJECT_CATEGORY_TICKET_BOOK:
+			break;
+		case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
 			break;
 		}
 	}
 
-	private Handler	notifyHandler	= new Handler()
+	private Handler	selfHandler	= new Handler()
+								{
+									@Override
+									public void handleMessage(Message msg)
 									{
-										@Override
-										public void handleMessage(Message msg)
+										switch (msg.what)
 										{
-											switch (msg.what)
-											{
-											case EventMessage.MSG_SHOW_ITEM:
-												showItem(msg.arg1, (String) msg.obj);
-												break;
-											case EventMessage.MSG_IMAGE_CLICK:
-												mstrRemoveImage = (String) msg.obj;
-												postDelayed(runRemoveImage, 100);
-												break;
-											case EventMessage.MSG_VIDEO_PLAY:
-												playVideo(msg.arg1, (String) msg.obj);
-												break;
-											case EventMessage.MSG_SEND_POSTCARD:
-												sendPostcard();
-												break;
-											case EventMessage.MSG_DRAG_START:
-												setDraging(true);
-												break;
-											case EventMessage.MSG_DRAG_END:
-												setDraging(false);
-												DragEnd(msg.arg1);
-												break;
-											}
+										case EventMessage.MSG_SHOW_ITEM:
+											showItem(msg.arg1, (String) msg.obj);
+											break;
+										case EventMessage.MSG_IMAGE_CLICK:
+											mstrRemoveImage = (String) msg.obj;
+											postDelayed(runRemoveImage, 100);
+											break;
+										case EventMessage.MSG_VIDEO_PLAY:
+											playVideo(msg.arg1, (String) msg.obj);
+											break;
+										case EventMessage.MSG_SEND_POSTCARD:
+											sendPostcard();
+											break;
+										case EventMessage.MSG_DRAG_START:
+											setDraging(true);
+											break;
+										case EventMessage.MSG_DRAG_END:
+											setDraging(false);
+											DragEnd(msg.arg1);
+											break;
+										case EventMessage.MSG_BUTTON_EVENT:
+											handleButtonEvent((String) msg.obj);
+											break;
+										case EventMessage.MSG_RESET:
+											handleReset(msg.arg1, (String) msg.obj);
+											break;
 										}
-									};
+									}
+								};
 }
