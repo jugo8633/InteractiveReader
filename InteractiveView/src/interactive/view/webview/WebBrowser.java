@@ -2,8 +2,8 @@ package interactive.view.webview;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.Logs;
 import interactive.view.global.Global;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -46,6 +46,7 @@ public class WebBrowser extends RelativeLayout
 		init(context);
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	private void init(Context context)
 	{
 		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -64,7 +65,6 @@ public class WebBrowser extends RelativeLayout
 
 		webView = new WebView(context);
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.elsalvador.com");
 		webView.setWebViewClient(new WebViewClient());
 		webView.setInitialScale(1);
 		webView.getSettings().setBuiltInZoomControls(true);

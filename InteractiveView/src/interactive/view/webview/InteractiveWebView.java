@@ -25,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -39,7 +40,6 @@ public class InteractiveWebView extends WebView
 	private int					mnChapter			= Type.INVALID; // self chapter
 	private int					mnPage				= Type.INVALID; // self page
 	private GestureDetector		gestureDetector		= null;
-//	private String				mstrBackgroundImage	= null;
 	private boolean				mbAutoPlay			= false;
 
 	public InteractiveWebView(Context context)
@@ -63,30 +63,43 @@ public class InteractiveWebView extends WebView
 	@SuppressLint("SetJavaScriptEnabled")
 	private void init()
 	{
+		//		this.getSettings().setLoadWithOverviewMode(true);
+		//		this.getSettings().setUseWideViewPort(false);
+		//		this.getSettings().setJavaScriptEnabled(true);
+		//		this.getSettings().setPluginState(PluginState.ON);
+		//		this.getSettings().setBuiltInZoomControls(true);
+		//		this.getSettings().setSupportZoom(false);
+		//		this.getSettings().setAllowContentAccess(false);
+		//		this.getSettings().setDisplayZoomControls(false);
+		//		this.getSettings().setAllowFileAccess(true);
+		//		this.getSettings().setDefaultTextEncodingName("utf-8");
+		//		this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+		//		this.getSettings().setDomStorageEnabled(true);
+		//		this.getSettings().setPluginState(PluginState.ON_DEMAND);
+		//
+		//		this.setHorizontalScrollBarEnabled(false);
+		//		this.setVerticalScrollBarEnabled(false);
+		//		this.setFocusable(true);
+		//		this.setFocusableInTouchMode(true);
+		//		this.setBackgroundColor(Color.TRANSPARENT);
+		//		this.setClickable(false);
+		//		this.setHorizontalFadingEdgeEnabled(false);
+		//		this.setVerticalFadingEdgeEnabled(false);
+		//		this.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+		//      this.setInitialScale(1);
+
+		this.getSettings().setJavaScriptEnabled(true);
+		this.setWebViewClient(new WebViewClient());
+
+		this.getSettings().setBuiltInZoomControls(false);
+		this.getSettings().setSupportZoom(false);
 		this.getSettings().setLoadWithOverviewMode(true);
 		this.getSettings().setUseWideViewPort(false);
-		this.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
-		this.getSettings().setJavaScriptEnabled(true);
-		//		this.getSettings().setPluginState(PluginState.ON);
-		this.getSettings().setBuiltInZoomControls(true);
-		this.getSettings().setSupportZoom(false);
-		this.getSettings().setAllowContentAccess(false);
-		this.getSettings().setDisplayZoomControls(false);
-		this.getSettings().setAllowFileAccess(true);
-		this.getSettings().setDefaultTextEncodingName("utf-8");
-		this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-		this.getSettings().setDomStorageEnabled(true);
-		//		this.getSettings().setPluginState(PluginState.ON_DEMAND);
-
+		this.setOverScrollMode(OVER_SCROLL_NEVER);
 		this.setHorizontalScrollBarEnabled(false);
 		this.setVerticalScrollBarEnabled(false);
-		this.setFocusable(true);
-		this.setFocusableInTouchMode(true);
-		this.setBackgroundColor(Color.TRANSPARENT);
 		this.setClickable(false);
-		this.setHorizontalFadingEdgeEnabled(false);
-		this.setVerticalFadingEdgeEnabled(false);
-		this.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+
 		this.setOnLongClickListener(longClickListener);
 		this.setOnTouchListener(onTouchListener);
 
@@ -211,16 +224,6 @@ public class InteractiveWebView extends WebView
 		this.setLayoutParams(new RelativeLayout.LayoutParams(nWidth, nHeight));
 	}
 
-	//	public void setBackgroundImage(String strImage)
-	//	{
-	//		mstrBackgroundImage = strImage;
-	//	}
-	//
-	//	public String getBackgroundImage()
-	//	{
-	//		return mstrBackgroundImage;
-	//	}
-
 	public void setAutoPlay(boolean bAutoPlay)
 	{
 		mbAutoPlay = bAutoPlay;
@@ -306,7 +309,8 @@ public class InteractiveWebView extends WebView
 																EventHandler.notify(Global.handlerActivity,
 																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
 																		Type.INVALID, null);
-																return super.onDoubleTap(e);
+																return true;
+																//return super.onDoubleTap(e);
 															}
 
 														};
