@@ -2,6 +2,7 @@ package interactive.view.json;
 
 import interactive.common.BitmapHandler;
 import interactive.view.handler.InteractiveImageData;
+import interactive.view.image.EventImageView;
 import interactive.view.image.InteractiveImageView;
 import interactive.view.image.ScalableImageView;
 import interactive.view.webview.InteractiveWebView;
@@ -14,7 +15,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.SparseArray;
-import android.view.View;
 
 public class InteractiveImage extends InteractiveObject
 {
@@ -58,30 +58,37 @@ public class InteractiveImage extends InteractiveObject
 					if (null != strKey)
 					{
 						/** image include gesture , Event Image */
-						ScalableImageView imgView = new ScalableImageView(getContext());
-						imgView.setTag(jsonHeader.mstrName);
-						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
-						imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+						EventImageView eventImage = new EventImageView(getContext());
+						eventImage.setTag(jsonHeader.mstrName);
+						eventImage.setZoomAction(webView);
+						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
-						for (int j = 0; j < jsonArrayGesture.length(); ++j)
-						{
-							JsonGesture jsonGesture = new JsonGesture();
-							JSONObject gesture = jsonArrayGesture.getJSONObject(j);
-							if (parseJsonGesture(gesture, jsonGesture))
-							{
-								imgView.setImageScaleMode(jsonGesture.mnType, jsonGesture.mnEvent,
-										jsonGesture.mnDisplay);
-							}
-							jsonGesture = null;
-						}
-						webView.addView(imgView);
-						if (!jsonHeader.mbIsVisible)
-						{
-							imgView.setVisibility(View.GONE);
-						}
-						imgView = null;
+						eventImage.setImageBitmap(bitmap);
+						eventImage.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						webView.addView(eventImage);
+						eventImage = null;
+
+						//						ScalableImageView imgView = new ScalableImageView(getContext());
+						//						imgView.setTag(jsonHeader.mstrName);
+						//						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
+						//						imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						//						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+						//								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+						//						JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
+						//						for (int j = 0; j < jsonArrayGesture.length(); ++j)
+						//						{
+						//							JsonGesture jsonGesture = new JsonGesture();
+						//							JSONObject gesture = jsonArrayGesture.getJSONObject(j);
+						//							if (parseJsonGesture(gesture, jsonGesture))
+						//							{
+						//								imgView.setImageScaleMode(jsonGesture.mnType, jsonGesture.mnEvent,
+						//										jsonGesture.mnDisplay);
+						//							}
+						//							jsonGesture = null;
+						//						}
+						//						webView.addView(imgView);
+						//						imgView = null;
 					}
 					else
 					{
@@ -90,7 +97,6 @@ public class InteractiveImage extends InteractiveObject
 						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 						imgView.setImageBitmap(bitmap);
-						//imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
 						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 						imgView.setGroupId(jsonHeader.mstrGroupId);

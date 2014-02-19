@@ -16,6 +16,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.opengl.GLES10;
 import android.view.View;
+import android.view.View.MeasureSpec;
 
 public class BitmapHandler
 {
@@ -299,5 +300,33 @@ public class BitmapHandler
 		}
 
 		return thumbnailBitmap;
+	}
+
+	public static Bitmap loadBitmapFromView(Context context, View v)
+	{
+		int nWidth = v.getLayoutParams().width;
+		int nHeight = v.getLayoutParams().height;
+		Device device = new Device(context);
+
+		if (0 >= nWidth)
+		{
+			nWidth = device.getDeviceWidth();
+		}
+
+		if (0 >= nHeight)
+		{
+			nHeight = device.getDeviceHeight();
+		}
+
+		device = null;
+
+		Bitmap b = Bitmap.createBitmap(nWidth, nHeight, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(b);
+		v.measure(MeasureSpec.makeMeasureSpec(v.getLayoutParams().width, MeasureSpec.EXACTLY),
+				MeasureSpec.makeMeasureSpec(v.getLayoutParams().height, MeasureSpec.EXACTLY));
+		v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+		v.draw(c);
+
+		return b;
 	}
 }

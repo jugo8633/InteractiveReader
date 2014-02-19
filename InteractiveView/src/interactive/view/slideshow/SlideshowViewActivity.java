@@ -88,4 +88,13 @@ public class SlideshowViewActivity extends Activity
 			gallery.setCurrentItem(nCurrentItem);
 		}
 	}
+
+	@Override
+	protected void onDestroy()
+	{
+		gallery.release();
+		gallery = null;
+		super.onDestroy();
+	}
+
 }
