@@ -33,7 +33,7 @@ public class ZoomHandler
 		mShortAnimationDuration = context.getResources().getInteger(android.R.integer.config_shortAnimTime);
 	}
 
-	public void zoomOut(View view, float fScaleSize)
+	public void zoom(View view, float fScaleSize)
 	{
 		AnimatorSet set = new AnimatorSet();
 		ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX", 1f);
@@ -72,7 +72,8 @@ public class ZoomHandler
 			@Override
 			public void onAnimationEnd(Animator animation)
 			{
-				EventHandler.notify(notifyHandler, EventMessage.MSG_ANIMATION_END, 0, 0, null);
+				EventHandler.notify(notifyHandler, EventMessage.MSG_ANIMATION_END, EventMessage.MSG_ANIMATION_ZOOM, 0,
+						null);
 			}
 
 			@Override

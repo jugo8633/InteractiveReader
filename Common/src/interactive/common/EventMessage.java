@@ -43,6 +43,8 @@ public class EventMessage
 	public static final int	MSG_NOT_CURRENT_ACTIVE		= MSG_CUSTOM + 33;
 	public static final int	MSG_BUTTON_EVENT			= MSG_CUSTOM + 34;
 	public static final int	MSG_RESET					= MSG_CUSTOM + 35;
+	public static final int	MSG_ANIMATION_ZOOM			= MSG_CUSTOM + 36;
+	public static final int	MSG_ANIMATION_MOVE			= MSG_CUSTOM + 37;
 
 	/**
 	 * @author jugo

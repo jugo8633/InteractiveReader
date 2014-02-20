@@ -122,6 +122,11 @@ public class AutoScrollableView extends HorizontalScrollView
 			setOffsetX(nOffsetX);
 		}
 
+		if (0 < nOffsetY)
+		{
+			setOffsetY(nOffsetY);
+		}
+
 		verticalScrollView.removeAllViewsInLayout();
 		verticalScrollView.addView(imageView);
 	}
@@ -129,6 +134,11 @@ public class AutoScrollableView extends HorizontalScrollView
 	private void setOffsetX(int nX)
 	{
 		mnOffsetX = nX;
+	}
+
+	private void setOffsetY(int nY)
+	{
+		mnOffsetY = nY;
 	}
 
 	public void setPosition(int nChapter, int nPage)

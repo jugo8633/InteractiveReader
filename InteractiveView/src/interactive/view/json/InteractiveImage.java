@@ -1,6 +1,7 @@
 package interactive.view.json;
 
 import interactive.common.BitmapHandler;
+import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.EventImageView;
 import interactive.view.image.InteractiveImageView;
@@ -45,6 +46,21 @@ public class InteractiveImage extends InteractiveObject
 		{
 			return false;
 		}
+
+		/** get image */
+		SparseArray<InteractiveImageData> listImageData = null;
+		if (null != strKey)
+		{
+			listImageData = new SparseArray<InteractiveImageData>();
+			if (getInteractiveImage(strBookPath, jsonAll, listImageData))
+			{
+				if (0 >= listImageData.size())
+				{
+					listImageData = null;
+				}
+			}
+		}
+
 		JSONArray jsonArrayImage = jsonAll.getJSONArray(strKey);
 		for (int i = 0; i < jsonArrayImage.length(); ++i)
 		{
@@ -60,35 +76,41 @@ public class InteractiveImage extends InteractiveObject
 						/** image include gesture , Event Image */
 						EventImageView eventImage = new EventImageView(getContext());
 						eventImage.setTag(jsonHeader.mstrName);
-						eventImage.setZoomAction(webView);
-						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
-								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						eventImage.setImageBitmap(bitmap);
+						eventImage.setPosition(nChapter, nPage);
+						eventImage.setContainer(webView);
+						eventImage.setBitmap(strBookPath + jsonHeader.mstrSrc, ScaleSize(jsonHeader.mnWidth),
+								ScaleSize(jsonHeader.mnHeight));
 						eventImage.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+
+						JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
+						for (int j = 0; j < jsonArrayGesture.length(); ++j)
+						{
+							JsonGesture jsonGesture = new JsonGesture();
+							JSONObject gesture = jsonArrayGesture.getJSONObject(j);
+							if (parseJsonGesture(gesture, jsonGesture))
+							{
+								eventImage.addGesture(jsonGesture.mnDisplay, jsonGesture.mnEvent,
+										jsonGesture.mstrTargetId, jsonGesture.mnTargetType, jsonGesture.mnType);
+								if (InteractiveDefine.IMAGE_EVENT_SHOW_ITEM == jsonGesture.mnEvent
+										&& InteractiveDefine.OBJECT_CATEGORY_IMAGE == jsonGesture.mnTargetType
+										&& null != listImageData)
+								{
+									InteractiveImageData imageData = getImageData(listImageData,
+											jsonGesture.mstrTargetId);
+									if (null != imageData)
+									{
+										eventImage.addEventTargetImage(imageData.mstrName, imageData.mstrSrc,
+												imageData.mstrGroupId, imageData.mnX, imageData.mnY, imageData.mnWidth,
+												imageData.mnHeight, imageData.mbIsVisible);
+									}
+								}
+							}
+							jsonGesture = null;
+						}
+
 						webView.addView(eventImage);
 						eventImage = null;
-
-						//						ScalableImageView imgView = new ScalableImageView(getContext());
-						//						imgView.setTag(jsonHeader.mstrName);
-						//						imgView.setImageURI(Uri.parse(strBookPath + jsonHeader.mstrSrc));
-						//						imgView.setImageSize(ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						//						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-						//								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						//						JSONArray jsonArrayGesture = jsonImage.getJSONArray(strKey);
-						//						for (int j = 0; j < jsonArrayGesture.length(); ++j)
-						//						{
-						//							JsonGesture jsonGesture = new JsonGesture();
-						//							JSONObject gesture = jsonArrayGesture.getJSONObject(j);
-						//							if (parseJsonGesture(gesture, jsonGesture))
-						//							{
-						//								imgView.setImageScaleMode(jsonGesture.mnType, jsonGesture.mnEvent,
-						//										jsonGesture.mnDisplay);
-						//							}
-						//							jsonGesture = null;
-						//						}
-						//						webView.addView(imgView);
-						//						imgView = null;
 					}
 					else
 					{
@@ -108,6 +130,11 @@ public class InteractiveImage extends InteractiveObject
 			jsonHeader = null;
 		}
 
+		if (null != listImageData)
+		{
+			listImageData.clear();
+			listImageData = null;
+		}
 		return true;
 	}
 
@@ -138,5 +165,22 @@ public class InteractiveImage extends InteractiveObject
 			}
 		}
 		return true;
+	}
+
+	private InteractiveImageData getImageData(SparseArray<InteractiveImageData> listImageData, String strImageTag)
+	{
+		if (null == listImageData || null == strImageTag)
+		{
+			return null;
+		}
+
+		for (int i = 0; i < listImageData.size(); ++i)
+		{
+			if (listImageData.get(i).mstrName.equals(strImageTag))
+			{
+				return listImageData.get(i);
+			}
+		}
+		return null;
 	}
 }

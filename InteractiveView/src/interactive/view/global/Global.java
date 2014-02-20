@@ -3,7 +3,6 @@ package interactive.view.global;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.handler.InteractiveHandler;
 import interactive.view.pagereader.PageReader;

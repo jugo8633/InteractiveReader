@@ -101,6 +101,7 @@ public class DisplayPage extends RelativeLayout
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
 		setJson(jsonData, nChapter, nPage);
 
+		pageData.container = this;
 		pageData.extWebView = exdWebView;
 
 		addView(exdWebView);

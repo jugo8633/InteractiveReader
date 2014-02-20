@@ -549,7 +549,7 @@ public class Postcard
 		Logs.showTrace("Set postcard drag tag=" + (String) postcardFrame.getTag());
 		hidePostcard(true);
 		ZoomHandler zoomHandler = new ZoomHandler(theContext);
-		zoomHandler.zoomOut(imgThumb, 0.25f);
+		zoomHandler.zoom(imgThumb, 0.25f);
 		zoomHandler.setNotifyHandler(postcardHandler);
 		container.invalidate();
 	}

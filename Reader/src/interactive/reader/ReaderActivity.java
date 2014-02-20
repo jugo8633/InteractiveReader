@@ -58,10 +58,10 @@ public class ReaderActivity extends Activity
 
 		/** init global*/
 		Global.theActivity = this;
-		Global.handlerActivity = activityHandler;
+		Global.handlerActivity = selfHandler;
 
 		/** load reader layout */
-		int nResId = getResourceId("reader", "layout");
+		int nResId = Global.getResourceId(this, "reader", "layout");
 		this.setContentView(nResId);
 
 		/** initialize header bar */
@@ -74,11 +74,11 @@ public class ReaderActivity extends Activity
 		optionHandler = new OptionHandler(this);
 
 		/** get book information and path */
-		nResId = getResourceId("loading_book", "string");
+		nResId = Global.getResourceId(this, "loading_book", "string");
 		String strTmp = getString(nResId);
 		showProgreeDialog(strTmp);
 		bookHandler = new BookHandler();
-		bookHandler.setNotifyHandler(activityHandler);
+		bookHandler.setNotifyHandler(selfHandler);
 		bookHandler.startBookCheck(this);
 
 		Logs.showTrace("Reader Activity Create");
@@ -126,14 +126,9 @@ public class ReaderActivity extends Activity
 		super.onLowMemory();
 	}
 
-	public int getResourceId(String name, String defType)
-	{
-		return getResources().getIdentifier(name, defType, getPackageName());
-	}
-
 	private void initPageReader()
 	{
-		int nResId = getResourceId("readerPageReader", "id");
+		int nResId = Global.getResourceId(this, "readerPageReader", "id");
 		pageReader = (PageReader) findViewById(nResId);
 		if (null != pageReader)
 		{
@@ -154,7 +149,7 @@ public class ReaderActivity extends Activity
 
 	private void initHeader()
 	{
-		int nResId = getResourceId("readerHeaderMain", "id");
+		int nResId = Global.getResourceId(this, "readerHeaderMain", "id");
 		rlLayoutHeader = (RelativeLayout) findViewById(nResId);
 		if (null != rlLayoutHeader)
 		{
@@ -293,7 +288,7 @@ public class ReaderActivity extends Activity
 
 	private void setHeaderBookName(String strBookName)
 	{
-		TextView txBookName = (TextView) findViewById(getResourceId("textViewBookName", "id"));
+		TextView txBookName = (TextView) findViewById(Global.getResourceId(this, "textViewBookName", "id"));
 		txBookName.setText(strBookName);
 		txBookName.setOnLongClickListener(new OnLongClickListener()
 		{
@@ -500,66 +495,67 @@ public class ReaderActivity extends Activity
 		}
 	}
 
-	private Handler	activityHandler	= new Handler()
+	private Handler	selfHandler	= new Handler()
+								{
+									@Override
+									public void handleMessage(Message msg)
 									{
-										@Override
-										public void handleMessage(Message msg)
+										switch (msg.what)
 										{
-											switch (msg.what)
-											{
-											case EventMessage.MSG_START_UNEXPRESS:
-												int nResId = getResourceId("start_unexpress", "string");
-												String strTmp = getString(nResId);
-												showProgreeDialog(strTmp);
-												break;
-											case EventMessage.MSG_CHECKED_BOOK:
-												initBook(bookHandler.getBookPath());
-												break;
-											case EventMessage.MSG_DOUBLE_CLICK:
-												showOption();
-												Logs.showTrace("Activity receive double click");
-												break;
-											case EventMessage.MSG_FLIPPER_CLOSE:
-												optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(),
-														pageReader.getCurrentPage());
-												break;
-											case EventMessage.MSG_GO_FORWARD:
-												pageReader.goForward();
-												break;
-											case EventMessage.MSG_OPTION_ITEM_SELECTED:
-												showOption();
-												pageReader.jumpPage(msg.arg1, msg.arg2);
-												break;
-											case GalleryView.MSG_WND_CLICK:
-												optionHandler.closeFlipView();
-												break;
-											case GalleryView.MSG_IMAGE_CLICK:
-												showOption();
-												pageReader.jumpPage(msg.arg1, msg.arg2);
-												break;
-											case EventMessage.MSG_LOCK_PAGE:
-												pageReader.lockScroll(true);
-												break;
-											case EventMessage.MSG_UNLOCK_PAGE:
-												pageReader.lockScroll(false);
-												break;
-											case EventMessage.MSG_LOCK_HORIZON:
-												pageReader.lockHorizonScroll(true);
-												break;
-											case EventMessage.MSG_UNLOCK_HORIZON:
-												pageReader.lockHorizonScroll(false);
-												break;
-											case EventMessage.MSG_LOCK_VERTICAL:
-												pageReader.lockVerticalScroll(true);
-												break;
-											case EventMessage.MSG_UNLOCK_VERTICAL:
-												pageReader.lockVerticalScroll(false);
-												break;
-											case EventMessage.MSG_JUMP:
-												pageReader.jumpPage(msg.arg1, msg.arg2);
-												break;
-											}
-											super.handleMessage(msg);
+										case EventMessage.MSG_START_UNEXPRESS:
+											int nResId = Global.getResourceId(ReaderActivity.this, "start_unexpress",
+													"string");
+											String strTmp = getString(nResId);
+											showProgreeDialog(strTmp);
+											break;
+										case EventMessage.MSG_CHECKED_BOOK:
+											initBook(bookHandler.getBookPath());
+											break;
+										case EventMessage.MSG_DOUBLE_CLICK:
+											showOption();
+											Logs.showTrace("Activity receive double click");
+											break;
+										case EventMessage.MSG_FLIPPER_CLOSE:
+											optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(),
+													pageReader.getCurrentPage());
+											break;
+										case EventMessage.MSG_GO_FORWARD:
+											pageReader.goForward();
+											break;
+										case EventMessage.MSG_OPTION_ITEM_SELECTED:
+											showOption();
+											pageReader.jumpPage(msg.arg1, msg.arg2);
+											break;
+										case GalleryView.MSG_WND_CLICK:
+											optionHandler.closeFlipView();
+											break;
+										case GalleryView.MSG_IMAGE_CLICK:
+											showOption();
+											pageReader.jumpPage(msg.arg1, msg.arg2);
+											break;
+										case EventMessage.MSG_LOCK_PAGE:
+											pageReader.lockScroll(true);
+											break;
+										case EventMessage.MSG_UNLOCK_PAGE:
+											pageReader.lockScroll(false);
+											break;
+										case EventMessage.MSG_LOCK_HORIZON:
+											pageReader.lockHorizonScroll(true);
+											break;
+										case EventMessage.MSG_UNLOCK_HORIZON:
+											pageReader.lockHorizonScroll(false);
+											break;
+										case EventMessage.MSG_LOCK_VERTICAL:
+											pageReader.lockVerticalScroll(true);
+											break;
+										case EventMessage.MSG_UNLOCK_VERTICAL:
+											pageReader.lockVerticalScroll(false);
+											break;
+										case EventMessage.MSG_JUMP:
+											pageReader.jumpPage(msg.arg1, msg.arg2);
+											break;
 										}
-									};
+										super.handleMessage(msg);
+									}
+								};
 }

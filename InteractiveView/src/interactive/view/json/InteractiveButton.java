@@ -132,6 +132,11 @@ public class InteractiveButton extends InteractiveObject
 			listImageData = null;
 		}
 
+		if (null != listMapData)
+		{
+			listMapData.clear();
+			listMapData = null;
+		}
 		return true;
 	}
 

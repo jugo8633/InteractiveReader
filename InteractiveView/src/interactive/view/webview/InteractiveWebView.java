@@ -91,8 +91,9 @@ public class InteractiveWebView extends WebView
 		this.getSettings().setJavaScriptEnabled(true);
 		this.setWebViewClient(new WebViewClient());
 
+		this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		this.getSettings().setBuiltInZoomControls(false);
-		this.getSettings().setSupportZoom(false);
+		this.getSettings().setSupportZoom(true);
 		this.getSettings().setLoadWithOverviewMode(true);
 		this.getSettings().setUseWideViewPort(false);
 		this.setOverScrollMode(OVER_SCROLL_NEVER);
