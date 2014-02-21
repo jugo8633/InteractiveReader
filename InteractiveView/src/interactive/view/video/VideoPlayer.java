@@ -9,8 +9,6 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -23,11 +21,9 @@ public class VideoPlayer extends RelativeLayout
 {
 	private VideoView		videoView			= null;
 	private boolean			mbIsLoop			= false;
-	private boolean			mbAutoplay			= false;
 	private boolean			mbShowController	= false;
 	private MediaController	videoController		= null;
 	private GestureDetector	gestureDetector		= null;
-	private String			mstrVideoPath		= null;
 
 	public VideoPlayer(Context context)
 	{
@@ -95,20 +91,8 @@ public class VideoPlayer extends RelativeLayout
 		this.addView(videoController);
 	}
 
-	public void setPosition(int nChapter, int nPage)
-	{
-		Global.addActiveNotify(nChapter, nPage, playerHandler);
-		Global.addUnActiveNotify(nChapter, nPage, playerHandler);
-	}
-
-	public void setAutoplay(boolean bAutoplay)
-	{
-		mbAutoplay = bAutoplay;
-	}
-
 	public void setVideo(String strVideoPath)
 	{
-		mstrVideoPath = strVideoPath;
 		videoView.setVideoPath(strVideoPath);
 	}
 
@@ -212,32 +196,6 @@ public class VideoPlayer extends RelativeLayout
 													return true;
 												}
 											};
-
-	public Handler getHandler()
-	{
-		return playerHandler;
-	}
-
-	private Handler			playerHandler			= new Handler()
-													{
-														@Override
-														public void handleMessage(Message msg)
-														{
-															switch (msg.what)
-															{
-															case EventMessage.MSG_CURRENT_ACTIVE:
-																if (mbAutoplay && null != mstrVideoPath)
-																{
-																	play(mstrVideoPath);
-																	Logs.showTrace("video play:" + mstrVideoPath);
-																}
-																break;
-															case EventMessage.MSG_NOT_CURRENT_ACTIVE:
-																stop();
-																break;
-															}
-														}
-													};
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
 													{

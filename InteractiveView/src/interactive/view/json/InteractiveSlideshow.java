@@ -1,7 +1,5 @@
 package interactive.view.json;
 
-import interactive.common.EventHandler;
-import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
@@ -147,16 +145,6 @@ public class InteractiveSlideshow extends InteractiveObject
 		}
 		slideshowview.setFullScreen(bFullScreen);
 		slideshowview.setItem(listItem, nWidth, nHeight, false);
-
-		slideshowview.setOnItemSwitchedListener(new SlideshowView.OnSlideshowItemSwitched()
-		{
-			@Override
-			public void onItemSwitched()
-			{
-				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_STOP,
-						InteractiveDefine.MEDIA_TYPE_YOUTUBE, 0, null);
-			}
-		});
 		return slideshowview;
 	}
 

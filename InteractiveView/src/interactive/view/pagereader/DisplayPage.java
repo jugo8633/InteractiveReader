@@ -35,8 +35,6 @@ public class DisplayPage extends RelativeLayout
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
 	private DisplayMetrics		metrics			= null;
-	private int					mnChapter		= Type.INVALID;
-	private int					mnPage			= Type.INVALID;
 	private String				mstrBackground	= null;
 
 	public DisplayPage(Context context)

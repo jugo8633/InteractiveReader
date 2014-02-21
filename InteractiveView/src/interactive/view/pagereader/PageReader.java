@@ -135,13 +135,13 @@ public class PageReader extends RelativeLayout
 	{
 		if (Type.INVALID != nChapter)
 		{
-			viewPager.setCurrentItem(nChapter);
+			viewPager.setCurrentItem(nChapter, false);
 			if (Type.INVALID != nPage)
 			{
 				VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(nChapter);
 				if (null != vvp)
 				{
-					vvp.setCurrentItem(nPage);
+					vvp.setCurrentItem(nPage, false);
 				}
 			}
 			Logs.showTrace("jump to chapter=" + nChapter + " page=" + nPage);
@@ -240,7 +240,7 @@ public class PageReader extends RelativeLayout
 		}
 	}
 
-	private void setCurrentPosition()
+	public void setCurrentPosition()
 	{
 		Global.currentChapter = viewPager.getCurrentItem();
 		VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(Global.currentChapter);

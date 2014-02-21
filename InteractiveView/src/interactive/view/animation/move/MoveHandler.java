@@ -2,9 +2,6 @@ package interactive.view.animation.move;
 
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.Animator.AnimatorListener;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,7 +17,8 @@ public class MoveHandler
 		super();
 	}
 
-	public static void move(final View view, int nX1, int nX2, int nY1, int nY2, int nDuration, final Handler notifyHandler)
+	public static void move(final View view, int nX1, int nX2, int nY1, int nY2, int nDuration,
+			final Handler notifyHandler)
 	{
 		AnimationSet animSet = new AnimationSet(false);
 

@@ -4,7 +4,6 @@ import interactive.common.BitmapHandler;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.EventImageView;
-import interactive.view.image.InteractiveImageView;
 import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
@@ -14,6 +13,8 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 
 public class InteractiveImage extends InteractiveObject
 {
@@ -112,14 +113,15 @@ public class InteractiveImage extends InteractiveObject
 					}
 					else
 					{
-						InteractiveImageView imgView = new InteractiveImageView(getContext());
+						ImageView imgView = new ImageView(getContext());
 						imgView.setTag(jsonHeader.mstrName);
 						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
 								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
 						imgView.setImageBitmap(bitmap);
-						imgView.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
-						imgView.setGroupId(jsonHeader.mstrGroupId);
+						imgView.setX(ScaleSize(jsonHeader.mnX));
+						imgView.setY(ScaleSize(jsonHeader.mnY));
+						imgView.setLayoutParams(new LayoutParams(ScaleSize(jsonHeader.mnWidth),
+								ScaleSize(jsonHeader.mnHeight)));
 						webView.addView(imgView);
 						imgView = null;
 					}

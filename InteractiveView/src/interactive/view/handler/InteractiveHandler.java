@@ -185,6 +185,11 @@ public class InteractiveHandler
 		}
 	}
 
+	private void stopMedia(String strTag)
+	{
+		mediaHandler.stopMedia(strTag);
+	}
+
 	public void addMediaData(String strName, int nWidth, int nHeight, int nX, int nY, String strSrc, int nMediaType,
 			String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop, boolean bPlayerControls,
 			boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
@@ -243,7 +248,14 @@ public class InteractiveHandler
 											playVideo((String) msg.obj);
 											break;
 										case EventMessage.MSG_MEDIA_STOP:
-											stopMedia(msg.arg1);
+											if (null != msg.obj)
+											{
+												stopMedia((String) msg.obj);
+											}
+											else
+											{
+												stopMedia(msg.arg1); // msg.arg1 = -1 , stop all media
+											}
 											break;
 										case EventMessage.MSG_SEND_POSTCARD:
 											sendPostcard();

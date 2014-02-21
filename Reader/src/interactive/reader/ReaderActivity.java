@@ -330,6 +330,7 @@ public class ReaderActivity extends Activity
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		}
 		initOption();
+		pageReader.setCurrentPosition();
 	}
 
 	private int createDisplayPage(SparseArray<SparseArray<DisplayPage>> book, ConfigData configData, String strBookPath)

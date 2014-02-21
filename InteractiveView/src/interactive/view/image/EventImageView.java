@@ -5,7 +5,6 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.animation.move.MoveHandler;
 import interactive.view.animation.zoom.ZoomHandler;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;

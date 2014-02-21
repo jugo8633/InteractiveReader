@@ -46,23 +46,7 @@ public class InteractiveMediaHandler
 		youtubePlayer = new YoutubeView(activity);
 		youtubePlayer.init("YoutubeView", activity);
 		youtubePlayer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		//		youtubePlayer.setOnYoutubePlayListner(new YoutubeView.OnYoutubePlayListner()
-		//		{
-		//			@Override
-		//			public void onYoutubePlayed()
-		//			{
-		//				for (int i = 0; i < listMediaData.size(); ++i)
-		//				{
-		//					if (null != listMediaData.get(i) && listMediaData.get(i).mbIsCurrentPlayer)
-		//					{
-		//						if (listMediaData.get(i).mMediaContainer instanceof SlideshowViewVideoLayout)
-		//						{
-		//							((SlideshowViewVideoLayout) listMediaData.get(i).mMediaContainer).notifyVideoPlay();
-		//						}
-		//					}
-		//				}
-		//			}
-		//		});
+
 		for (int i = 0; i < listMediaData.size(); ++i)
 		{
 			listMediaData.get(i).mbIsCurrentPlayer = false;
@@ -99,7 +83,10 @@ public class InteractiveMediaHandler
 				{
 				case InteractiveDefine.MEDIA_TYPE_LOCAL:
 				case InteractiveDefine.MEDIA_TYPE_URL:
+					Logs.showTrace("Video play:" + listMediaData.get(i).mstrMediaSrc);
 					listMediaData.get(i).mMediaContainer.addView(videoPlayer);
+					videoPlayer.setLoop(listMediaData.get(i).mbLoop);
+					videoPlayer.showController(listMediaData.get(i).mbPlayerControls);
 					videoPlayer.play(listMediaData.get(i).mstrMediaSrc);
 					break;
 				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
@@ -144,6 +131,29 @@ public class InteractiveMediaHandler
 		for (int i = 0; i < listMediaData.size(); ++i)
 		{
 			if (listMediaData.get(i).mbIsCurrentPlayer && listMediaData.get(i).mnMediaType == nMediaType)
+			{
+				listMediaData.get(i).mbIsCurrentPlayer = false;
+				switch (listMediaData.get(i).mnMediaType)
+				{
+				case InteractiveDefine.MEDIA_TYPE_LOCAL:
+				case InteractiveDefine.MEDIA_TYPE_URL:
+					videoPlayer.stop();
+					listMediaData.get(i).mMediaContainer.removeView(videoPlayer);
+					break;
+				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
+					youtubePlayer.pause();
+					listMediaData.get(i).mMediaContainer.removeView(youtubePlayer);
+					break;
+				}
+			}
+		}
+	}
+
+	public void stopMedia(String strTag)
+	{
+		for (int i = 0; i < listMediaData.size(); ++i)
+		{
+			if (listMediaData.get(i).mbIsCurrentPlayer && listMediaData.get(i).mstrName.equals(strTag))
 			{
 				listMediaData.get(i).mbIsCurrentPlayer = false;
 				switch (listMediaData.get(i).mnMediaType)

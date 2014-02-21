@@ -6,7 +6,6 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveMediaLayout;
 
@@ -25,7 +24,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-//import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -80,6 +78,9 @@ public class SlideshowView extends RelativeLayout
 	private int										mnDeviceWidth			= Type.INVALID;
 	private int										mnDeviceHeight			= Type.INVALID;
 	private SparseArray<Bitmap>						listBitmap				= null;
+	private SparseArray<String>						listMediaTag			= null;
+	private int										mnChapter				= Type.INVALID;
+	private int										mnPage					= Type.INVALID;
 
 	public interface OnSlideshowItemSwitched
 	{
@@ -309,6 +310,12 @@ public class SlideshowView extends RelativeLayout
 		lLayoutThumbnail.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, nHeight / 4));
 	}
 
+	public void setPosition(int nChapter, int nPage)
+	{
+		mnChapter = nChapter;
+		mnPage = nPage;
+	}
+
 	private void setViewCenter()
 	{
 		int center = horizontalScrollView.getScrollX() + horizontalScrollView.getWidth() / 2;
@@ -432,6 +439,15 @@ public class SlideshowView extends RelativeLayout
 
 	private void notifyItemSwitched()
 	{
+		if (null != listMediaTag)
+		{
+			for (int i = 0; i < listMediaTag.size(); ++i)
+			{
+				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_STOP,
+						Type.INVALID, Type.INVALID, listMediaTag.get(i));
+			}
+		}
+
 		for (int i = 0; i < listOnItemSwitched.size(); ++i)
 		{
 			listOnItemSwitched.get(i).onItemSwitched();
@@ -560,7 +576,6 @@ public class SlideshowView extends RelativeLayout
 			Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
 			listBitmap.put(listBitmap.size(), bmp);
 			imageview.setImageBitmap(bmp);
-			//imageview.setImageURI(Uri.parse(strPath));
 		}
 		else
 		{
@@ -636,19 +651,8 @@ public class SlideshowView extends RelativeLayout
 				}
 				break;
 			case SlideshowViewItem.TYPE_VIDEO:
-				switch (gitem.getVideoType())
-				{
-				case InteractiveDefine.MEDIA_TYPE_LOCAL:
-					InteractiveMediaLayout localVideo = initLocalVideo(gitem, nWidth, nItemHeight);
-					linearLayout.addView(localVideo);
-					break;
-				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
-					InteractiveMediaLayout youtube = initYoutubeVideo(gitem, nWidth, nItemHeight);
-					linearLayout.addView(youtube);
-					break;
-				case InteractiveDefine.MEDIA_TYPE_URL:
-					break;
-				}
+				InteractiveMediaLayout localVideo = initMedia(gitem, nWidth, nItemHeight);
+				linearLayout.addView(localVideo);
 				break;
 			}
 		}
@@ -659,24 +663,24 @@ public class SlideshowView extends RelativeLayout
 		initThumbnail();
 	}
 
-	private InteractiveMediaLayout initLocalVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
+	private InteractiveMediaLayout initMedia(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
-		InteractiveMediaLayout localVideoLayout = new InteractiveMediaLayout(getContext());
-		localVideoLayout.setBackgroundColor(Color.BLACK);
-		localVideoLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
+		InteractiveMediaLayout mediaLayout = new InteractiveMediaLayout(getContext());
+		mediaLayout.setMediaTag(viewItem.getVideoName());
+		mediaLayout.setPosition(mnChapter, mnPage);
+		mediaLayout.setAutoplay(viewItem.getVideoAutoplay());
+		mediaLayout.setBackgroundColor(Color.BLACK);
+		mediaLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
 		{
-			localVideoLayout.setBackground(viewItem.getSourceImage(), nWidth, nHeight);
-			localVideoLayout.setTag(viewItem.getVideoName() + "full");
+			mediaLayout.setBackground(viewItem.getSourceImage(), nWidth, nHeight);
 		}
 		else
 		{
-			localVideoLayout.setBackground(viewItem.getVideoSrc(), nWidth, nHeight);
-			localVideoLayout.setTag(viewItem.getVideoName());
+			mediaLayout.setBackground(viewItem.getVideoSrc(), nWidth, nHeight);
 		}
-
-		localVideoLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
-		localVideoLayout.setOnVideoPlayListner(new InteractiveMediaLayout.OnVideoPlayListner()
+		mediaLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
+		mediaLayout.setOnVideoPlayListner(new InteractiveMediaLayout.OnVideoPlayListner()
 		{
 			@Override
 			public void onVideoPlayed()
@@ -686,38 +690,13 @@ public class SlideshowView extends RelativeLayout
 				rLayoutScaleImage.setVisibility(View.GONE);
 			}
 		});
-		Global.interactiveHandler.setMediaContainer(viewItem.getVideoName(), localVideoLayout);
-		return localVideoLayout;
-	}
 
-	private InteractiveMediaLayout initYoutubeVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
-	{
-		InteractiveMediaLayout youtubeLayout = new InteractiveMediaLayout(getContext());
-		youtubeLayout.setBackgroundColor(Color.BLACK);
-		youtubeLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
-		if (mbIsFullScreen)
+		if (null == listMediaTag)
 		{
-			youtubeLayout.setBackground(viewItem.getSourceImage(), nWidth, nHeight);
-			youtubeLayout.setTag(viewItem.getVideoName() + "full");
+			listMediaTag = new SparseArray<String>();
 		}
-		else
-		{
-			youtubeLayout.setBackground(viewItem.getVideoSrc(), nWidth, nHeight);
-			youtubeLayout.setTag(viewItem.getVideoName());
-		}
-		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
-		youtubeLayout.setOnVideoPlayListner(new InteractiveMediaLayout.OnVideoPlayListner()
-		{
-			@Override
-			public void onVideoPlayed()
-			{
-				rLayoutIndicator.setVisibility(View.GONE);
-				rLayoutThumbnail.setVisibility(View.GONE);
-				rLayoutScaleImage.setVisibility(View.GONE);
-			}
-		});
-		Global.interactiveHandler.setMediaContainer(viewItem.getVideoName(), youtubeLayout);
-		return youtubeLayout;
+		listMediaTag.put(listMediaTag.size(), viewItem.getVideoName());
+		return mediaLayout;
 	}
 
 	public void setAdapter(BaseAdapter adapter, int nItemWidth, int nItemHeight)
@@ -1145,9 +1124,4 @@ public class SlideshowView extends RelativeLayout
 	{
 		slideViewActivity = activity;
 	}
-
-	//	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
-	//													{
-	//
-	//													};
 }
