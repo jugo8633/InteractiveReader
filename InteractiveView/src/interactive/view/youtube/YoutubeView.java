@@ -57,6 +57,9 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 	@Override
 	protected void finalize() throws Throwable
 	{
+		player.release();
+		player = null;
+		Logs.showTrace("Youtube player release");
 		super.finalize();
 	}
 

@@ -1,8 +1,8 @@
 package interactive.view.json;
 
 import interactive.view.button.ButtonView;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveGoogleMapData;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.webview.InteractiveWebView;

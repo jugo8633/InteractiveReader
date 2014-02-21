@@ -4,9 +4,8 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveDefine;
-import interactive.view.type.InteractiveType;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -109,10 +108,10 @@ public class ButtonView extends ImageView
 	{
 		switch (nClickType)
 		{
-		case InteractiveType.BUTTON_TYPE_TAP:
+		case InteractiveDefine.BUTTON_TYPE_TAP:
 			this.setOnTouchListener(onTouchListener);
 			break;
-		case InteractiveType.BUTTON_TYPE_LONG_PRESS:
+		case InteractiveDefine.BUTTON_TYPE_LONG_PRESS:
 			this.setOnLongClickListener(onLongClickListener);
 			break;
 		}

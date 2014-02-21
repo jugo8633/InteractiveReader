@@ -14,9 +14,9 @@ public class EventMessage
 	public static final int	MSG_WEB						= MSG_CUSTOM + 4;
 	public static final int	MSG_JUMP					= MSG_CUSTOM + 5;
 	public static final int	MSG_VIEW_CHANGE				= MSG_CUSTOM + 6;
-	public static final int	MSG_VIDEO_PLAY				= MSG_CUSTOM + 7;
-	public static final int	MSG_VIDEO_PAUSE				= MSG_CUSTOM + 8;
-	public static final int	MSG_VIDEO_STOP				= MSG_CUSTOM + 9;
+	public static final int	MSG_MEDIA_PLAY				= MSG_CUSTOM + 7;
+	public static final int	MSG_MEDIA_PAUSE				= MSG_CUSTOM + 8;
+	public static final int	MSG_MEDIA_STOP				= MSG_CUSTOM + 9;
 	public static final int	MSG_SHOW_PROGRESS			= MSG_CUSTOM + 10;
 	public static final int	MSG_FLIPPER_CLOSE			= MSG_CUSTOM + 11;
 	public static final int	MSG_NOTIFY_ROTATE			= MSG_CUSTOM + 12;

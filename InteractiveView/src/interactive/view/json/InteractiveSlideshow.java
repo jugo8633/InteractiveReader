@@ -1,9 +1,12 @@
 package interactive.view.json;
 
+import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Type;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
+import interactive.view.handler.InteractiveMediaData;
 import interactive.view.slideshow.SlideshowView;
 import interactive.view.slideshow.SlideshowViewItem;
 import interactive.view.webview.InteractiveWebView;
@@ -46,8 +49,8 @@ public class InteractiveSlideshow extends InteractiveObject
 
 		// get video data for slideshow
 		InteractiveVideo interactiveVideo = new InteractiveVideo(getContext());
-		SparseArray<InteractiveVideoData> listVideoData = new SparseArray<InteractiveVideoData>();
-		interactiveVideo.getInteractiveVideo(strBookPath, jsonAll, listVideoData);
+		SparseArray<InteractiveMediaData> listMediaData = new SparseArray<InteractiveMediaData>();
+		interactiveVideo.getInteractiveVideo(strBookPath, jsonAll, listMediaData, webView);
 		interactiveVideo = null;
 
 		JSONArray jsonArraySlideshow = jsonAll.getJSONArray(JSON_SLIDESHOW);
@@ -81,7 +84,7 @@ public class InteractiveSlideshow extends InteractiveObject
 							break;
 						case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
 							nItemType = SlideshowViewItem.TYPE_VIDEO;
-							InteractiveVideoData videoData = getVideoData(listVideoData, item.mstrTargetID);
+							InteractiveMediaData videoData = getVideoData(listMediaData, item.mstrTargetID);
 							if (null != videoData)
 							{
 								viewItem.setSlideVideo(videoData.mstrName, videoData.mstrSrc, videoData.mstrMediaSrc,
@@ -115,8 +118,8 @@ public class InteractiveSlideshow extends InteractiveObject
 			jsonHeader = null;
 			jsonBody = null;
 		}
-		listVideoData.clear();
-		listVideoData = null;
+		listMediaData.clear();
+		listMediaData = null;
 		listImageData.clear();
 		listImageData = null;
 		return true;
@@ -150,7 +153,8 @@ public class InteractiveSlideshow extends InteractiveObject
 			@Override
 			public void onItemSwitched()
 			{
-				Global.interactiveHandler.removeAllMedia();
+				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_STOP,
+						InteractiveDefine.MEDIA_TYPE_YOUTUBE, 0, null);
 			}
 		});
 		return slideshowview;
@@ -173,7 +177,7 @@ public class InteractiveSlideshow extends InteractiveObject
 		return null;
 	}
 
-	private InteractiveVideoData getVideoData(SparseArray<InteractiveVideoData> listVideoData, String strTagName)
+	private InteractiveMediaData getVideoData(SparseArray<InteractiveMediaData> listVideoData, String strTagName)
 	{
 		if (null == listVideoData || null == strTagName || 0 >= listVideoData.size())
 		{

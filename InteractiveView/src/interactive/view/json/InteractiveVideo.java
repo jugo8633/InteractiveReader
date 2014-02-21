@@ -1,11 +1,12 @@
 package interactive.view.json;
 
 import interactive.common.Logs;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveDefine;
+import interactive.view.handler.InteractiveMediaData;
+import interactive.view.handler.InteractiveMediaLayout;
 import interactive.view.video.VideoPlayer;
 import interactive.view.webview.InteractiveWebView;
-import interactive.view.youtube.YoutubeFrameLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,17 +52,24 @@ public class InteractiveVideo extends InteractiveObject
 			JsonVideo jsonBody = new JsonVideo();
 			if (parseJsonHeader(jsonObjVideo, jsonHeader) && parseJsonVideo(jsonObjVideo, jsonBody))
 			{
+				Global.interactiveHandler.addMediaData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
+						ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
+						strBookPath + jsonHeader.mstrSrc, jsonBody.mnMediaType, jsonBody.mstrMediaSrc,
+						jsonBody.options.mnStart, jsonBody.options.mnEnd, jsonBody.options.mbAutoPlay,
+						jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls, jsonHeader.mbIsVisible, webView,
+						false);
+
 				if (jsonHeader.mbIsVisible)
 				{
-					switch (jsonBody.mnVideoType)
+					switch (jsonBody.mnMediaType)
 					{
-					case InteractiveDefine.VIDEO_TYPE_LOCAL:
+					case InteractiveDefine.MEDIA_TYPE_LOCAL:
 						playLocalVideo(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
 						break;
-					case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
+					case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
 						playYoutubeVideo(jsonHeader, jsonBody, webView, strBookPath);
 						break;
-					case InteractiveDefine.VIDEO_TYPE_URL:
+					case InteractiveDefine.MEDIA_TYPE_URL:
 						playUrlVideo(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
 						break;
 					default:
@@ -83,7 +91,7 @@ public class InteractiveVideo extends InteractiveObject
 		player.setTag(jsonHeader.mstrName);
 		player.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
 				ScaleSize(jsonHeader.mnHeight));
-		player.setVideo(strBookPath + jsonBody.mstrVideoSrc);
+		player.setVideo(strBookPath + jsonBody.mstrMediaSrc);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.setAutoplay(jsonBody.options.mbAutoPlay);
 		player.showController(jsonBody.appearance.mbPlayerControls);
@@ -98,14 +106,19 @@ public class InteractiveVideo extends InteractiveObject
 
 	private void playYoutubeVideo(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent, String strBookPath)
 	{
-		YoutubeFrameLayout youtubeLayout = new YoutubeFrameLayout(getContext());
+		InteractiveMediaLayout youtubeLayout = new InteractiveMediaLayout(getContext());
 		youtubeLayout.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
 				ScaleSize(jsonHeader.mnHeight));
-		youtubeLayout.setBackground(strBookPath + jsonHeader.mstrSrc);
+		youtubeLayout.setBackground(strBookPath + jsonHeader.mstrSrc, ScaleSize(jsonHeader.mnWidth),
+				ScaleSize(jsonHeader.mnHeight));
 		youtubeLayout.setTag(jsonHeader.mstrName);
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
-		Global.interactiveHandler.addYoutubeVideo(youtubeLayout, jsonHeader.mstrName, false, jsonBody.mstrVideoSrc,
-				jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls);
+		Global.interactiveHandler.addMediaData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
+				ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), strBookPath
+						+ jsonHeader.mstrSrc, jsonBody.mnMediaType, jsonBody.mstrMediaSrc, jsonBody.options.mnStart,
+				jsonBody.options.mnEnd, jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop,
+				jsonBody.appearance.mbPlayerControls, jsonHeader.mbIsVisible, viewParent, false);
+
 		viewParent.addView(youtubeLayout);
 	}
 
@@ -129,9 +142,9 @@ public class InteractiveVideo extends InteractiveObject
 	}
 
 	public boolean getInteractiveVideo(String strBookPath, JSONObject jsonAll,
-			SparseArray<InteractiveVideoData> listVideoData) throws JSONException
+			SparseArray<InteractiveMediaData> listMediaData, ViewGroup viewContainer) throws JSONException
 	{
-		if (null == listVideoData || null == strBookPath || null == jsonAll)
+		if (null == listMediaData || null == strBookPath || null == jsonAll)
 		{
 			return false;
 		}
@@ -149,27 +162,28 @@ public class InteractiveVideo extends InteractiveObject
 			JsonVideo jsonBody = new JsonVideo();
 			if (parseJsonHeader(jsonObjVideo, jsonHeader) && parseJsonVideo(jsonObjVideo, jsonBody))
 			{
-				switch (jsonBody.mnVideoType)
+				switch (jsonBody.mnMediaType)
 				{
-				case InteractiveDefine.VIDEO_TYPE_LOCAL:
-					strMediaSrc = strBookPath + jsonBody.mstrVideoSrc;
+				case InteractiveDefine.MEDIA_TYPE_LOCAL:
+					strMediaSrc = strBookPath + jsonBody.mstrMediaSrc;
 					break;
-				case InteractiveDefine.VIDEO_TYPE_TOUTUBE:
-					strMediaSrc = jsonBody.mstrVideoSrc;
+				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
+					strMediaSrc = jsonBody.mstrMediaSrc;
 					break;
-				case InteractiveDefine.VIDEO_TYPE_URL:
-					strMediaSrc = jsonBody.mstrVideoSrc;
+				case InteractiveDefine.MEDIA_TYPE_URL:
+					strMediaSrc = jsonBody.mstrMediaSrc;
 					break;
 				default:
-					strMediaSrc = jsonBody.mstrVideoSrc;
+					strMediaSrc = jsonBody.mstrMediaSrc;
 					break;
 				}
 
-				listVideoData.put(listVideoData.size(), new InteractiveVideoData(jsonHeader.mstrName,
+				listMediaData.put(listMediaData.size(), new InteractiveMediaData(jsonHeader.mstrName,
 						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX),
-						ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonBody.mnVideoType, strMediaSrc,
+						ScaleSize(jsonHeader.mnY), strBookPath + jsonHeader.mstrSrc, jsonBody.mnMediaType, strMediaSrc,
 						jsonBody.options.mnStart, jsonBody.options.mnEnd, jsonBody.options.mbAutoPlay,
-						jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls));
+						jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls, jsonHeader.mbIsVisible,
+						viewContainer, false));
 			}
 		}
 		return true;

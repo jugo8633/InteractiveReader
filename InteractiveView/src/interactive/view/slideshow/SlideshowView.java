@@ -6,8 +6,9 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.type.InteractiveType;
+import interactive.view.handler.InteractiveMediaLayout;
 
 import java.util.ArrayList;
 
@@ -637,15 +638,15 @@ public class SlideshowView extends RelativeLayout
 			case SlideshowViewItem.TYPE_VIDEO:
 				switch (gitem.getVideoType())
 				{
-				case InteractiveType.VIDEO_TYPE_LOCAL:
-					SlideshowViewVideoLayout localVideo = initLocalVideo(gitem, nWidth, nItemHeight);
+				case InteractiveDefine.MEDIA_TYPE_LOCAL:
+					InteractiveMediaLayout localVideo = initLocalVideo(gitem, nWidth, nItemHeight);
 					linearLayout.addView(localVideo);
 					break;
-				case InteractiveType.VIDEO_TYPE_TOUTUBE:
-					SlideshowViewVideoLayout youtube = initYoutubeVideo(gitem, nWidth, nItemHeight);
+				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
+					InteractiveMediaLayout youtube = initYoutubeVideo(gitem, nWidth, nItemHeight);
 					linearLayout.addView(youtube);
 					break;
-				case InteractiveType.VIDEO_TYPE_URL:
+				case InteractiveDefine.MEDIA_TYPE_URL:
 					break;
 				}
 				break;
@@ -658,27 +659,24 @@ public class SlideshowView extends RelativeLayout
 		initThumbnail();
 	}
 
-	private SlideshowViewVideoLayout initLocalVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
+	private InteractiveMediaLayout initLocalVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
-		SlideshowViewVideoLayout localVideoLayout = new SlideshowViewVideoLayout(getContext());
+		InteractiveMediaLayout localVideoLayout = new InteractiveMediaLayout(getContext());
 		localVideoLayout.setBackgroundColor(Color.BLACK);
-		localVideoLayout.setVideoType(InteractiveType.VIDEO_TYPE_LOCAL);
 		localVideoLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
 		{
-			localVideoLayout.setBackground(viewItem.getSourceImage());
+			localVideoLayout.setBackground(viewItem.getSourceImage(), nWidth, nHeight);
 			localVideoLayout.setTag(viewItem.getVideoName() + "full");
 		}
 		else
 		{
-			localVideoLayout.setBackground(viewItem.getVideoSrc());
+			localVideoLayout.setBackground(viewItem.getVideoSrc(), nWidth, nHeight);
 			localVideoLayout.setTag(viewItem.getVideoName());
 		}
 
 		localVideoLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
-		Global.interactiveHandler.addLocalVideo(localVideoLayout, (String) localVideoLayout.getTag(), false,
-				viewItem.getVideoId(), viewItem.getVideoLoop(), viewItem.getVideoPlayerControls());
-		localVideoLayout.setOnVideoPlayListner(new SlideshowViewVideoLayout.OnVideoPlayListner()
+		localVideoLayout.setOnVideoPlayListner(new InteractiveMediaLayout.OnVideoPlayListner()
 		{
 			@Override
 			public void onVideoPlayed()
@@ -688,30 +686,27 @@ public class SlideshowView extends RelativeLayout
 				rLayoutScaleImage.setVisibility(View.GONE);
 			}
 		});
+		Global.interactiveHandler.setMediaContainer(viewItem.getVideoName(), localVideoLayout);
 		return localVideoLayout;
 	}
 
-	private SlideshowViewVideoLayout initYoutubeVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
+	private InteractiveMediaLayout initYoutubeVideo(SlideshowViewItem viewItem, int nWidth, int nHeight)
 	{
-		SlideshowViewVideoLayout youtubeLayout = new SlideshowViewVideoLayout(getContext());
+		InteractiveMediaLayout youtubeLayout = new InteractiveMediaLayout(getContext());
 		youtubeLayout.setBackgroundColor(Color.BLACK);
-		youtubeLayout.setVideoType(InteractiveType.VIDEO_TYPE_TOUTUBE);
 		youtubeLayout.setLayoutParams(new ViewGroup.LayoutParams(nWidth, nHeight));
 		if (mbIsFullScreen)
 		{
-			youtubeLayout.setBackground(viewItem.getSourceImage());
+			youtubeLayout.setBackground(viewItem.getSourceImage(), nWidth, nHeight);
 			youtubeLayout.setTag(viewItem.getVideoName() + "full");
 		}
 		else
 		{
-			youtubeLayout.setBackground(viewItem.getVideoSrc());
+			youtubeLayout.setBackground(viewItem.getVideoSrc(), nWidth, nHeight);
 			youtubeLayout.setTag(viewItem.getVideoName());
 		}
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
-		Global.interactiveHandler.addYoutubeVideo(youtubeLayout, (String) youtubeLayout.getTag(), false,
-				viewItem.getVideoId(), viewItem.getVideoLoop(), viewItem.getVideoPlayerControls());
-
-		youtubeLayout.setOnVideoPlayListner(new SlideshowViewVideoLayout.OnVideoPlayListner()
+		youtubeLayout.setOnVideoPlayListner(new InteractiveMediaLayout.OnVideoPlayListner()
 		{
 			@Override
 			public void onVideoPlayed()
@@ -721,6 +716,7 @@ public class SlideshowView extends RelativeLayout
 				rLayoutScaleImage.setVisibility(View.GONE);
 			}
 		});
+		Global.interactiveHandler.setMediaContainer(viewItem.getVideoName(), youtubeLayout);
 		return youtubeLayout;
 	}
 

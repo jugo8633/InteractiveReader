@@ -1,7 +1,7 @@
 package interactive.view.json;
 
 import interactive.common.BitmapHandler;
-import interactive.view.handler.InteractiveDefine;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.EventImageView;
 import interactive.view.image.InteractiveImageView;

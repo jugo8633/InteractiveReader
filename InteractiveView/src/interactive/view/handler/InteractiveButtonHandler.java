@@ -4,6 +4,7 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.map.GoogleMapActivity;
 import android.content.Context;

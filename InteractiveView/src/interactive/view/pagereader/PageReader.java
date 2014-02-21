@@ -1,5 +1,6 @@
 package interactive.view.pagereader;
 
+import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
@@ -247,7 +248,8 @@ public class PageReader extends RelativeLayout
 		addHistory(Global.currentChapter, Global.currentPage);
 		Logs.showTrace("Current position: " + Global.currentChapter + " " + Global.currentPage);
 
-		Global.interactiveHandler.removeAllMedia();
+		EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_STOP, Type.INVALID,
+				Type.INVALID, null);
 		Global.notifyActive(Global.currentChapter, Global.currentPage);
 		notifyPageSwitched();
 		lockHorizonScroll(false);

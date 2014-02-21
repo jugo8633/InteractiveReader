@@ -160,6 +160,14 @@ public class DisplayPage extends RelativeLayout
 				interactivePostcard = null;
 			}
 
+			/**  note: vide 要放在slideshow前面*/
+			if (!jsonAll.isNull(InteractiveObject.JSON_VIDEO))
+			{
+				InteractiveVideo interactiveVideo = new InteractiveVideo(theContext);
+				interactiveVideo.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				interactiveVideo = null;
+			}
+
 			if (!jsonAll.isNull(InteractiveObject.JSON_SLIDESHOW))
 			{
 				InteractiveSlideshow interactiveSlideshow = new InteractiveSlideshow(theContext);
@@ -173,13 +181,6 @@ public class DisplayPage extends RelativeLayout
 				interactiveMap.setBackground(mstrBackground);
 				interactiveMap.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveMap = null;
-			}
-
-			if (!jsonAll.isNull(InteractiveObject.JSON_VIDEO))
-			{
-				InteractiveVideo interactiveVideo = new InteractiveVideo(theContext);
-				interactiveVideo.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
-				interactiveVideo = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_IMAGE))

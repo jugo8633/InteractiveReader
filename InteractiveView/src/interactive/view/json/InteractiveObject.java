@@ -317,8 +317,8 @@ public abstract class InteractiveObject
 			}
 		}
 
-		public int			mnVideoType		= Type.INVALID;
-		public String		mstrVideoSrc	= null;
+		public int			mnMediaType		= Type.INVALID;
+		public String		mstrMediaSrc	= null;
 		public String		mstrUrl			= null;
 		public Options		options			= null;
 		public Appearance	appearance		= null;
@@ -727,8 +727,8 @@ public abstract class InteractiveObject
 			return false;
 		}
 
-		jsonVideo.mnVideoType = getJsonInt(jsonObject, JSON_MEDIA_TYPE);
-		jsonVideo.mstrVideoSrc = getJsonString(jsonObject, JSON_MEDIA_SRC);
+		jsonVideo.mnMediaType = getJsonInt(jsonObject, JSON_MEDIA_TYPE);
+		jsonVideo.mstrMediaSrc = getJsonString(jsonObject, JSON_MEDIA_SRC);
 		jsonVideo.mstrUrl = getJsonString(jsonObject, JSON_URL);
 
 		strKey = getValidKey(jsonObject, JSON_OPTIONS);

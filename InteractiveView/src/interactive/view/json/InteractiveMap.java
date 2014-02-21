@@ -1,7 +1,7 @@
 package interactive.view.json;
 
+import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
-import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveGoogleMapData;
 import interactive.view.map.GoogleMapView;
 import interactive.view.webview.InteractiveWebView;
