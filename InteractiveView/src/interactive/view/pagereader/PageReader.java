@@ -1,27 +1,37 @@
 package interactive.view.pagereader;
 
+import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.animation.fade.FadeHandler;
+import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
 public class PageReader extends RelativeLayout
 {
-
-	private Context								theContext					= null;
 	private HorizonPageView						viewPager					= null;
 	private ChaptersAdapter						chaptersAdapter				= null;
 	private int									mnTotalPage					= Type.INVALID;
 	private SparseArray<ViewHistory>			listViewHistory				= null;
 	private boolean								mbIsGoHistory				= false;
 	private SparseArray<OnPageSwitchedListener>	listOnPageSwitchedListener	= null;
+	private Bitmap								mShowBitmap					= null;
+	private Bitmap								mHideBitmap					= null;
+	private ImageView							mShowImage					= null;
+	private ImageView							mHideImage					= null;
+	FadeHandler									fade						= null;
 
 	public interface OnPageSwitchedListener
 	{
@@ -43,22 +53,25 @@ public class PageReader extends RelativeLayout
 	public PageReader(Context context)
 	{
 		super(context);
-		theContext = context;
-		initPageReader(context);
+		init(context);
 	}
 
 	public PageReader(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		theContext = context;
-		initPageReader(context);
+		init(context);
 	}
 
 	public PageReader(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		theContext = context;
+		init(context);
+	}
+
+	private void init(Context context)
+	{
 		initPageReader(context);
+		fade = new FadeHandler();
 	}
 
 	@Override
@@ -120,7 +133,7 @@ public class PageReader extends RelativeLayout
 				pagesAdapter.addPageView(listPage.get(nPage));
 				++mnTotalPage;
 			}
-			VerticalPageView vvp = new VerticalPageView(theContext);
+			VerticalPageView vvp = new VerticalPageView(getContext());
 			vvp.setAdapter(pagesAdapter);
 			vvp.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			vvp.setOnPageChangeListener(new PageChangeListener(readerHandler));
@@ -135,12 +148,17 @@ public class PageReader extends RelativeLayout
 	{
 		if (Type.INVALID != nChapter)
 		{
+			if (Type.INVALID == nPage)
+			{
+				crossFade(nChapter, Global.currentPage);
+			}
 			viewPager.setCurrentItem(nChapter, false);
 			if (Type.INVALID != nPage)
 			{
 				VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(nChapter);
 				if (null != vvp)
 				{
+					crossFade(nChapter, nPage);
 					vvp.setCurrentItem(nPage, false);
 				}
 			}
@@ -148,11 +166,72 @@ public class PageReader extends RelativeLayout
 		}
 		else if (Type.INVALID != nPage)
 		{
-
 			VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(getCurrentChapter());
+			crossFade(Global.currentChapter, nPage);
 			vvp.setCurrentItem(nPage);
-
 		}
+	}
+
+	private void crossFade(int nChapter, int nPage)
+	{
+		removeCrossFade();
+		String strImagePath = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).strShapLarge;
+		int nWidth = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nWidth;
+		int nHeight = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nHeight;
+		mHideBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(nWidth, nHeight);
+		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		mHideImage = new ImageView(getContext());
+		mHideImage.setImageBitmap(mHideBitmap);
+		mHideImage.setScaleType(ScaleType.CENTER_CROP);
+		mHideImage.setLayoutParams(layoutParams);
+
+		strImagePath = PageData.listPageData.get(nChapter).get(nPage).strShapLarge;
+		nWidth = PageData.listPageData.get(nChapter).get(nPage).nWidth;
+		nHeight = PageData.listPageData.get(nChapter).get(nPage).nHeight;
+		mShowBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
+		RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(nWidth, nHeight);
+		layoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
+		mShowImage = new ImageView(getContext());
+		mShowImage.setImageBitmap(mShowBitmap);
+		mShowImage.setScaleType(ScaleType.CENTER_CROP);
+		mShowImage.setLayoutParams(layoutParams2);
+
+		this.addView(mShowImage);
+		this.addView(mHideImage);
+
+		fade.crossFade(mShowImage, mHideImage, selfHandler);
+	}
+
+	private void removeCrossFade()
+	{
+		if (null != mHideImage)
+		{
+			this.removeView(mHideImage);
+			if (null != mHideBitmap)
+			{
+				if (!mHideBitmap.isRecycled())
+				{
+					mHideBitmap.recycle();
+				}
+				mHideBitmap = null;
+			}
+		}
+		mHideImage = null;
+
+		if (null != mShowImage)
+		{
+			this.removeView(mShowImage);
+			if (null != mShowBitmap)
+			{
+				if (!mShowBitmap.isRecycled())
+				{
+					mShowBitmap.recycle();
+				}
+				mShowBitmap = null;
+			}
+		}
+		mShowImage = null;
 	}
 
 	public void goForward()
@@ -291,4 +370,18 @@ public class PageReader extends RelativeLayout
 		}
 		Logs.showTrace("Page reader lock vertical page: " + bLock);
 	}
+
+	private Handler	selfHandler	= new Handler()
+								{
+									@Override
+									public void handleMessage(Message msg)
+									{
+										switch (msg.what)
+										{
+										case EventMessage.MSG_ANIMATION_END:
+											removeCrossFade();
+											break;
+										}
+									}
+								};
 }
