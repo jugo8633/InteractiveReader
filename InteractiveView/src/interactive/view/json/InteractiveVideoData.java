@@ -11,13 +11,14 @@ public class InteractiveVideoData
 	public int		mnX					= 0;
 	public int		mnY					= 0;
 	public String	mstrSrc				= null;
-	public int		mnVideoType			= 0;
-	public String	mstrVideoSrc		= null;
+	public int		mnMediaType			= 0;
+	public String	mstrMediaSrc		= null;
 	public int		mnStart				= 0;
 	public int		mnEnd				= 0;
 	public boolean	mbAutoplay			= false;
 	public boolean	mbLoop				= false;
 	public boolean	mbPlayerControls	= false;
+	public boolean	mbIsVisible			= true;
 
 	public InteractiveVideoData()
 	{
@@ -25,8 +26,8 @@ public class InteractiveVideoData
 		// TODO Auto-generated constructor stub
 	}
 
-	public InteractiveVideoData(String strName, int nWidth, int nHeight, int nX, int nY, String strSrc, int nVideoType,
-			String strVideoSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop, boolean bPlayerControls)
+	public InteractiveVideoData(String strName, int nWidth, int nHeight, int nX, int nY, String strSrc, int nMediaType,
+			String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop, boolean bPlayerControls)
 	{
 		super();
 		mstrName = strName;
@@ -35,8 +36,8 @@ public class InteractiveVideoData
 		mnX = nX;
 		mnY = nY;
 		mstrSrc = strSrc;
-		mnVideoType = nVideoType;
-		mstrVideoSrc = strVideoSrc;
+		mnMediaType = nMediaType;
+		mstrMediaSrc = strMediaSrc;
 		mnStart = nStart;
 		mnEnd = nEnd;
 		mbAutoplay = bAutoplay;

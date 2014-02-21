@@ -1,10 +1,6 @@
 package interactive.view.json;
 
-import interactive.common.Logs;
-import interactive.view.json.InteractiveObject.JsonButton;
-import interactive.view.json.InteractiveObject.JsonHeader;
 import interactive.view.webview.InteractiveWebView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -5,7 +5,6 @@ import interactive.view.handler.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.EventImageView;
 import interactive.view.image.InteractiveImageView;
-import interactive.view.image.ScalableImageView;
 import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
@@ -14,7 +13,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.SparseArray;
 
 public class InteractiveImage extends InteractiveObject

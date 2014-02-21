@@ -14,7 +14,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.MailTo;
 import android.os.Handler;
 import android.os.Message;
@@ -23,9 +22,7 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -33,7 +30,6 @@ import android.widget.RelativeLayout;
 public class InteractiveWebView extends WebView
 {
 	public static final String	EXTRA_URL			= "extra_url";
-	private Handler				pageReaderHandler	= null;		//send message to PageReader
 	private boolean				mbOverLoadUrl		= false;
 	private int					mnJumpChapter		= Type.INVALID;
 	private int					mnJumpPage			= Type.INVALID;
@@ -111,11 +107,6 @@ public class InteractiveWebView extends WebView
 
 	}
 
-	public void initPageReaderHandler(Handler handler)
-	{
-		pageReaderHandler = handler;
-	}
-
 	private boolean isPageExist(String strPageName)
 	{
 		if (null != PageData.listPageData)
@@ -148,8 +139,7 @@ public class InteractiveWebView extends WebView
 			file = null;
 			if (mbOverLoadUrl && InteractiveWebView.this.isPageExist(strName))
 			{
-				EventHandler.notify(pageReaderHandler, EventMessage.MSG_WEB, EventMessage.MSG_JUMP, mnJumpChapter,
-						mnJumpPage);
+				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_JUMP, mnJumpChapter, mnJumpPage, null);
 				mnJumpPage = Type.INVALID;
 				mnJumpChapter = Type.INVALID;
 				return true;
@@ -208,16 +198,6 @@ public class InteractiveWebView extends WebView
 		mnChapter = nChapter;
 		mnPage = nPage;
 		Global.addActiveNotify(nChapter, nPage, selfHandler);
-	}
-
-	public int getChapter()
-	{
-		return mnChapter;
-	}
-
-	public int getPage()
-	{
-		return mnPage;
 	}
 
 	public void setDisplaySize(int nWidth, int nHeight)
@@ -282,10 +262,9 @@ public class InteractiveWebView extends WebView
 																if ((e1.getX() - e2.getX()) > sensitvity)
 																{
 																	// left
-																	EventHandler.notify(pageReaderHandler,
-																			EventMessage.MSG_WEB,
+																	EventHandler.notify(Global.handlerActivity,
 																			EventMessage.MSG_JUMP, mnChapter + 1,
-																			Type.INVALID);
+																			Type.INVALID, null);
 																}
 																else if ((e2.getX() - e1.getX()) > sensitvity)
 																{
@@ -311,7 +290,6 @@ public class InteractiveWebView extends WebView
 																		EventMessage.MSG_DOUBLE_CLICK, Type.INVALID,
 																		Type.INVALID, null);
 																return true;
-																//return super.onDoubleTap(e);
 															}
 
 														};
@@ -335,10 +313,5 @@ public class InteractiveWebView extends WebView
 																}
 															}
 														};
-
-	public Handler getWebHandler()
-	{
-		return selfHandler;
-	}
 
 }

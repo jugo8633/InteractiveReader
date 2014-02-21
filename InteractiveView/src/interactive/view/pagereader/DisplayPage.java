@@ -93,7 +93,6 @@ public class DisplayPage extends RelativeLayout
 		exdWebView = new InteractiveWebView(theContext);
 		exdWebView.setPosition(pageData.nChapter, pageData.nPage);
 		exdWebView.setTag(pageData.strName);
-		exdWebView.initPageReaderHandler(handler);
 		exdWebView.setDisplaySize(getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);

@@ -84,8 +84,8 @@ public class InteractiveSlideshow extends InteractiveObject
 							InteractiveVideoData videoData = getVideoData(listVideoData, item.mstrTargetID);
 							if (null != videoData)
 							{
-								viewItem.setSlideVideo(videoData.mstrName, videoData.mstrSrc, videoData.mstrVideoSrc,
-										videoData.mnVideoType, videoData.mnStart, videoData.mnEnd,
+								viewItem.setSlideVideo(videoData.mstrName, videoData.mstrSrc, videoData.mstrMediaSrc,
+										videoData.mnMediaType, videoData.mnStart, videoData.mnEnd,
 										videoData.mbAutoplay, videoData.mbLoop, videoData.mbPlayerControls);
 							}
 							break;

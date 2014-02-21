@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 
 public class InteractiveVideo extends InteractiveObject
 {
@@ -61,7 +62,7 @@ public class InteractiveVideo extends InteractiveObject
 						playYoutubeVideo(jsonHeader, jsonBody, webView, strBookPath);
 						break;
 					case InteractiveDefine.VIDEO_TYPE_URL:
-						playUrlVideo(jsonHeader, jsonBody, webView, strBookPath);
+						playUrlVideo(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
 						break;
 					default:
 						Logs.showTrace("Unknow video type?");
@@ -95,8 +96,7 @@ public class InteractiveVideo extends InteractiveObject
 		player = null;
 	}
 
-	private void playYoutubeVideo(JsonHeader jsonHeader, JsonVideo jsonBody, InteractiveWebView webView,
-			String strBookPath)
+	private void playYoutubeVideo(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent, String strBookPath)
 	{
 		YoutubeFrameLayout youtubeLayout = new YoutubeFrameLayout(getContext());
 		youtubeLayout.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
@@ -106,10 +106,11 @@ public class InteractiveVideo extends InteractiveObject
 		youtubeLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
 		Global.interactiveHandler.addYoutubeVideo(youtubeLayout, jsonHeader.mstrName, false, jsonBody.mstrVideoSrc,
 				jsonBody.options.mbLoop, jsonBody.appearance.mbPlayerControls);
-		webView.addView(youtubeLayout);
+		viewParent.addView(youtubeLayout);
 	}
 
-	private void playUrlVideo(JsonHeader jsonHeader, JsonVideo jsonBody, InteractiveWebView webView, String strBookPath)
+	private void playUrlVideo(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent, String strBookPath,
+			int nChapter, int nPage)
 	{
 		VideoPlayer player = new VideoPlayer(getContext());
 		player.setTag(jsonHeader.mstrName);
@@ -118,8 +119,8 @@ public class InteractiveVideo extends InteractiveObject
 		player.setVideo(jsonBody.mstrUrl);
 		player.setLoop(jsonBody.options.mbLoop);
 		player.showController(jsonBody.appearance.mbPlayerControls);
-		player.setPosition(webView.getChapter(), webView.getPage());
-		webView.addView(player);
+		player.setPosition(nChapter, nPage);
+		viewParent.addView(player);
 		if (jsonBody.options.mbAutoPlay)
 		{
 			player.play();
