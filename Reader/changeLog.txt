@@ -1,3 +1,4 @@
+2014/02/22 : 新增跳頁時 cross fade 動畫效果
 2014/02/22 : 修正Youtube & Local video的播放行為,全部由InteractiveMediaHandler來控制
 2014/02/17 : 修正Scrollable offset的判斷行為
 2014/02/14 : 修正Scrollable 橫向捲動或翻頁的判斷機制
@@ -19,8 +20,6 @@
 2014/01/28 : add cache clear
 2014/01/27 : postcard add text area
 2014/01/27 : postcard drag and drop finish
-2014/01/22 : fix postcard camera get picture bug
-             add postcard picture select function
-             add intent handler for image
+2014/01/22 : fix postcard camera get picture bug. add postcard picture select function. add intent handler for image.
 2014/01/21 : add page lock
 2014/01/21 : add postcard camera
