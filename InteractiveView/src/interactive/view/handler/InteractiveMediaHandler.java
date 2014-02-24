@@ -71,6 +71,39 @@ public class InteractiveMediaHandler
 						nStart, nEnd, bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer));
 	}
 
+	public boolean getMediaData(String strName, InteractiveMediaData mediaData)
+	{
+		if (null == strName || null == mediaData)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < listMediaData.size(); ++i)
+		{
+			if (listMediaData.get(i).mstrName.equals(strName))
+			{
+				mediaData.mstrName = listMediaData.get(i).mstrName;
+				mediaData.mnWidth = listMediaData.get(i).mnWidth;
+				mediaData.mnHeight = listMediaData.get(i).mnHeight;
+				mediaData.mnX = listMediaData.get(i).mnX;
+				mediaData.mnY = listMediaData.get(i).mnY;
+				mediaData.mstrSrc = listMediaData.get(i).mstrSrc;
+				mediaData.mnMediaType = listMediaData.get(i).mnMediaType;
+				mediaData.mstrMediaSrc = listMediaData.get(i).mstrMediaSrc;
+				mediaData.mnStart = listMediaData.get(i).mnStart;
+				mediaData.mnEnd = listMediaData.get(i).mnEnd;
+				mediaData.mbAutoplay = listMediaData.get(i).mbAutoplay;
+				mediaData.mbLoop = listMediaData.get(i).mbLoop;
+				mediaData.mbPlayerControls = listMediaData.get(i).mbPlayerControls;
+				mediaData.mbIsVisible = listMediaData.get(i).mbIsVisible;
+				mediaData.mMediaContainer = listMediaData.get(i).mMediaContainer;
+				mediaData.mbIsCurrentPlayer = false;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void playMedia(String strTag)
 	{
 		stopMedia();

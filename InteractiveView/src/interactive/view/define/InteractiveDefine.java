@@ -64,6 +64,10 @@ public class InteractiveDefine
 	public static final int	MEDIA_TYPE_YOUTUBE					= 1;	// Youtube
 	public static final int	MEDIA_TYPE_URL						= 2;	// URL video
 
+	public static final int	DISPLAY_TYPE_CHILD					= 0;	// 控制是區域顯示  
+	public static final int	DISPLAY_TYPE_LAYOUT					= 1;	// 浮出一層
+	public static final int	DISPLAY_TYPE_FULL_SCREEN			= 2;	// 全螢幕
+
 	public InteractiveDefine()
 	{
 		super();

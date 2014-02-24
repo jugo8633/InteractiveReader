@@ -206,6 +206,11 @@ public class InteractiveHandler
 				bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer);
 	}
 
+	public boolean getMediaData(String strName, InteractiveMediaData mediaData)
+	{
+		return mediaHandler.getMediaData(strName, mediaData);
+	}
+
 	public void initMediaView(Activity activity)
 	{
 		mediaHandler.initMediaView(activity);

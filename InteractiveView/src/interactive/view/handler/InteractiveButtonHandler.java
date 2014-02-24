@@ -151,7 +151,7 @@ public class InteractiveButtonHandler
 				break;
 			case InteractiveDefine.BUTTON_EVENT_SHOW_ITEM:
 				showItem(buttonData, buttonData.listEventData.get(i).mnTargetType,
-						buttonData.listEventData.get(i).mstrTargetID);
+						buttonData.listEventData.get(i).mstrTargetID, buttonData.listEventData.get(i).mnDisplay);
 				break;
 			case InteractiveDefine.BUTTON_EVENT_VIDEO_PAUSE:
 				break;
@@ -236,7 +236,7 @@ public class InteractiveButtonHandler
 		}
 	}
 
-	private void showItem(InteractiveButtonData buttonData, int nTargetType, String strItemTag)
+	private void showItem(InteractiveButtonData buttonData, int nTargetType, String strItemTag, int nDisplay)
 	{
 		switch (nTargetType)
 		{
@@ -247,6 +247,7 @@ public class InteractiveButtonHandler
 			showMap(buttonData, strItemTag);
 			break;
 		case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
+			showMedia(buttonData, strItemTag, nDisplay);
 			break;
 		}
 	}
@@ -313,6 +314,45 @@ public class InteractiveButtonHandler
 			intent.putExtra(GoogleMapActivity.EXTRA_HEIGHT, googleMap.mnHeight);
 			intent.putExtra(GoogleMapActivity.EXTRA_BACKGROUND_IMAGE, googleMap.mstrBackgroundImage);
 			Global.theActivity.startActivity(intent);
+		}
+	}
+
+	private void showMedia(final InteractiveButtonData buttonData, String strMediaTag, int nDisplay)
+	{
+		if (null == buttonData.listMediaData || null == strMediaTag)
+		{
+			return;
+		}
+
+		for (int i = 0; i < buttonData.listMediaData.size(); ++i)
+		{
+			InteractiveMediaData mediaData = new InteractiveMediaData();
+			Global.interactiveHandler.getMediaData(buttonData.listMediaData.get(i).mstrName, mediaData);
+			switch (nDisplay)
+			{
+			case InteractiveDefine.DISPLAY_TYPE_LAYOUT:
+				break;
+			case InteractiveDefine.DISPLAY_TYPE_FULL_SCREEN:
+				showMediaFullScreen(mediaData);
+				break;
+			}
+			mediaData = null;
+		}
+	}
+
+	private void showMediaLayout(InteractiveMediaData mediaData)
+	{
+		if (null == mediaData)
+		{
+			return;
+		}
+	}
+
+	private void showMediaFullScreen(InteractiveMediaData mediaData)
+	{
+		if (null == mediaData)
+		{
+			return;
 		}
 	}
 

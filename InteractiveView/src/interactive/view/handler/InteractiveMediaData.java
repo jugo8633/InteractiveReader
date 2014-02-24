@@ -23,6 +23,11 @@ public class InteractiveMediaData
 	public boolean		mbIsCurrentPlayer	= false;
 	public ViewGroup	mMediaContainer		= null;
 
+	public InteractiveMediaData()
+	{
+
+	}
+
 	public InteractiveMediaData(String strName, int nWidth, int nHeight, int nX, int nY, String strSrc, int nMediaType,
 			String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop, boolean bPlayerControls,
 			boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
