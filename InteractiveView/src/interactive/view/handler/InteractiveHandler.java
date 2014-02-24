@@ -64,6 +64,14 @@ public class InteractiveHandler
 				nDisplay);
 	}
 
+	public void addButtonMedia(String strButtonTag, String strName, int nWidth, int nHeight, int nX, int nY,
+			String strSrc, int nMediaType, String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop,
+			boolean bPlayerControls, boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
+	{
+		buttonHandler.addMediaData(strButtonTag, strName, nWidth, nHeight, nX, nY, strSrc, nMediaType, strMediaSrc,
+				nStart, nEnd, bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer);
+	}
+
 	synchronized private void handleButtonEvent(String strTag)
 	{
 		if (null != strTag)

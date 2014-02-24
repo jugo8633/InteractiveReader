@@ -97,6 +97,18 @@ public class InteractiveButtonHandler
 		}
 	}
 
+	public void addMediaData(String strButtonTag, String strName, int nWidth, int nHeight, int nX, int nY,
+			String strSrc, int nMediaType, String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop,
+			boolean bPlayerControls, boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
+	{
+		InteractiveButtonData buttonData = getButtonData(strButtonTag);
+		if (null != buttonData)
+		{
+			buttonData.addMediaData(strName, nWidth, nHeight, nX, nY, strSrc, nMediaType, strMediaSrc, nStart, nEnd,
+					bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer);
+		}
+	}
+
 	public void setContainer(String strButtonTag, ViewGroup viewGroup)
 	{
 		InteractiveButtonData buttonData = getButtonData(strButtonTag);
@@ -144,6 +156,7 @@ public class InteractiveButtonHandler
 			case InteractiveDefine.BUTTON_EVENT_VIDEO_PAUSE:
 				break;
 			case InteractiveDefine.BUTTON_EVENT_VIDEO_PLAY:
+				playMedia(buttonData);
 				break;
 			}
 		}
@@ -355,6 +368,19 @@ public class InteractiveButtonHandler
 				imageData.mBitmapSrc = null;
 			}
 			imageData.mImageView = null;
+		}
+	}
+
+	private void playMedia(InteractiveButtonData buttonData)
+	{
+		if (null != buttonData && null != buttonData.listMediaData)
+		{
+			for (int i = 0; i < buttonData.listMediaData.size(); ++i)
+			{
+				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_PLAY, 0, 0,
+						buttonData.listMediaData.get(i).mstrName);
+				Logs.showTrace("Button triggle Play media:" + buttonData.listMediaData.get(i).mstrName);
+			}
 		}
 	}
 

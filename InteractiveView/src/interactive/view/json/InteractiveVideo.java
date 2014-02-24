@@ -1,6 +1,5 @@
 package interactive.view.json;
 
-
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveMediaData;
@@ -56,16 +55,17 @@ public class InteractiveVideo extends InteractiveObject
 				{
 					strMediaSrc = strBookPath + jsonBody.mstrMediaSrc;
 				}
+				ViewGroup viewContainer = webView;
+				if (jsonHeader.mbIsVisible)
+				{
+					viewContainer = createMediaLayout(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
+				}
 				Global.interactiveHandler.addMediaData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
 						ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 						strBookPath + jsonHeader.mstrSrc, jsonBody.mnMediaType, strMediaSrc, jsonBody.options.mnStart,
 						jsonBody.options.mnEnd, jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop,
-						jsonBody.appearance.mbPlayerControls, jsonHeader.mbIsVisible, webView, false);
+						jsonBody.appearance.mbPlayerControls, jsonHeader.mbIsVisible, viewContainer, false);
 
-				if (jsonHeader.mbIsVisible)
-				{
-					createMediaLayout(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
-				}
 			}
 			jsonBody = null;
 			jsonHeader = null;
@@ -73,8 +73,8 @@ public class InteractiveVideo extends InteractiveObject
 		return false;
 	}
 
-	private void createMediaLayout(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent, String strBookPath,
-			int nChapter, int nPage)
+	private InteractiveMediaLayout createMediaLayout(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent,
+			String strBookPath, int nChapter, int nPage)
 	{
 		InteractiveMediaLayout mediaLayout = new InteractiveMediaLayout(getContext());
 		mediaLayout.setMediaTag(jsonHeader.mstrName);
@@ -86,6 +86,7 @@ public class InteractiveVideo extends InteractiveObject
 				ScaleSize(jsonHeader.mnHeight));
 		mediaLayout.setNotifyHandler(Global.interactiveHandler.getNotifyHandler());
 		viewParent.addView(mediaLayout);
+		return mediaLayout;
 	}
 
 	public boolean getInteractiveVideo(String strBookPath, JSONObject jsonAll,

@@ -13,6 +13,7 @@ public class InteractiveButtonData
 	public SparseArray<InteractiveImageData>		listImageData	= null;
 	public SparseArray<InteractiveGoogleMapData>	listMapData		= null;
 	public SparseArray<InteractiveEventData>		listEventData	= null;
+	public SparseArray<InteractiveMediaData>		listMediaData	= null;
 	private ViewGroup								container		= null;
 	private Context									theContext		= null;
 
@@ -43,6 +44,12 @@ public class InteractiveButtonData
 		{
 			listEventData.clear();
 			listEventData = null;
+		}
+
+		if (null != listMediaData)
+		{
+			listMediaData.clear();
+			listMediaData = null;
 		}
 		super.finalize();
 	}
@@ -81,6 +88,19 @@ public class InteractiveButtonData
 
 		listEventData.put(listEventData.size(), new InteractiveEventData(nType, strTypeName, nEvent, strEventName,
 				nTargetType, strTargetID, nDisplay));
+	}
+
+	public void addMediaData(String strName, int nWidth, int nHeight, int nX, int nY, String strSrc, int nMediaType,
+			String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop, boolean bPlayerControls,
+			boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
+	{
+		if (null == listMediaData)
+		{
+			listMediaData = new SparseArray<InteractiveMediaData>();
+		}
+		listMediaData.put(listMediaData.size(), new InteractiveMediaData(strName, nWidth, nHeight, nX, nY, strSrc,
+				nMediaType, strMediaSrc, nStart, nEnd, bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent,
+				bIsCurrentPlayer));
 	}
 
 	public void setContainer(ViewGroup viewGroup)

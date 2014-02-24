@@ -1,5 +1,6 @@
 package interactive.view.json;
 
+import interactive.common.Type;
 import interactive.view.button.ButtonView;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
@@ -115,6 +116,14 @@ public class InteractiveButton extends InteractiveObject
 								&& InteractiveDefine.OBJECT_CATEGORY_MAP == event.mnTargetType && null != listMapData)
 						{
 							addButtonMap(listMapData, jsonHeader.mstrName, event.mstrTargetId);
+						}
+
+						if (InteractiveDefine.BUTTON_EVENT_VIDEO_PLAY == event.mnEvent
+								&& InteractiveDefine.OBJECT_CATEGORY_VIDEO == event.mnTargetType)
+						{
+							Global.interactiveHandler.addButtonMedia(jsonHeader.mstrName, event.mstrTargetId,
+									Type.INVALID, Type.INVALID, Type.INVALID, Type.INVALID, null, Type.INVALID, null,
+									Type.INVALID, Type.INVALID, false, false, false, false, null, false);
 						}
 						event = null;
 					}

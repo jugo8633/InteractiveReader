@@ -2,6 +2,7 @@ package interactive.view.youtube;
 
 import interactive.common.Device;
 import interactive.common.Logs;
+import interactive.common.Type;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -13,6 +14,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.widget.RelativeLayout;
@@ -30,6 +32,7 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 	private boolean								mbShowController				= true;
 	private Context								theContext						= null;
 	private SparseArray<OnYoutubePlayListner>	listOnYoutubePlayListner		= null;
+	private int									mnStart							= Type.INVALID;
 
 	public interface OnYoutubePlayListner
 	{
@@ -57,8 +60,11 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 	@Override
 	protected void finalize() throws Throwable
 	{
-		player.release();
-		player = null;
+		if (null != player)
+		{
+			player.release();
+			player = null;
+		}
 		Logs.showTrace("Youtube player release");
 		super.finalize();
 	}
@@ -89,11 +95,62 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 
 	}
 
-	public void initVideo(String strVideoId, boolean bLoop, boolean bShowControl)
+	public void initVideo(String strVideoId, boolean bLoop, boolean bShowControl, final int nStart, final int nEnd)
 	{
 		mstrVideoId = strVideoId;
 		mbIsLoop = bLoop;
 		mbShowController = bShowControl;
+		if (null != player)
+		{
+			if (mbShowController)
+			{
+				player.setPlayerStyle(PlayerStyle.DEFAULT);
+			}
+			else
+			{
+				player.setPlayerStyle(PlayerStyle.CHROMELESS);
+			}
+
+			mnStart = nStart;
+
+			//			if (0 < nEnd)
+			//			{
+			//				final Handler handler = new Handler();
+			//				handler.postDelayed(new Runnable()
+			//				{
+			//					@Override
+			//					public void run()
+			//					{
+			//						//For every 1 second, check the current time and endTime
+			//						if (null == player)
+			//						{
+			//							handler.removeCallbacks(this);
+			//							return;
+			//						}
+			//						int nPosition = player.getCurrentTimeMillis();
+			//						if (nPosition <= (nEnd * 1000))
+			//						{
+			//							Logs.showTrace("Youtube play position=" + nPosition);
+			//							handler.postDelayed(this, 1000);
+			//						}
+			//						else
+			//						{
+			//							if (!mbIsLoop)
+			//							{
+			//								handler.removeCallbacks(this); //no longer required
+			//								player.pause(); //and Pause the video
+			//							}
+			//							else
+			//							{
+			//								seekTo(0);
+			//							}
+			//
+			//						}
+			//					}
+			//				}, 1000);
+			//			}
+		}
+
 	}
 
 	public void setLoop(boolean bLoop)
@@ -171,6 +228,11 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 			boolean wasRestored)
 	{
 		Logs.showTrace("Youtube initialization success");
+		if (null != player)
+		{
+			player.release();
+			player = null;
+		}
 		player = YoutubePlayer;
 		if (mbShowController)
 		{
@@ -232,6 +294,10 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 			for (int i = 0; i < listOnYoutubePlayListner.size(); ++i)
 			{
 				listOnYoutubePlayListner.get(i).onYoutubePlayed();
+			}
+			if (0 < mnStart)
+			{
+				seekTo(mnStart);
 			}
 			Logs.showTrace("youtube playing");
 		}

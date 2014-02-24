@@ -1,3 +1,4 @@
+2014/02/25 : 新增button play media
 2014/02/22 : 新增跳頁時 cross fade 動畫效果
 2014/02/22 : 修正Youtube & Local video的播放行為,全部由InteractiveMediaHandler來控制
 2014/02/17 : 修正Scrollable offset的判斷行為

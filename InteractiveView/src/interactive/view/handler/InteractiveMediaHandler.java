@@ -92,7 +92,8 @@ public class InteractiveMediaHandler
 				case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
 					youtubePlayer.bringToFront();
 					youtubePlayer.initVideo(listMediaData.get(i).mstrMediaSrc, listMediaData.get(i).mbLoop,
-							listMediaData.get(i).mbPlayerControls);
+							listMediaData.get(i).mbPlayerControls, listMediaData.get(i).mnStart,
+							listMediaData.get(i).mnEnd);
 					listMediaData.get(i).mMediaContainer.addView(youtubePlayer);
 					youtubePlayer.play(listMediaData.get(i).mstrMediaSrc);
 					Logs.showTrace("Play youtube on container:" + listMediaData.get(i).mMediaContainer.getTag());
