@@ -13,7 +13,6 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.ImageView.ScaleType;
@@ -105,7 +104,7 @@ public class VerticalScrollableView extends ScrollView
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, (0 - nOffsetY));
 			bitmapBack.recycle();
 			bitmapFront.recycle();
-		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
+			//	this.setOverScrollMode(OVER_SCROLL_NEVER);
 		}
 		else if (0 < nOffsetY && (nHeight - nOffsetY) < mnHeight)
 		{
@@ -114,7 +113,7 @@ public class VerticalScrollableView extends ScrollView
 			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
 			bitmapBack.recycle();
 			bitmapFront.recycle();
-		//	this.setOverScrollMode(OVER_SCROLL_NEVER);
+			//	this.setOverScrollMode(OVER_SCROLL_NEVER);
 		}
 		else
 		{

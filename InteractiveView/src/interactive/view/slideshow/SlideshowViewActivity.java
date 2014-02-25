@@ -86,13 +86,13 @@ public class SlideshowViewActivity extends Activity
 			int nDisplayWidth = device.getDeviceWidth();
 			gallery.setItem(slist, Global.ScaleSize(nDisplayWidth), Global.ScaleSize(600), true);
 			gallery.setCurrentItem(nCurrentItem);
+			gallery.initImageView();
 		}
 	}
 
 	@Override
 	protected void onDestroy()
 	{
-		gallery.release();
 		gallery = null;
 		super.onDestroy();
 	}

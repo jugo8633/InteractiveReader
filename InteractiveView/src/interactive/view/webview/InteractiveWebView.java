@@ -29,14 +29,14 @@ import android.widget.RelativeLayout;
 
 public class InteractiveWebView extends WebView
 {
-	public static final String	EXTRA_URL			= "extra_url";
-	private boolean				mbOverLoadUrl		= false;
-	private int					mnJumpChapter		= Type.INVALID;
-	private int					mnJumpPage			= Type.INVALID;
-	private int					mnChapter			= Type.INVALID; // self chapter
-	private int					mnPage				= Type.INVALID; // self page
-	private GestureDetector		gestureDetector		= null;
-	private boolean				mbAutoPlay			= false;
+	public static final String	EXTRA_URL		= "extra_url";
+	private boolean				mbOverLoadUrl	= false;
+	private int					mnJumpChapter	= Type.INVALID;
+	private int					mnJumpPage		= Type.INVALID;
+	private int					mnChapter		= Type.INVALID; // self chapter
+	private int					mnPage			= Type.INVALID; // self page
+	private GestureDetector		gestureDetector	= null;
+	private boolean				mbAutoPlay		= false;
 
 	public InteractiveWebView(Context context)
 	{
@@ -139,7 +139,8 @@ public class InteractiveWebView extends WebView
 			file = null;
 			if (mbOverLoadUrl && InteractiveWebView.this.isPageExist(strName))
 			{
-				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_JUMP, mnJumpChapter, mnJumpPage, null);
+				EventHandler
+						.notify(Global.handlerActivity, EventMessage.MSG_JUMP_FADE, mnJumpChapter, mnJumpPage, null);
 				mnJumpPage = Type.INVALID;
 				mnJumpChapter = Type.INVALID;
 				return true;

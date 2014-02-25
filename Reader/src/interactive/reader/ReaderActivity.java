@@ -101,7 +101,7 @@ public class ReaderActivity extends Activity
 		{
 			mnOrientation = newConfig.orientation;
 			loadDisplayPage(configData, mstrBookPath);
-			pageReader.jumpPage(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+			pageReader.jumpPage(pageReader.getCurrentChapter(), pageReader.getCurrentPage(), true);
 			Logs.showTrace("Orientation change: " + newConfig.orientation);
 		}
 		super.onConfigurationChanged(newConfig);
@@ -303,8 +303,9 @@ public class ReaderActivity extends Activity
 				VersionHandler version = new VersionHandler();
 				strVersionValue = version.getVersionName(ReaderActivity.this);
 
-				Toast.makeText(ReaderActivity.this, strVersionName + " : V" + strVersionValue, Toast.LENGTH_LONG)
-						.show();
+				String strVersion = strVersionName + " : V" + strVersionValue;
+				Logs.showTrace("==== Interactive Reader Version: " + strVersion + " ====");
+				Toast.makeText(ReaderActivity.this, strVersion, Toast.LENGTH_LONG).show();
 				strVersionValue = null;
 				strVersionName = null;
 				return true;
@@ -525,14 +526,14 @@ public class ReaderActivity extends Activity
 											break;
 										case EventMessage.MSG_OPTION_ITEM_SELECTED:
 											showOption();
-											pageReader.jumpPage(msg.arg1, msg.arg2);
+											pageReader.jumpPage(msg.arg1, msg.arg2, true);
 											break;
 										case GalleryView.MSG_WND_CLICK:
 											optionHandler.closeFlipView();
 											break;
 										case GalleryView.MSG_IMAGE_CLICK:
 											showOption();
-											pageReader.jumpPage(msg.arg1, msg.arg2);
+											pageReader.jumpPage(msg.arg1, msg.arg2, true);
 											break;
 										case EventMessage.MSG_LOCK_PAGE:
 											pageReader.lockScroll(true);
@@ -553,7 +554,10 @@ public class ReaderActivity extends Activity
 											pageReader.lockVerticalScroll(false);
 											break;
 										case EventMessage.MSG_JUMP:
-											pageReader.jumpPage(msg.arg1, msg.arg2);
+											pageReader.jumpPage(msg.arg1, msg.arg2, false);
+											break;
+										case EventMessage.MSG_JUMP_FADE:
+											pageReader.jumpPage(msg.arg1, msg.arg2, true);
 											break;
 										}
 										super.handleMessage(msg);

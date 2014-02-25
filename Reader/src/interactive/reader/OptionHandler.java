@@ -158,7 +158,6 @@ public class OptionHandler
 						PageData.listPageData.get(nChapter).get(nPage).strShapTiny, nChapItemWidth, nChapItemHeight);
 				img.setImageBitmap(bmp);
 				img.setLayoutParams(new LayoutParams(nChapItemWidth, nChapItemHeight));
-				//	img.setImageURI(Uri.parse(PageData.listPageData.get(nChapter).get(nPage).strShapTiny));
 				img.setScaleType(ScaleType.FIT_XY);
 				img.setAdjustViewBounds(true);
 				imgs.put(nPage, img);

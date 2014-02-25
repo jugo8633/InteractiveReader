@@ -8,6 +8,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveMediaLayout;
+import interactive.view.image.ImageViewHandler;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.GestureDetector;
@@ -29,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -77,10 +81,13 @@ public class SlideshowView extends RelativeLayout
 	private boolean									mbFlingOnePage			= false;
 	private int										mnDeviceWidth			= Type.INVALID;
 	private int										mnDeviceHeight			= Type.INVALID;
-	private SparseArray<Bitmap>						listBitmap				= null;
 	private SparseArray<String>						listMediaTag			= null;
 	private int										mnChapter				= Type.INVALID;
 	private int										mnPage					= Type.INVALID;
+	private ImageViewHandler						imageHandler			= null;
+	private boolean									mbCurrentActive			= false;
+	private Runnable								runInitImage			= null;
+	private ProgressBar								progressBar				= null;
 
 	public interface OnSlideshowItemSwitched
 	{
@@ -128,6 +135,7 @@ public class SlideshowView extends RelativeLayout
 		horizontalScrollView = null;
 		listIndicator.clear();
 		listIndicator = null;
+		imageHandler = null;
 		this.removeAllViewsInLayout();
 		super.finalize();
 	}
@@ -135,7 +143,6 @@ public class SlideshowView extends RelativeLayout
 	private void init(Context context)
 	{
 		this.setBackgroundColor(Color.TRANSPARENT);
-		listBitmap = new SparseArray<Bitmap>();
 
 		/** init slide */
 		scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
@@ -257,21 +264,32 @@ public class SlideshowView extends RelativeLayout
 
 		/** init item switch listener */
 		listOnItemSwitched = new SparseArray<OnSlideshowItemSwitched>();
-	}
 
-	public void release()
-	{
-		for (int i = 0; i < listBitmap.size(); ++i)
+		/** init image viewer */
+		imageHandler = new ImageViewHandler();
+		runInitImage = new Runnable()
 		{
-			if (null != listBitmap.get(i))
+			@Override
+			public void run()
 			{
-				if (!listBitmap.get(i).isRecycled())
+				if (imageHandler.isRelease())
 				{
-					listBitmap.get(i).recycle();
-					Logs.showTrace("Slideshow recycle bitmap");
+					postDelayed(runInitImage, 500);
+					return;
 				}
+				imageHandler.initImageView();
+				SlideshowView.this.invalidate();
+				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
+				SlideshowView.this.removeView(progressBar);
 			}
-		}
+		};
+
+		/** init progress bar */
+		progressBar = new ProgressBar(context);
+		RelativeLayout.LayoutParams progressParams = new RelativeLayout.LayoutParams(80, 80);
+		progressParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		progressBar.setLayoutParams(progressParams);
+		progressBar.getIndeterminateDrawable().setColorFilter(0xFF309FD6, android.graphics.PorterDuff.Mode.MULTIPLY);
 	}
 
 	@Override
@@ -314,6 +332,13 @@ public class SlideshowView extends RelativeLayout
 	{
 		mnChapter = nChapter;
 		mnPage = nPage;
+		Global.addActiveNotify(nChapter, nPage, selfHandler);
+		Global.addUnActiveNotify(nChapter, nPage, selfHandler);
+	}
+
+	public void initImageView()
+	{
+		imageHandler.initImageView();
 	}
 
 	private void setViewCenter()
@@ -348,6 +373,7 @@ public class SlideshowView extends RelativeLayout
 					if (mbShowIndicator)
 					{
 						rLayoutIndicator.setVisibility(View.VISIBLE);
+						rLayoutIndicator.bringToFront();
 					}
 					Logs.showTrace("slideshow switch item:" + mnCurrentItem);
 				}
@@ -553,6 +579,7 @@ public class SlideshowView extends RelativeLayout
 		imageview.setScaleType(ScaleType.CENTER_CROP);
 		imageview.setAdjustViewBounds(false);
 		imageview.setBackgroundColor(Color.TRANSPARENT);
+		imageview.setId(Global.getUserId());
 
 		if (0 < nResId)
 		{
@@ -573,9 +600,9 @@ public class SlideshowView extends RelativeLayout
 			}
 
 			Logs.showTrace("Slideshow get image width=" + nBitmapWidth + " height=" + nBitmapHeight);
-			Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
-			listBitmap.put(listBitmap.size(), bmp);
-			imageview.setImageBitmap(bmp);
+			//Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
+			//	imageview.setImageBitmap(bmp);
+			imageHandler.addImageView(imageview, strPath, nBitmapWidth, nBitmapHeight);
 		}
 		else
 		{
@@ -897,25 +924,25 @@ public class SlideshowView extends RelativeLayout
 		mbShowThumbnail = bShow;
 	}
 
-	public void initThumbnail(SparseArray<Integer> listImageResId)
-	{
-		if (null == listImageResId || 0 >= listImageResId.size())
-		{
-			return;
-		}
-		lLayoutThumbnail.removeAllViewsInLayout();
-		for (int i = 0; i < listImageResId.size(); ++i)
-		{
-			ImageView img = new ImageView(getContext());
-			img.setImageResource(listImageResId.get(i));
-			img.setScaleType(ScaleType.FIT_CENTER);
-			img.setAdjustViewBounds(true);
-			img.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			img.setPadding(3, 4, 3, 4);
-
-			lLayoutThumbnail.addView(img);
-		}
-	}
+	//	public void initThumbnail(SparseArray<Integer> listImageResId)
+	//	{
+	//		if (null == listImageResId || 0 >= listImageResId.size())
+	//		{
+	//			return;
+	//		}
+	//		lLayoutThumbnail.removeAllViewsInLayout();
+	//		for (int i = 0; i < listImageResId.size(); ++i)
+	//		{
+	//			ImageView img = new ImageView(getContext());
+	//			img.setImageResource(listImageResId.get(i));
+	//			img.setScaleType(ScaleType.FIT_CENTER);
+	//			img.setAdjustViewBounds(true);
+	//			img.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+	//			img.setPadding(3, 4, 3, 4);
+	//
+	//			lLayoutThumbnail.addView(img);
+	//		}
+	//	}
 
 	private void initThumbnail()
 	{
@@ -929,16 +956,15 @@ public class SlideshowView extends RelativeLayout
 		for (int i = 0; i < listGalleryItem.size(); ++i)
 		{
 			ImageView img = new ImageView(getContext());
+			img.setId(Global.getUserId());
 			SlideshowViewItem viewItem = listGalleryItem.get(i);
 			switch (viewItem.getType())
 			{
 			case SlideshowViewItem.TYPE_IMAGE:
-				//	img.setImageURI(Uri.parse(viewItem.getImageSrc()));
-				img.setImageBitmap(getThumbnail(viewItem.getImageSrc()));
+				setThumbnail(img, viewItem.getImageSrc());
 				break;
 			case SlideshowViewItem.TYPE_VIDEO:
-				//img.setImageURI(Uri.parse(viewItem.getVideoSrc()));
-				img.setImageBitmap(getThumbnail(viewItem.getVideoSrc()));
+				setThumbnail(img, viewItem.getVideoSrc());
 				break;
 			}
 			img.setScaleType(ScaleType.FIT_CENTER);
@@ -949,7 +975,6 @@ public class SlideshowView extends RelativeLayout
 			img.setTag(i);
 			img.setOnClickListener(new OnClickListener()
 			{
-
 				@Override
 				public void onClick(View view)
 				{
@@ -961,7 +986,7 @@ public class SlideshowView extends RelativeLayout
 		}
 	}
 
-	private Bitmap getThumbnail(String strImagePath)
+	private void setThumbnail(ImageView imageView, String strImagePath)
 	{
 		int nBitmapWidth = BitmapHandler.getBitmapWidth(strImagePath);
 		int nBitmapHeight = BitmapHandler.getBitmapHeight(strImagePath);
@@ -974,9 +999,9 @@ public class SlideshowView extends RelativeLayout
 		{
 			nBitmapHeight = 200;
 		}
-		Bitmap bitmap = BitmapHandler.readBitmap(theActivity, strImagePath, nBitmapWidth / 4, nBitmapHeight / 4);
-		listBitmap.put(listBitmap.size(), bitmap);
-		return bitmap;
+		imageHandler.addImageView(imageView, strImagePath, nBitmapWidth, nBitmapHeight);
+		//	Bitmap bitmap = BitmapHandler.readBitmap(theActivity, strImagePath, nBitmapWidth / 4, nBitmapHeight / 4);
+		//	imageView.setImageBitmap(bitmap);
 	}
 
 	OnTouchListener	onHVTouchListener	= new OnTouchListener()
@@ -984,6 +1009,17 @@ public class SlideshowView extends RelativeLayout
 											@Override
 											public boolean onTouch(View v, MotionEvent event)
 											{
+												if (MotionEvent.ACTION_DOWN == event.getAction())
+												{
+													EventHandler.notify(Global.handlerActivity,
+															EventMessage.MSG_LOCK_HORIZON, 0, 0, null);
+												}
+
+												if (MotionEvent.ACTION_UP == event.getAction())
+												{
+													EventHandler.notify(Global.handlerActivity,
+															EventMessage.MSG_UNLOCK_HORIZON, 0, 0, null);
+												}
 												gestureDetector.onTouchEvent(event);
 												scaleGestureDetector.onTouchEvent(event);
 												switch (event.getAction())
@@ -1124,4 +1160,32 @@ public class SlideshowView extends RelativeLayout
 	{
 		slideViewActivity = activity;
 	}
+
+	private Handler	selfHandler	= new Handler()
+								{
+
+									@Override
+									public void handleMessage(Message msg)
+									{
+										switch (msg.what)
+										{
+										case EventMessage.MSG_CURRENT_ACTIVE:
+											SlideshowView.this.addView(progressBar);
+											mbCurrentActive = true;
+											EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0,
+													0, null);
+											this.postDelayed(runInitImage, 500);
+											break;
+										case EventMessage.MSG_NOT_CURRENT_ACTIVE:
+											if (mbCurrentActive)
+											{
+												SlideshowView.this.removeView(progressBar);
+												mbCurrentActive = false;
+												imageHandler.releaseBitmap();
+											}
+											break;
+										}
+									}
+
+								};
 }

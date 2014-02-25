@@ -144,11 +144,11 @@ public class PageReader extends RelativeLayout
 		updatePageReader();
 	}
 
-	public void jumpPage(int nChapter, int nPage)
+	public void jumpPage(int nChapter, int nPage, boolean bFade)
 	{
 		if (Type.INVALID != nChapter)
 		{
-			if (Type.INVALID == nPage)
+			if (Type.INVALID == nPage && bFade)
 			{
 				crossFade(nChapter, Global.currentPage);
 			}
@@ -158,7 +158,10 @@ public class PageReader extends RelativeLayout
 				VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(nChapter);
 				if (null != vvp)
 				{
-					crossFade(nChapter, nPage);
+					if (bFade)
+					{
+						crossFade(nChapter, nPage);
+					}
 					vvp.setCurrentItem(nPage, false);
 				}
 			}
@@ -167,7 +170,10 @@ public class PageReader extends RelativeLayout
 		else if (Type.INVALID != nPage)
 		{
 			VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(getCurrentChapter());
-			crossFade(Global.currentChapter, nPage);
+			if (bFade)
+			{
+				crossFade(Global.currentChapter, nPage);
+			}
 			vvp.setCurrentItem(nPage);
 		}
 	}
@@ -175,6 +181,11 @@ public class PageReader extends RelativeLayout
 	private void crossFade(int nChapter, int nPage)
 	{
 		removeCrossFade();
+		if (null == PageData.listPageData.get(nChapter).get(nPage)
+				|| null == PageData.listPageData.get(Global.currentChapter).get(Global.currentPage))
+		{
+			return;
+		}
 		String strImagePath = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).strShapLarge;
 		int nWidth = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nWidth;
 		int nHeight = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nHeight;
@@ -242,7 +253,7 @@ public class PageReader extends RelativeLayout
 			int nKey = listViewHistory.keyAt(listViewHistory.size() - 1);
 			ViewHistory history = listViewHistory.get(nKey);
 			mbIsGoHistory = true;
-			jumpPage(history.mnChapter, history.mnPage);
+			jumpPage(history.mnChapter, history.mnPage, true);
 		}
 	}
 
@@ -277,23 +288,23 @@ public class PageReader extends RelativeLayout
 											case EventMessage.MSG_PAGE:
 												pageEvent(msg.arg1, msg.arg2);
 												break;
-											case EventMessage.MSG_WEB:
-												WebEvent(msg.arg1, msg.arg2, msg.obj);
-												break;
+											//											case EventMessage.MSG_WEB:
+											//												WebEvent(msg.arg1, msg.arg2, msg.obj);
+											//												break;
 											}
 										}
 
 									};
 
-	private void WebEvent(int nEvent, int nPosition, Object object)
-	{
-		switch (nEvent)
-		{
-		case EventMessage.MSG_JUMP:
-			jumpPage(nPosition, (Integer) object);
-			break;
-		}
-	}
+	//	private void WebEvent(int nEvent, int nPosition, Object object)
+	//	{
+	//		switch (nEvent)
+	//		{
+	//		case EventMessage.MSG_JUMP:
+	//			jumpPage(nPosition, (Integer) object);
+	//			break;
+	//		}
+	//	}
 
 	private void chapterEvent(int nEvent, int nPosition)
 	{

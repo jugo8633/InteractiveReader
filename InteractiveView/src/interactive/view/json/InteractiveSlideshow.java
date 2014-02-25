@@ -100,7 +100,7 @@ public class InteractiveSlideshow extends InteractiveObject
 							ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
 							jsonBody.mstrBackground, jsonBody.mnStyle, jsonBody.mbFullScreen, jsonBody.mnItemCount,
 							listViewItem);
-
+					slideshow.setPosition(nChapter, nPage);
 					webView.addView(slideshow);
 
 					slideshow.showThumbnail();

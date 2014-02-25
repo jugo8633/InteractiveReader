@@ -109,14 +109,12 @@ public class BitmapHandler
 		int nWidth = (int) Math.floor(fWidth);
 		int nHeight = (int) Math.floor(fHeight);
 		options.inSampleSize = calculateInSampleSize(options, nWidth, nHeight);
-		//	Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
-		Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
+		Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
+		//Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
 
 		options.inDither = false;
 		options.inInputShareable = true;
 		options.inTempStorage = new byte[16 * msMaxTexture];
-
-		//	Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, nWidth, nHeight, false);
 		Bitmap resizedBitmap = getResizedBitmap(originalBitmap, nWidth, nHeight);
 		if (originalBitmap != resizedBitmap)
 		{
@@ -142,8 +140,8 @@ public class BitmapHandler
 
 		if (height > reqHeight || width > reqWidth)
 		{
-			final int heightRatio = Math.round((float) height / (float) reqHeight);
-			final int widthRatio = Math.round((float) width / (float) reqWidth);
+			final int heightRatio = (int) Math.floor((float) height / (float) reqHeight);
+			final int widthRatio = (int) Math.floor((float) width / (float) reqWidth);
 			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 		}
 
