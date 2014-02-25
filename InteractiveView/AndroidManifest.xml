@@ -88,12 +88,18 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:noHistory="false"
-            android:taskAffinity=":activity" >
+            android:taskAffinity=":activity" >
             <intent-filter>
                 <action android:name="interactive.view.webview.WebBrowserActivity.LAUNCH" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="interactive.view.youtube.YouTubePlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensor"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
         </activity>
     </application>
 

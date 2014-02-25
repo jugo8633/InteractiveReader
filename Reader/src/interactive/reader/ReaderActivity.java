@@ -47,6 +47,7 @@ public class ReaderActivity extends Activity
 	private int							mnOrientation		= Type.INVALID;
 	private ConfigData					configData			= null;
 	private String						mstrBookPath		= null;
+	private boolean						mbIsActive			= true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -87,6 +88,7 @@ public class ReaderActivity extends Activity
 	@Override
 	protected void onResume()
 	{
+		mbIsActive = true;
 		Logs.showTrace("Reader activity resume");
 		Global.theActivity = this;
 		Global.interactiveHandler.initMediaView(this);
@@ -95,9 +97,17 @@ public class ReaderActivity extends Activity
 	}
 
 	@Override
+	protected void onPause()
+	{
+		mbIsActive = false;
+		Logs.showTrace("Main Activity pause");
+		super.onPause();
+	}
+
+	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
-		if (newConfig.orientation != mnOrientation)
+		if (newConfig.orientation != mnOrientation && mbIsActive)
 		{
 			mnOrientation = newConfig.orientation;
 			loadDisplayPage(configData, mstrBookPath);

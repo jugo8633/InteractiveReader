@@ -186,25 +186,26 @@ public class PageReader extends RelativeLayout
 			return;
 		}
 		String strImagePath = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).strShapLarge;
-		int nWidth = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nWidth;
-		int nHeight = PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nHeight;
+		int nWidth = Global.ScaleSize(PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nWidth);
+		int nHeight = Global
+				.ScaleSize(PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nHeight);
 		mHideBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(nWidth, nHeight);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mHideImage = new ImageView(getContext());
 		mHideImage.setImageBitmap(mHideBitmap);
-		mHideImage.setScaleType(ScaleType.CENTER_CROP);
+		mHideImage.setScaleType(ScaleType.FIT_XY);
 		mHideImage.setLayoutParams(layoutParams);
 
 		strImagePath = PageData.listPageData.get(nChapter).get(nPage).strShapLarge;
-		nWidth = PageData.listPageData.get(nChapter).get(nPage).nWidth;
-		nHeight = PageData.listPageData.get(nChapter).get(nPage).nHeight;
+		nWidth = Global.ScaleSize(PageData.listPageData.get(nChapter).get(nPage).nWidth);
+		nHeight = Global.ScaleSize(PageData.listPageData.get(nChapter).get(nPage).nHeight);
 		mShowBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
 		RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(nWidth, nHeight);
 		layoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mShowImage = new ImageView(getContext());
 		mShowImage.setImageBitmap(mShowBitmap);
-		mShowImage.setScaleType(ScaleType.CENTER_CROP);
+		mShowImage.setScaleType(ScaleType.FIT_XY);
 		mShowImage.setLayoutParams(layoutParams2);
 
 		this.addView(mShowImage);
@@ -331,9 +332,15 @@ public class PageReader extends RelativeLayout
 
 	public void setCurrentPosition()
 	{
+		VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(viewPager.getCurrentItem());
+		if (null == vvp)
+		{
+			return;
+		}
+
 		Global.currentChapter = viewPager.getCurrentItem();
-		VerticalPageView vvp = (VerticalPageView) chaptersAdapter.getChildView(Global.currentChapter);
 		Global.currentPage = vvp.getCurrentItem();
+
 		addHistory(Global.currentChapter, Global.currentPage);
 		Logs.showTrace("Current position: " + Global.currentChapter + " " + Global.currentPage);
 

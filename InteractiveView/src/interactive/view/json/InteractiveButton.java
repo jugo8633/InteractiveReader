@@ -117,14 +117,6 @@ public class InteractiveButton extends InteractiveObject
 						{
 							addButtonMap(listMapData, jsonHeader.mstrName, event.mstrTargetId);
 						}
-
-						if (InteractiveDefine.BUTTON_EVENT_VIDEO_PLAY == event.mnEvent
-								&& InteractiveDefine.OBJECT_CATEGORY_VIDEO == event.mnTargetType)
-						{
-							Global.interactiveHandler.addButtonMedia(jsonHeader.mstrName, event.mstrTargetId,
-									Type.INVALID, Type.INVALID, Type.INVALID, Type.INVALID, null, Type.INVALID, null,
-									Type.INVALID, Type.INVALID, false, false, false, false, null, false);
-						}
 						event = null;
 					}
 					webView.addView(acButton);

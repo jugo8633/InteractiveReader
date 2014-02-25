@@ -23,7 +23,6 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 {
 	/** The player view cannot be smaller than 110 pixels high. */
 	private final int							PLAYER_VIEW_MINIMUM_HEIGHT_DP	= 110;
-	private final String						DEVELOPER_KEY					= "AIzaSyDSCh-Uv3tkWuWg_wGF_uTpBS5ULXVq9Do";
 	private YoutubeFragment						youtubeFragment					= null;
 	private YouTubePlayer						player							= null;
 	private String								mstrVideoId						= null;
@@ -81,7 +80,7 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 		this.setTag(strTag);
 
 		youtubeFragment = new YoutubeFragment();
-		youtubeFragment.initialize(DEVELOPER_KEY, this);
+		youtubeFragment.initialize(DeveloperKey.DEVELOPER_KEY, this);
 		youtubeFragment.setContainer(this);
 
 		ft.add(0, youtubeFragment, strTag);

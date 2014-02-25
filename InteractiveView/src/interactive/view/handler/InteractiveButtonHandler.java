@@ -7,6 +7,7 @@ import interactive.common.Logs;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.map.GoogleMapActivity;
+import interactive.view.youtube.YouTubePlayerActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -97,18 +98,6 @@ public class InteractiveButtonHandler
 		}
 	}
 
-	public void addMediaData(String strButtonTag, String strName, int nWidth, int nHeight, int nX, int nY,
-			String strSrc, int nMediaType, String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop,
-			boolean bPlayerControls, boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
-	{
-		InteractiveButtonData buttonData = getButtonData(strButtonTag);
-		if (null != buttonData)
-		{
-			buttonData.addMediaData(strName, nWidth, nHeight, nX, nY, strSrc, nMediaType, strMediaSrc, nStart, nEnd,
-					bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer);
-		}
-	}
-
 	public void setContainer(String strButtonTag, ViewGroup viewGroup)
 	{
 		InteractiveButtonData buttonData = getButtonData(strButtonTag);
@@ -156,7 +145,7 @@ public class InteractiveButtonHandler
 			case InteractiveDefine.BUTTON_EVENT_VIDEO_PAUSE:
 				break;
 			case InteractiveDefine.BUTTON_EVENT_VIDEO_PLAY:
-				playMedia(buttonData);
+				playMedia(buttonData.listEventData.get(i).mstrTargetID);
 				break;
 			}
 		}
@@ -238,6 +227,7 @@ public class InteractiveButtonHandler
 
 	private void showItem(InteractiveButtonData buttonData, int nTargetType, String strItemTag, int nDisplay)
 	{
+		Logs.showTrace("Button triggle show item target type=" + nTargetType);
 		switch (nTargetType)
 		{
 		case InteractiveDefine.OBJECT_CATEGORY_IMAGE:
@@ -247,7 +237,7 @@ public class InteractiveButtonHandler
 			showMap(buttonData, strItemTag);
 			break;
 		case InteractiveDefine.OBJECT_CATEGORY_VIDEO:
-			showMedia(buttonData, strItemTag, nDisplay);
+			showMedia(strItemTag, nDisplay);
 			break;
 		}
 	}
@@ -317,43 +307,86 @@ public class InteractiveButtonHandler
 		}
 	}
 
-	private void showMedia(final InteractiveButtonData buttonData, String strMediaTag, int nDisplay)
+	private void showMedia(String strMediaTag, int nDisplay)
 	{
-		if (null == buttonData.listMediaData || null == strMediaTag)
+		if (null == strMediaTag)
+		{
+			return;
+		}
+		switch (nDisplay)
+		{
+		case InteractiveDefine.DISPLAY_TYPE_LAYOUT:
+			showMediaLayout(strMediaTag);
+			break;
+		case InteractiveDefine.DISPLAY_TYPE_FULL_SCREEN:
+			showMediaFullScreen(strMediaTag);
+			break;
+		}
+	}
+
+	private void showMediaLayout(String strMediaTag)
+	{
+		if (null == strMediaTag)
 		{
 			return;
 		}
 
-		for (int i = 0; i < buttonData.listMediaData.size(); ++i)
+		InteractiveMediaData mediaData = new InteractiveMediaData();
+		Global.interactiveHandler.getMediaData(strMediaTag, mediaData);
+		if (null != mediaData)
 		{
-			InteractiveMediaData mediaData = new InteractiveMediaData();
-			Global.interactiveHandler.getMediaData(buttonData.listMediaData.get(i).mstrName, mediaData);
-			switch (nDisplay)
+			Logs.showTrace("Button triggle show layout media media type=" + mediaData.mnMediaType);
+			switch (mediaData.mnMediaType)
 			{
-			case InteractiveDefine.DISPLAY_TYPE_LAYOUT:
+			case InteractiveDefine.MEDIA_TYPE_LOCAL:
 				break;
-			case InteractiveDefine.DISPLAY_TYPE_FULL_SCREEN:
-				showMediaFullScreen(mediaData);
+			case InteractiveDefine.MEDIA_TYPE_URL:
+				break;
+			case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
+				showYoutubeActivity(mediaData.mstrMediaSrc, true);
 				break;
 			}
-			mediaData = null;
 		}
+		mediaData = null;
 	}
 
-	private void showMediaLayout(InteractiveMediaData mediaData)
+	private void showMediaFullScreen(String strMediaTag)
 	{
-		if (null == mediaData)
+		if (null == strMediaTag)
 		{
 			return;
 		}
+
+		InteractiveMediaData mediaData = new InteractiveMediaData();
+		Global.interactiveHandler.getMediaData(strMediaTag, mediaData);
+		if (null != mediaData)
+		{
+			Logs.showTrace("Button triggle show full screent media media type=" + mediaData.mnMediaType);
+			switch (mediaData.mnMediaType)
+			{
+			case InteractiveDefine.MEDIA_TYPE_LOCAL:
+				break;
+			case InteractiveDefine.MEDIA_TYPE_URL:
+				break;
+			case InteractiveDefine.MEDIA_TYPE_YOUTUBE:
+				showYoutubeActivity(mediaData.mstrMediaSrc, false);
+				break;
+			}
+		}
+		mediaData = null;
 	}
 
-	private void showMediaFullScreen(InteractiveMediaData mediaData)
+	private void showYoutubeActivity(String strMediaId, boolean bTranslate)
 	{
-		if (null == mediaData)
+		if (null == strMediaId)
 		{
 			return;
 		}
+		Intent intent = new Intent(Global.theActivity, YouTubePlayerActivity.class);
+		intent.putExtra(YouTubePlayerActivity.EXTRA_VIDEO_ID, strMediaId);
+		intent.putExtra(YouTubePlayerActivity.EXTRA_TRANSLATE, bTranslate);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		Global.theActivity.startActivity(intent);
 	}
 
 	private InteractiveGoogleMapData getMapData(InteractiveButtonData buttonData, String strMapTag)
@@ -411,16 +444,13 @@ public class InteractiveButtonHandler
 		}
 	}
 
-	private void playMedia(InteractiveButtonData buttonData)
+	private void playMedia(String strMediaTag)
 	{
-		if (null != buttonData && null != buttonData.listMediaData)
+		if (null != strMediaTag)
 		{
-			for (int i = 0; i < buttonData.listMediaData.size(); ++i)
-			{
-				EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_PLAY, 0, 0,
-						buttonData.listMediaData.get(i).mstrName);
-				Logs.showTrace("Button triggle Play media:" + buttonData.listMediaData.get(i).mstrName);
-			}
+			EventHandler.notify(Global.interactiveHandler.getNotifyHandler(), EventMessage.MSG_MEDIA_PLAY, 0, 0,
+					strMediaTag);
+			Logs.showTrace("Button triggle Play media:" + strMediaTag);
 		}
 	}
 
