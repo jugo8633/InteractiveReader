@@ -1170,6 +1170,7 @@ public class SlideshowView extends RelativeLayout
 										switch (msg.what)
 										{
 										case EventMessage.MSG_CURRENT_ACTIVE:
+											SlideshowView.this.removeView(progressBar);
 											SlideshowView.this.addView(progressBar);
 											mbCurrentActive = true;
 											EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0,

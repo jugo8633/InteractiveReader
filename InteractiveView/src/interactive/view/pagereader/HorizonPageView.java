@@ -21,20 +21,31 @@ public class HorizonPageView extends ViewPager
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
-		if (this.mbPagingEnabled)
+		try
 		{
-			return super.onTouchEvent(event);
+			if (this.mbPagingEnabled)
+			{
+				return super.onTouchEvent(event);
+			}
 		}
-
+		catch (IllegalArgumentException ex)
+		{
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event)
 	{
-		if (this.mbPagingEnabled)
+		try
 		{
-			return super.onInterceptTouchEvent(event);
+			if (this.mbPagingEnabled)
+			{
+				return super.onInterceptTouchEvent(event);
+			}
+		}
+		catch (IllegalArgumentException ex)
+		{
 		}
 
 		return false;

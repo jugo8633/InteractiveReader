@@ -94,7 +94,6 @@ public class ImageViewHandler
 				if (!listImageView.get(nKey).mBitmap.isRecycled())
 				{
 					listImageView.get(nKey).mBitmap.recycle();
-					Logs.showTrace("Bitmap recycle id=" + nKey + " $$$$$$$$$$$$$$$$$");
 				}
 				listImageView.get(nKey).mBitmap = null;
 			}

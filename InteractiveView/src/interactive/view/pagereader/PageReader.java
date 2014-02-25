@@ -16,7 +16,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
 public class PageReader extends RelativeLayout
