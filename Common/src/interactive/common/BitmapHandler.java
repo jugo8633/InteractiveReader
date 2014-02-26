@@ -77,59 +77,65 @@ public class BitmapHandler
 		{
 			e.printStackTrace();
 		}
-
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		options.inPurgeable = true;
-		BitmapFactory.decodeFile(strFilePath, options);
-		options.inJustDecodeBounds = false;
-		float fWidth = reqWidth;
-		float fHeight = reqHeight;
-		float fScale = 1.0f;
-		if (reqWidth > reqHeight && msMaxTexture < reqWidth)
-		{
-			fWidth = msMaxTexture;
-			fScale = reqWidth / msMaxTexture;
-			fHeight = reqHeight / fScale;
-		}
-
-		if (reqWidth < reqHeight && msMaxTexture < reqHeight)
-		{
-			fHeight = msMaxTexture;
-			fScale = reqHeight / msMaxTexture;
-			fWidth = reqWidth / fScale;
-		}
-
-		if (reqWidth == reqHeight && msMaxTexture < reqWidth)
-		{
-			fWidth = msMaxTexture;
-			fHeight = msMaxTexture;
-		}
-
-		int nWidth = (int) Math.floor(fWidth);
-		int nHeight = (int) Math.floor(fHeight);
-		options.inSampleSize = calculateInSampleSize(options, nWidth, nHeight);
-		Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
-		//Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
-
-		options.inDither = false;
-		options.inInputShareable = true;
-		options.inTempStorage = new byte[16 * msMaxTexture];
-		Bitmap resizedBitmap = getResizedBitmap(originalBitmap, nWidth, nHeight);
-		if (originalBitmap != resizedBitmap)
-		{
-			originalBitmap.recycle();
-		}
 		try
 		{
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			options.inPurgeable = true;
+			BitmapFactory.decodeFile(strFilePath, options);
+			options.inJustDecodeBounds = false;
+			float fWidth = reqWidth;
+			float fHeight = reqHeight;
+			float fScale = 1.0f;
+			if (reqWidth > reqHeight && msMaxTexture < reqWidth)
+			{
+				fWidth = msMaxTexture;
+				fScale = reqWidth / msMaxTexture;
+				fHeight = reqHeight / fScale;
+			}
+
+			if (reqWidth < reqHeight && msMaxTexture < reqHeight)
+			{
+				fHeight = msMaxTexture;
+				fScale = reqHeight / msMaxTexture;
+				fWidth = reqWidth / fScale;
+			}
+
+			if (reqWidth == reqHeight && msMaxTexture < reqWidth)
+			{
+				fWidth = msMaxTexture;
+				fHeight = msMaxTexture;
+			}
+
+			int nWidth = (int) Math.floor(fWidth);
+			int nHeight = (int) Math.floor(fHeight);
+			options.inSampleSize = calculateInSampleSize(options, nWidth, nHeight);
+			Bitmap originalBitmap = BitmapFactory.decodeStream(fis, null, options);
+			//Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
 			fis.close();
 			fis = null;
+			//return originalBitmap;
+
+			options.inDither = false;
+			options.inPurgeable = true;
+			options.inInputShareable = true;
+			options.inSampleSize = 1;
+			options.inTempStorage = new byte[16 * 1024];
+			Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, nWidth, nHeight, true);//getResizedBitmap(originalBitmap, nWidth, nHeight);
+			if (originalBitmap != resizedBitmap)
+			{
+				originalBitmap.recycle();
+			}
+
+			return resizedBitmap;
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return resizedBitmap;
+
+		return null;
+
 	}
 
 	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
