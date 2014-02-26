@@ -129,7 +129,6 @@ public class InteractiveMediaHandler
 							listMediaData.get(i).mnEnd);
 					listMediaData.get(i).mMediaContainer.addView(youtubePlayer);
 					youtubePlayer.play(listMediaData.get(i).mstrMediaSrc);
-					Logs.showTrace("Play youtube on container:" + listMediaData.get(i).mMediaContainer.getTag());
 					break;
 				}
 				break;

@@ -302,7 +302,6 @@ public class InteractiveButtonHandler
 			intent.putExtra(GoogleMapActivity.EXTRA_Y, googleMap.mnY);
 			intent.putExtra(GoogleMapActivity.EXTRA_WIDTH, googleMap.mnWidth);
 			intent.putExtra(GoogleMapActivity.EXTRA_HEIGHT, googleMap.mnHeight);
-			intent.putExtra(GoogleMapActivity.EXTRA_BACKGROUND_IMAGE, googleMap.mstrBackgroundImage);
 			Global.theActivity.startActivity(intent);
 		}
 	}

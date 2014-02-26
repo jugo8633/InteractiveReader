@@ -59,7 +59,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:multiprocess="true"
             android:noHistory="false"
-            android:taskAffinity=":activity" >
+            android:taskAffinity=":activity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="interactive.view.map.GoogleMapActivity.LAUNCH" />
 

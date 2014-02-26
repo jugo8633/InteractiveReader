@@ -1,33 +1,26 @@
 package interactive.view.map;
 
-import interactive.common.BitmapHandler;
-import interactive.common.Device;
-import interactive.common.Logs;
 import interactive.view.global.Global;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class GoogleMapActivity extends Activity
 {
 
-	public static final String	EXTRA_TAG				= "Tag";
-	public static final String	EXTRA_MAP_TYPE			= "MapType";
-	public static final String	EXTRA_LATITUDE			= "Latitude";
-	public static final String	EXTRA_LONGITUDE			= "Longitude";
-	public static final String	EXTRA_ZOOM_LEVEL		= "ZoomLevel";
-	public static final String	EXTRA_MARKER			= "Marker";
-	public static final String	EXTRA_X					= "X";
-	public static final String	EXTRA_Y					= "Y";
-	public static final String	EXTRA_WIDTH				= "Width";
-	public static final String	EXTRA_HEIGHT			= "Height";
-	public static final String	EXTRA_BACKGROUND_IMAGE	= "Background";
-	private Bitmap				mBitmapBackground		= null;
+	public static final String	EXTRA_TAG			= "Tag";
+	public static final String	EXTRA_MAP_TYPE		= "MapType";
+	public static final String	EXTRA_LATITUDE		= "Latitude";
+	public static final String	EXTRA_LONGITUDE		= "Longitude";
+	public static final String	EXTRA_ZOOM_LEVEL	= "ZoomLevel";
+	public static final String	EXTRA_MARKER		= "Marker";
+	public static final String	EXTRA_X				= "X";
+	public static final String	EXTRA_Y				= "Y";
+	public static final String	EXTRA_WIDTH			= "Width";
+	public static final String	EXTRA_HEIGHT		= "Height";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -37,7 +30,7 @@ public class GoogleMapActivity extends Activity
 
 		RelativeLayout rlMain = new RelativeLayout(this);
 		rlMain.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		rlMain.setAlpha(0.80f);
+		rlMain.setBackgroundColor(Color.parseColor("#80000000"));
 		this.setContentView(rlMain);
 
 		Intent intent = getIntent();
@@ -49,26 +42,6 @@ public class GoogleMapActivity extends Activity
 		String strMarker = intent.getStringExtra(EXTRA_MARKER);
 		int nWidth = intent.getIntExtra(EXTRA_WIDTH, LayoutParams.MATCH_PARENT);
 		int nHeight = intent.getIntExtra(EXTRA_HEIGHT, LayoutParams.MATCH_PARENT);
-		String strBackgroundImage = intent.getStringExtra(EXTRA_BACKGROUND_IMAGE);
-
-		Logs.showTrace("google map activity tag=" + strTag + " map type=" + nMapType + " latitude=" + dLatitude
-				+ " longitude=" + dLongitude + " zoom level=" + nZoomLevel + " marker=" + strMarker + " backImage="
-				+ strBackgroundImage);
-
-		// add background image
-		if (null != strBackgroundImage)
-		{
-			Device device = new Device(this);
-			int nDisplayWidth = device.getDeviceWidth();
-			int nDisplayHeight = device.getDeviceHeight();
-			device = null;
-			ImageView backImage = new ImageView(this);
-			backImage.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			mBitmapBackground = BitmapHandler.readBitmap(this, strBackgroundImage, nDisplayWidth, nDisplayHeight);
-			backImage.setImageBitmap(mBitmapBackground);
-			backImage.setAlpha(0.30f);
-			rlMain.addView(backImage);
-		}
 
 		// add google map view
 		GoogleMapView googleMapView = new GoogleMapView(this);
@@ -83,7 +56,6 @@ public class GoogleMapActivity extends Activity
 		{
 			public void onViewClosed()
 			{
-				// TODO Auto-generated method stub
 				GoogleMapActivity.this.finish();
 			}
 		});
@@ -92,15 +64,6 @@ public class GoogleMapActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
-		if (null != mBitmapBackground)
-		{
-			if (!mBitmapBackground.isRecycled())
-			{
-				mBitmapBackground.recycle();
-			}
-			mBitmapBackground = null;
-		}
-		Logs.showTrace("Google map activity destroy");
 		super.onDestroy();
 	}
 }
