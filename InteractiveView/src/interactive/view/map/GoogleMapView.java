@@ -1,5 +1,9 @@
 package interactive.view.map;
 
+import interactive.common.EventHandler;
+import interactive.common.EventMessage;
+import interactive.view.global.Global;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -22,26 +26,16 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class GoogleMapView extends RelativeLayout
 {
-	private final int						PADING				= 10;
-	private GoogleMap						googleMap;
-	private GoogleMapFragment				googleMapFragment	= null;
-	private String							mstrMarker			= null;
-	private double							mdLatitude			= 0;
-	private double							mdLongitude			= 0;
-	private ImageView						imgCloseBtn;
-	private static int						snID				= 7878778;
-	private SparseArray<onViewCloseListner>	listOnViewCloseListner;
-	private boolean							mbShowCloseButton	= false;
-
-	public interface onViewCloseListner
-	{
-		void onViewClosed();
-	}
+	private final int			PADING				= 10;
+	private GoogleMap			googleMap;
+	private GoogleMapFragment	googleMapFragment	= null;
+	private String				mstrMarker			= null;
+	private double				mdLatitude			= 0;
+	private double				mdLongitude			= 0;
 
 	public GoogleMapView(Context context)
 	{
@@ -71,22 +65,13 @@ public class GoogleMapView extends RelativeLayout
 	private void init(Context context)
 	{
 		this.setOnTouchListener(mapViewTouchListener);
-		listOnViewCloseListner = new SparseArray<onViewCloseListner>();
-	}
-
-	public void setOnViewCloseListner(GoogleMapView.onViewCloseListner listner)
-	{
-		if (null != listner)
-		{
-			listOnViewCloseListner.put(listOnViewCloseListner.size(), listner);
-		}
 	}
 
 	public void init(String strTag, Activity activity, int nMapType, double dLatitude, double dLongitude,
 			int nZoomLevel, String strMarker)
 	{
 
-		this.setId(++snID);
+		this.setId(Global.getUserId());
 		this.setTag(strTag);
 		setPadding(PADING, PADING, PADING, PADING);
 
@@ -195,34 +180,6 @@ public class GoogleMapView extends RelativeLayout
 		googleMapFragment.getMap().addMarker(markerOpt);
 		markerOpt = null;
 		latLng = null;
-
-		if (mbShowCloseButton)
-		{
-			addCloseButton();
-		}
-	}
-
-	public void setCloseButton(boolean bSet)
-	{
-		mbShowCloseButton = bSet;
-	}
-
-	private void addCloseButton()
-	{
-		int nResId = getContext().getResources().getIdentifier("close_button", "drawable",
-				getContext().getPackageName());
-		imgCloseBtn = new ImageView(getContext());
-		imgCloseBtn.setImageResource(nResId);
-
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(30, 30);
-		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-
-		imgCloseBtn.setLayoutParams(params);
-
-		imgCloseBtn.setOnTouchListener(closeTouchListener);
-		addView(imgCloseBtn);
-		imgCloseBtn.bringToFront();
 	}
 
 	private Handler	mapHandler				= new Handler()
@@ -243,26 +200,6 @@ public class GoogleMapView extends RelativeLayout
 												}
 											};
 
-	OnTouchListener	closeTouchListener		= new OnTouchListener()
-											{
-
-												@Override
-												public boolean onTouch(View v, MotionEvent event)
-												{
-													switch (event.getAction())
-													{
-													case MotionEvent.ACTION_DOWN:
-														for (int i = 0; i < listOnViewCloseListner.size(); ++i)
-														{
-															listOnViewCloseListner.get(i).onViewClosed();
-															;
-														}
-														break;
-													}
-													return true;
-												}
-											};
-
 	OnTouchListener	mapViewTouchListener	= new OnTouchListener()
 											{
 
@@ -272,12 +209,12 @@ public class GoogleMapView extends RelativeLayout
 													switch (event.getAction())
 													{
 													case MotionEvent.ACTION_DOWN:
-														GoogleMapView.this.getParent()
-																.requestDisallowInterceptTouchEvent(true);
+														EventHandler.notify(Global.handlerActivity,
+																EventMessage.MSG_LOCK_PAGE, 0, 0, null);
 														break;
 													case MotionEvent.ACTION_UP:
-														GoogleMapView.this.getParent()
-																.requestDisallowInterceptTouchEvent(false);
+														EventHandler.notify(Global.handlerActivity,
+																EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 														break;
 													}
 
