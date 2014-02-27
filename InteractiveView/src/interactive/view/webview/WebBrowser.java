@@ -5,6 +5,7 @@ import interactive.common.EventMessage;
 import interactive.view.global.Global;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 
@@ -25,7 +27,7 @@ public class WebBrowser extends RelativeLayout
 	private final int	ID_PRE_PAGE		= ++Global.mnUserId;
 	private final int	ID_NEXT_PAGE	= ++Global.mnUserId;
 	private Handler		notifyHandler	= null;
-
+	private ProgressBar	progressBar		= null;
 	private WebView		webView			= null;
 
 	public WebBrowser(Context context)
@@ -121,6 +123,11 @@ public class WebBrowser extends RelativeLayout
 		imagePrePage.setOnTouchListener(onTouchListener);
 		imageNextPage.setOnTouchListener(onTouchListener);
 
+		progressBar = new ProgressBar(getContext());
+		RelativeLayout.LayoutParams progressParams = new RelativeLayout.LayoutParams(80, 80);
+		progressParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		progressBar.setLayoutParams(progressParams);
+		progressBar.getIndeterminateDrawable().setColorFilter(0xFF309FD6, android.graphics.PorterDuff.Mode.MULTIPLY);
 	}
 
 	public void loadURL(String strUrl)
@@ -132,12 +139,29 @@ public class WebBrowser extends RelativeLayout
 	{
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
-			if (url.startsWith("http:") || url.startsWith("https:"))
-			{
-				loadURL(url);
-			}
-			return true;
+			//			if (url.startsWith("http:") || url.startsWith("https:"))
+			//			{
+			//				loadURL(url);
+			//			}
+			//			return true;
+			return false;
 		}
+
+		@Override
+		public void onPageFinished(WebView view, String url)
+		{
+			WebBrowser.this.removeView(progressBar);
+			super.onPageFinished(view, url);
+		}
+
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon)
+		{
+			WebBrowser.this.removeView(progressBar);
+			WebBrowser.this.addView(progressBar);
+			super.onPageStarted(view, url, favicon);
+		}
+
 	}
 
 	private void optionDown(View view)

@@ -1,3 +1,4 @@
+2014/02/27 : 新增web browser loading bar
 2014/02/27 : 新增iframe互動元件 處理廣告彈出
 2014/02/26 : 修正google map activity背景透通 , 移除背景bitmap改用透通activity
 2014/02/26 : 新增 按鈕 無播放框(全屏&置中)
