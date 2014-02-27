@@ -15,11 +15,10 @@ public class InteractiveGoogleMapData
 	public int		mnY					= 0;
 	public int		mnWidth				= LayoutParams.MATCH_PARENT;
 	public int		mnHeight			= LayoutParams.MATCH_PARENT;
-	public String	mstrBackgroundImage	= null;
 	public boolean	mbIsVisible			= true;
 
 	public InteractiveGoogleMapData(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
-			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage, boolean bIsVisible)
+			String strMarker, int nX, int nY, int nWidth, int nHeight, boolean bIsVisible)
 	{
 		mstrTag = strTag;
 		mnMapType = nMapType;
@@ -31,7 +30,6 @@ public class InteractiveGoogleMapData
 		mnY = nY;
 		mnWidth = nWidth;
 		mnHeight = nHeight;
-		mstrBackgroundImage = strBackgroundImage;
 		mbIsVisible = bIsVisible;
 	}
 }

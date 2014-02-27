@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 
 @SuppressWarnings("unused")
 public abstract class InteractiveObject
@@ -227,6 +228,17 @@ public abstract class InteractiveObject
 			super.finalize();
 		}
 
+	}
+
+	public class JsonIframe
+	{
+		public boolean	mbIsOpen	= false;
+		public String	mstrUrl		= null;
+
+		public JsonIframe()
+		{
+
+		}
 	}
 
 	public class JsonSlideshow
@@ -531,7 +543,7 @@ public abstract class InteractiveObject
 		super.finalize();
 	}
 
-	public abstract boolean createInteractive(final InteractiveWebView webView, String strBookPath, JSONObject jsonAll,
+	public abstract boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll,
 			int nChapter, int nPage) throws JSONException;
 
 	public Context getContext()
@@ -637,6 +649,19 @@ public abstract class InteractiveObject
 			JSONObject joptions = jsonObject.getJSONObject(strKey);
 			jsonWebPage.options.mbAutoplay = getJsonBoolean(joptions, JSON_AUTOPLAY);
 		}
+		return true;
+	}
+
+	public boolean parseJsonIframe(JSONObject jsonObject, JsonIframe jsonIframe) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonIframe)
+		{
+			return false;
+		}
+
+		jsonIframe.mbIsOpen = getJsonBoolean(jsonObject, JSON_IS_OPEN);
+		jsonIframe.mstrUrl = getJsonString(jsonObject, JSON_URL);
 		return true;
 	}
 
@@ -915,11 +940,11 @@ public abstract class InteractiveObject
 		return Global.ScaleSize(nSize);
 	}
 
-	public boolean isCreateValid(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, String strJsonKey)
+	public boolean isCreateValid(ViewGroup container, String strBookPath, JSONObject jsonAll, String strJsonKey)
 	{
 		String strKey = null;
 		strKey = getValidKey(jsonAll, strJsonKey);
-		if (null == getContext() || null == webView || null == strBookPath || null == strKey)
+		if (null == getContext() || null == container || null == strBookPath || null == strKey)
 		{
 			return false;
 		}

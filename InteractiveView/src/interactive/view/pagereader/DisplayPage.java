@@ -6,6 +6,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
 import interactive.view.json.InteractiveButton;
+import interactive.view.json.InteractiveIframe;
 import interactive.view.json.InteractiveImage;
 import interactive.view.json.InteractiveMap;
 import interactive.view.json.InteractiveObject;
@@ -35,7 +36,6 @@ public class DisplayPage extends RelativeLayout
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
 	private DisplayMetrics		metrics			= null;
-	private String				mstrBackground	= null;
 
 	public DisplayPage(Context context)
 	{
@@ -76,7 +76,6 @@ public class DisplayPage extends RelativeLayout
 
 		int nWebWidth = pageData.nWidth;
 		int nWebHeight = pageData.nHeight;
-		mstrBackground = pageData.strShapLarge;
 
 		if (Type.INVALID != nDisplayWidth && nDisplayWidth < pageData.nWidth)
 		{
@@ -91,7 +90,7 @@ public class DisplayPage extends RelativeLayout
 		exdWebView = new InteractiveWebView(theContext);
 		exdWebView.setPosition(pageData.nChapter, pageData.nPage);
 		exdWebView.setTag(pageData.strName);
-		exdWebView.setDisplaySize(getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
+		exdWebView.setDisplay(0, 0, getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
 
@@ -144,11 +143,19 @@ public class DisplayPage extends RelativeLayout
 			10.	Web view
 			 */
 			jsonAll = new JSONObject(jsonData.toString());
+
 			if (!jsonAll.isNull(InteractiveObject.JSON_WEB_PAGE))
 			{
 				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(theContext);
 				interactiveWebPage.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveWebPage = null;
+			}
+
+			if (!jsonAll.isNull(InteractiveObject.JSON_IFRAME))
+			{
+				InteractiveIframe interactiveIframe = new InteractiveIframe(theContext);
+				interactiveIframe.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				interactiveIframe = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_POSTCARD))
@@ -176,7 +183,6 @@ public class DisplayPage extends RelativeLayout
 			if (!jsonAll.isNull(InteractiveObject.JSON_MAP))
 			{
 				InteractiveMap interactiveMap = new InteractiveMap(theContext);
-				interactiveMap.setBackground(mstrBackground);
 				interactiveMap.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveMap = null;
 			}
@@ -198,7 +204,6 @@ public class DisplayPage extends RelativeLayout
 			if (!jsonAll.isNull(InteractiveObject.JSON_BUTTON))
 			{
 				InteractiveButton interactiveButton = new InteractiveButton(theContext);
-				interactiveButton.setBackground(mstrBackground);
 				interactiveButton.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveButton = null;
 			}

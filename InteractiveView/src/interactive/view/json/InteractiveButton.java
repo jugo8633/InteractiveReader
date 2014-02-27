@@ -1,12 +1,10 @@
 package interactive.view.json;
 
-import interactive.common.Type;
 import interactive.view.button.ButtonView;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveGoogleMapData;
 import interactive.view.handler.InteractiveImageData;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,27 +12,21 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 
 public class InteractiveButton extends InteractiveObject
 {
-	private String	mstrBackground	= null;
-
 	public InteractiveButton(Context context)
 	{
 		super(context);
 	}
 
-	public void setBackground(String strBackground)
-	{
-		mstrBackground = strBackground;
-	}
-
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
 		String strKey = null;
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_BUTTON))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_BUTTON))
 		{
 			return false;
 		}
@@ -96,7 +88,7 @@ public class InteractiveButton extends InteractiveObject
 							ScaleSize(jsonHeader.mnHeight));
 
 					Global.interactiveHandler.addButton(getContext(), jsonHeader.mstrName, jsonHeader.mstrGroupId,
-							webView, acButton.getButtonHandler());
+							container, acButton.getButtonHandler());
 
 					for (int j = 0; j < jsonBody.listEvent.size(); ++j)
 					{
@@ -119,7 +111,7 @@ public class InteractiveButton extends InteractiveObject
 						}
 						event = null;
 					}
-					webView.addView(acButton);
+					container.addView(acButton);
 					acButton = null;
 				}
 			}
@@ -156,7 +148,6 @@ public class InteractiveButton extends InteractiveObject
 	{
 		boolean bResult = false;
 		InteractiveMap interactiveMap = new InteractiveMap(getContext());
-		interactiveMap.setBackground(mstrBackground);
 		bResult = interactiveMap.getInteractiveGoogleMap(jsonAll, listMapData, nChapter, nPage);
 		interactiveMap = null;
 		return bResult;
@@ -195,8 +186,7 @@ public class InteractiveButton extends InteractiveObject
 				Global.interactiveHandler.addButtonMap(strButtonTag, strMapTag, listMapData.get(i).mnMapType,
 						listMapData.get(i).mdLatitude, listMapData.get(i).mdLongitude, listMapData.get(i).mnZoomLevel,
 						listMapData.get(i).mstrMarker, listMapData.get(i).mnX, listMapData.get(i).mnY,
-						listMapData.get(i).mnWidth, listMapData.get(i).mnHeight,
-						listMapData.get(i).mstrBackgroundImage, listMapData.get(i).mbIsVisible);
+						listMapData.get(i).mnWidth, listMapData.get(i).mnHeight, listMapData.get(i).mbIsVisible);
 			}
 		}
 	}

@@ -4,7 +4,6 @@ import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveGoogleMapData;
 import interactive.view.map.GoogleMapView;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,27 +13,21 @@ import com.google.android.gms.maps.GoogleMap;
 
 import android.content.Context;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 
 public class InteractiveMap extends InteractiveObject
 {
-	private String	mstrBackground	= null;
-
 	public InteractiveMap(Context context)
 	{
 		super(context);
 	}
 
-	public void setBackground(String strBackground)
-	{
-		mstrBackground = strBackground;
-	}
-
 	@Override
-	public boolean createInteractive(final InteractiveWebView webView, String strBookPath, JSONObject jsonAll,
-			int nChapter, int nPage) throws JSONException
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
 		String strKey = null;
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_MAP))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_MAP))
 		{
 			return false;
 		}
@@ -62,7 +55,7 @@ public class InteractiveMap extends InteractiveObject
 					googleMapView.init(jsonHeader.mstrName, Global.theActivity, nType, jsonBody.mdLongitude,
 							jsonBody.mdlatitude, jsonBody.appearance.mnZoomLevel, jsonBody.appearance.mstrMarkAs);
 
-					webView.addView(googleMapView);
+					container.addView(googleMapView);
 				}
 			}
 			jsonHeader = null;
@@ -115,8 +108,7 @@ public class InteractiveMap extends InteractiveObject
 				listGoogleMapData.put(listGoogleMapData.size(), new InteractiveGoogleMapData(jsonHeader.mstrName,
 						nType, jsonBody.mdLongitude, jsonBody.mdlatitude, jsonBody.appearance.mnZoomLevel,
 						jsonBody.appearance.mstrMarkAs, ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
-						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), mstrBackground,
-						jsonHeader.mbIsVisible));
+						ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), jsonHeader.mbIsVisible));
 			}
 			jsonHeader = null;
 			jsonBody = null;

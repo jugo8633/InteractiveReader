@@ -22,7 +22,12 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebChromeClient.CustomViewCallback;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -85,8 +90,6 @@ public class InteractiveWebView extends WebView
 		//      this.setInitialScale(1);
 
 		this.getSettings().setJavaScriptEnabled(true);
-		this.setWebViewClient(new WebViewClient());
-
 		this.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		this.getSettings().setBuiltInZoomControls(false);
 		this.getSettings().setSupportZoom(true);
@@ -97,11 +100,11 @@ public class InteractiveWebView extends WebView
 		this.setVerticalScrollBarEnabled(false);
 		this.setClickable(false);
 
+		this.setWebViewClient(new myWebViewClient());
+		this.setWebChromeClient(new WebChromeClient());
+
 		this.setOnLongClickListener(longClickListener);
 		this.setOnTouchListener(onTouchListener);
-
-		setWebViewClient(new myWebViewClient());
-		setWebChromeClient(new WebChromeClient());
 
 		gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
 
@@ -131,6 +134,24 @@ public class InteractiveWebView extends WebView
 
 	private class myWebViewClient extends WebViewClient
 	{
+
+		//		@Override
+		//		public void onLoadResource(WebView view, String url)
+		//		{
+		//			/**  for AD */
+		//			if (null == view || null == url)
+		//			{
+		//				return;
+		//			}
+		//			if (null != view.getHitTestResult() && view.getHitTestResult().getType() > 0)
+		//			{
+		//				view.stopLoading();
+		//				Intent intent = new Intent(getContext(), WebBrowserActivity.class);
+		//				intent.putExtra(EXTRA_URL, url);
+		//				getContext().startActivity(intent);
+		//			}
+		//		}
+
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
 			/** 跳頁 */
@@ -201,8 +222,10 @@ public class InteractiveWebView extends WebView
 		Global.addActiveNotify(nChapter, nPage, selfHandler);
 	}
 
-	public void setDisplaySize(int nWidth, int nHeight)
+	public void setDisplay(int nX, int nY, int nWidth, int nHeight)
 	{
+		this.setX(nX);
+		this.setY(nY);
 		this.setLayoutParams(new RelativeLayout.LayoutParams(nWidth, nHeight));
 	}
 

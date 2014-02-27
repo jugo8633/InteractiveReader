@@ -50,11 +50,10 @@ public class InteractiveHandler
 	}
 
 	public void addButtonMap(String strButtonTag, String strMapTag, int nMapType, double dLatitude, double dLongitude,
-			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage,
-			boolean bIsVisible)
+			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, boolean bIsVisible)
 	{
 		buttonHandler.addMapData(strButtonTag, strMapTag, nMapType, dLatitude, dLongitude, nZoomLevel, strMarker, nX,
-				nY, nWidth, nHeight, strBackgroundImage, bIsVisible);
+				nY, nWidth, nHeight, bIsVisible);
 	}
 
 	public void addButtonEvent(String strButtonTag, int nType, String strTypeName, int nEvent, String strEventName,

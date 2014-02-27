@@ -77,14 +77,13 @@ public class InteractiveButtonHandler
 	}
 
 	public void addMapData(String strButtonTag, String strMapTag, int nMapType, double dLatitude, double dLongitude,
-			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage,
-			boolean bIsVisible)
+			int nZoomLevel, String strMarker, int nX, int nY, int nWidth, int nHeight, boolean bIsVisible)
 	{
 		InteractiveButtonData buttonData = getButtonData(strButtonTag);
 		if (null != buttonData)
 		{
 			buttonData.addMapData(strMapTag, nMapType, dLatitude, dLongitude, nZoomLevel, strMarker, nX, nY, nWidth,
-					nHeight, strBackgroundImage, bIsVisible);
+					nHeight, bIsVisible);
 		}
 	}
 

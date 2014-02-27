@@ -1,13 +1,12 @@
 package interactive.view.json;
 
 import interactive.view.scrollable.ScrollableView;
-import interactive.view.webview.InteractiveWebView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 public class InteractiveScrollable extends InteractiveObject
 {
@@ -24,10 +23,10 @@ public class InteractiveScrollable extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_SCROLLABLE))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_SCROLLABLE))
 		{
 			return false;
 		}
@@ -49,7 +48,7 @@ public class InteractiveScrollable extends InteractiveObject
 					scrollableImageView.setImage(jsonHeader.mstrName, strBookPath + jsonHeader.mstrSrc,
 							ScaleSize(jsonBody.imgBBox.mnWidth), ScaleSize(jsonBody.imgBBox.mnHeight),
 							jsonBody.mnOverflow, ScaleSize(jsonBody.offSet.mnX), ScaleSize(jsonBody.offSet.mnY),
-							webView);
+							container);
 				}
 			}
 			jsonBody = null;

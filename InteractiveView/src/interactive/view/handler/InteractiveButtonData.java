@@ -61,7 +61,7 @@ public class InteractiveButtonData
 	}
 
 	public void addMapData(String strTag, int nMapType, double dLatitude, double dLongitude, int nZoomLevel,
-			String strMarker, int nX, int nY, int nWidth, int nHeight, String strBackgroundImage, boolean bIsVisible)
+			String strMarker, int nX, int nY, int nWidth, int nHeight, boolean bIsVisible)
 	{
 		if (null == listMapData)
 		{
@@ -69,7 +69,7 @@ public class InteractiveButtonData
 		}
 
 		listMapData.put(listMapData.size(), new InteractiveGoogleMapData(strTag, nMapType, dLatitude, dLongitude,
-				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, strBackgroundImage, bIsVisible));
+				nZoomLevel, strMarker, nX, nY, nWidth, nHeight, bIsVisible));
 	}
 
 	public void addEventData(int nType, String strTypeName, int nEvent, String strEventName, int nTargetType,

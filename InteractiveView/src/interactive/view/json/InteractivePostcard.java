@@ -3,13 +3,13 @@ package interactive.view.json;
 import interactive.view.global.Global;
 import interactive.view.postcard.Postcard;
 import interactive.view.postcard.PostcardMailbox;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 public class InteractivePostcard extends InteractiveObject
 {
@@ -26,10 +26,10 @@ public class InteractivePostcard extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll,int nChapter, int nPage)
-			throws JSONException
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
+			int nPage) throws JSONException
 	{
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_POSTCARD))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_POSTCARD))
 		{
 			return false;
 		}
@@ -44,7 +44,7 @@ public class InteractivePostcard extends InteractiveObject
 			{
 				if (jsonHeader.mbIsVisible)
 				{
-					int nKey = Global.interactiveHandler.addPostcard(new Postcard(getContext(), webView));
+					int nKey = Global.interactiveHandler.addPostcard(new Postcard(getContext(), container));
 
 					Global.interactiveHandler.getPostcard(nKey).initPostcardFrame(jsonHeader.mstrName,
 							ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY), ScaleSize(jsonHeader.mnWidth),
@@ -86,7 +86,7 @@ public class InteractivePostcard extends InteractiveObject
 						mailBox.setDisplay(ScaleSize(jsonBody.mailBox.mnX), ScaleSize(jsonBody.mailBox.mnY),
 								ScaleSize(jsonBody.mailBox.mnWidth), ScaleSize(jsonBody.mailBox.mnHeight));
 						mailBox.setImage(strBookPath + jsonBody.mailBox.mstrSrc);
-						webView.addView(mailBox);
+						container.addView(mailBox);
 					}
 
 					if (null != jsonBody.textArea)

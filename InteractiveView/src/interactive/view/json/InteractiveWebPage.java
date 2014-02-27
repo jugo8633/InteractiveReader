@@ -1,11 +1,13 @@
 package interactive.view.json;
 
 import interactive.view.webview.InteractiveWebView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 public class InteractiveWebPage extends InteractiveObject
 {
@@ -16,11 +18,11 @@ public class InteractiveWebPage extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
 		String strKey = null;
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_WEB_PAGE))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_WEB_PAGE))
 		{
 			return false;
 		}
@@ -41,7 +43,7 @@ public class InteractiveWebPage extends InteractiveObject
 			{
 				if (jsonHeader.mbIsVisible)
 				{
-					webView.setAutoPlay(jsonBody.options.mbAutoplay);
+					((InteractiveWebView) container).setAutoPlay(jsonBody.options.mbAutoplay);
 				}
 			}
 			jsonHeader = null;

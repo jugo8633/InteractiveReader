@@ -4,7 +4,6 @@ import interactive.common.BitmapHandler;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.handler.InteractiveImageData;
 import interactive.view.image.EventImageView;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +12,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
@@ -30,12 +30,12 @@ public class InteractiveImage extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
 		String strKey = null;
 
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_IMAGE))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_IMAGE))
 		{
 			return false;
 		}
@@ -76,7 +76,7 @@ public class InteractiveImage extends InteractiveObject
 						EventImageView eventImage = new EventImageView(getContext());
 						eventImage.setTag(jsonHeader.mstrName);
 						eventImage.setPosition(nChapter, nPage);
-						eventImage.setContainer(webView);
+						eventImage.setContainer(container);
 						eventImage.setBitmap(strBookPath + jsonHeader.mstrSrc, ScaleSize(jsonHeader.mnWidth),
 								ScaleSize(jsonHeader.mnHeight));
 						eventImage.setDisplay(ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
@@ -108,7 +108,7 @@ public class InteractiveImage extends InteractiveObject
 							jsonGesture = null;
 						}
 
-						webView.addView(eventImage);
+						container.addView(eventImage);
 						eventImage = null;
 					}
 					else
@@ -122,7 +122,7 @@ public class InteractiveImage extends InteractiveObject
 						imgView.setY(ScaleSize(jsonHeader.mnY));
 						imgView.setLayoutParams(new LayoutParams(ScaleSize(jsonHeader.mnWidth),
 								ScaleSize(jsonHeader.mnHeight)));
-						webView.addView(imgView);
+						container.addView(imgView);
 						imgView = null;
 					}
 				}

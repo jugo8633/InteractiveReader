@@ -7,7 +7,6 @@ import interactive.view.handler.InteractiveImageData;
 import interactive.view.handler.InteractiveMediaData;
 import interactive.view.slideshow.SlideshowView;
 import interactive.view.slideshow.SlideshowViewItem;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +14,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.SparseArray;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class InteractiveSlideshow extends InteractiveObject
@@ -31,10 +31,10 @@ public class InteractiveSlideshow extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_SLIDESHOW))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_SLIDESHOW))
 		{
 			return false;
 		}
@@ -48,7 +48,7 @@ public class InteractiveSlideshow extends InteractiveObject
 		// get video data for slideshow
 		InteractiveVideo interactiveVideo = new InteractiveVideo(getContext());
 		SparseArray<InteractiveMediaData> listMediaData = new SparseArray<InteractiveMediaData>();
-		interactiveVideo.getInteractiveVideo(strBookPath, jsonAll, listMediaData, webView);
+		interactiveVideo.getInteractiveVideo(strBookPath, jsonAll, listMediaData, container);
 		interactiveVideo = null;
 
 		JSONArray jsonArraySlideshow = jsonAll.getJSONArray(JSON_SLIDESHOW);
@@ -101,13 +101,13 @@ public class InteractiveSlideshow extends InteractiveObject
 							jsonBody.mstrBackground, jsonBody.mnStyle, jsonBody.mbFullScreen, jsonBody.mnItemCount,
 							listViewItem);
 					slideshow.setPosition(nChapter, nPage);
-					webView.addView(slideshow);
+					container.addView(slideshow);
 
 					slideshow.showThumbnail();
 					if (jsonBody.mbFullScreen)
 					{
 						RelativeLayout rlMain = slideshow.getScaleImageView();
-						webView.addView(rlMain);
+						container.addView(rlMain);
 					}
 					listViewItem.clear();
 					listViewItem = null;

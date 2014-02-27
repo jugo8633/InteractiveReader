@@ -4,7 +4,6 @@ import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import interactive.view.handler.InteractiveMediaData;
 import interactive.view.handler.InteractiveMediaLayout;
-import interactive.view.webview.InteractiveWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,10 +27,10 @@ public class InteractiveVideo extends InteractiveObject
 	}
 
 	@Override
-	public boolean createInteractive(InteractiveWebView webView, String strBookPath, JSONObject jsonAll, int nChapter,
+	public boolean createInteractive(ViewGroup container, String strBookPath, JSONObject jsonAll, int nChapter,
 			int nPage) throws JSONException
 	{
-		if (!isCreateValid(webView, strBookPath, jsonAll, JSON_VIDEO))
+		if (!isCreateValid(container, strBookPath, jsonAll, JSON_VIDEO))
 		{
 			return false;
 		}
@@ -55,10 +54,10 @@ public class InteractiveVideo extends InteractiveObject
 				{
 					strMediaSrc = strBookPath + jsonBody.mstrMediaSrc;
 				}
-				ViewGroup viewContainer = webView;
+				ViewGroup viewContainer = container;
 				if (jsonHeader.mbIsVisible)
 				{
-					viewContainer = createMediaLayout(jsonHeader, jsonBody, webView, strBookPath, nChapter, nPage);
+					viewContainer = createMediaLayout(jsonHeader, jsonBody, container, strBookPath, nChapter, nPage);
 				}
 				Global.interactiveHandler.addMediaData(jsonHeader.mstrName, ScaleSize(jsonHeader.mnWidth),
 						ScaleSize(jsonHeader.mnHeight), ScaleSize(jsonHeader.mnX), ScaleSize(jsonHeader.mnY),
