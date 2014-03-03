@@ -2,11 +2,15 @@ package interactive.view.gallery;
 
 import interactive.common.Device;
 import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.image.ImageViewHandler;
+import interactive.view.slideshow.SlideshowView;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -20,17 +24,18 @@ import android.widget.LinearLayout;
 public class GalleryView extends HorizontalScrollView
 {
 
-	private LinearLayout	linearLayout	= null;
-	private Activity		theActivity		= null;
-	private Handler			theHandler		= null;
-	public static final int	MSG_WND_CLICK	= 0;
-	public static final int	MSG_IMAGE_CLICK	= 1;
-	private int				mnOffSetCount	= Type.INVALID;
-	private int				mnCurrentItem	= 0;
+	private LinearLayout		linearLayout	= null;
+	private Activity			theActivity		= null;
+	private Handler				theHandler		= null;
+	public static final int		MSG_WND_CLICK	= 0;
+	public static final int		MSG_IMAGE_CLICK	= 1;
+	private int					mnOffSetCount	= Type.INVALID;
+	private int					mnCurrentItem	= 0;
 
-	private Runnable		scrollerTask;
-	private int				intitPosition;
-	private int				newCheck		= 100;
+	private Runnable			scrollerTask;
+	private int					intitPosition;
+	private int					newCheck		= 100;
+	private ImageViewHandler	imageHandler	= null;
 
 	public interface onScrollStopListner
 	{
@@ -131,6 +136,8 @@ public class GalleryView extends HorizontalScrollView
 				}
 			}
 		};
+
+		imageHandler = new ImageViewHandler(selfHandler);
 	}
 
 	public void setCurrentItem(int nItem)
@@ -177,6 +184,42 @@ public class GalleryView extends HorizontalScrollView
 	public void addChild(View child)
 	{
 		linearLayout.addView(child);
+	}
+
+	public void setItem(SparseArray<SparseArray<String>> listImage, int nWidth, int nHeight)
+	{
+		if (null == theActivity)
+		{
+			Logs.showTrace("Invalid Activity!!");
+			return;
+		}
+
+		mnOffSetCount = setOffSetWidth(nWidth);
+
+		LayoutInflater layInflater = (LayoutInflater) theActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		for (int nChapter = 0; nChapter < listImage.size(); ++nChapter)
+		{
+			View viewHold = layInflater.inflate(getResourceId("gallery_view_item", "layout"), null);
+			viewHold.setBackgroundResource(android.R.color.transparent);
+			LinearLayout verticalLinearLayout = (LinearLayout) viewHold.findViewById(getResourceId(
+					"linearLayoutGalleryViewItem", "id"));
+			verticalLinearLayout.setLayoutParams(new LayoutParams(nWidth, LayoutParams.WRAP_CONTENT));
+			verticalLinearLayout.setBackgroundResource(android.R.color.transparent);
+			for (int nPage = 0; nPage < listImage.get(nChapter).size(); ++nPage)
+			{
+				ImageTag imgTag = new ImageTag(nChapter, nPage);
+				ImageView img = new ImageView(theActivity);
+				img.setTag(imgTag);
+				img.setLayoutParams(new LayoutParams(nWidth, nHeight));
+				img.setOnClickListener(imageOnClickListener);
+				verticalLinearLayout.addView(img);
+				imageHandler.addImageView(img, listImage.get(nChapter).get(nPage), nWidth, nHeight);
+				imgTag = null;
+				img = null;
+			}
+			addChild(viewHold);
+		}
+		setOffSetWidth(nWidth);
 	}
 
 	public void addChild(SparseArray<SparseArray<ImageView>> listView, int nChildWidth, int nChildHeight)
@@ -328,6 +371,21 @@ public class GalleryView extends HorizontalScrollView
 														break;
 													}
 													return false;
+												}
+											};
+
+	private Handler	selfHandler				= new Handler()
+											{
+												@Override
+												public void handleMessage(Message msg)
+												{
+													switch (msg.what)
+													{
+
+													case EventMessage.MSG_VIEW_INITED:
+
+														break;
+													}
 												}
 											};
 

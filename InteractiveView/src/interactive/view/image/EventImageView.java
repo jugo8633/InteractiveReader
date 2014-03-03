@@ -151,7 +151,7 @@ public class EventImageView extends ImageView
 
 	public void setBitmap(String strPath, int nWidth, int nHeight)
 	{
-		mBitmapSrc = BitmapHandler.readBitmap(getContext(), strPath, nWidth, nHeight);
+		mBitmapSrc = BitmapHandler.readBitmap(getContext(), strPath, nWidth, nHeight, false);
 		this.setImageBitmap(mBitmapSrc);
 	}
 
@@ -277,7 +277,8 @@ public class EventImageView extends ImageView
 	private void createEventImage(InteractiveImageData imageData)
 	{
 		removeEventImage();
-		mBitmapEvent = BitmapHandler.readBitmap(getContext(), imageData.mstrSrc, imageData.mnWidth, imageData.mnHeight);
+		mBitmapEvent = BitmapHandler.readBitmap(getContext(), imageData.mstrSrc, imageData.mnWidth, imageData.mnHeight,
+				false);
 		imgEvent = new ImageView(getContext());
 		imgEvent.setX(imageData.mnX);
 		imgEvent.setY(imageData.mnY);

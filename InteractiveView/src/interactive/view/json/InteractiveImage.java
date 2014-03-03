@@ -116,7 +116,7 @@ public class InteractiveImage extends InteractiveObject
 						ImageView imgView = new ImageView(getContext());
 						imgView.setTag(jsonHeader.mstrName);
 						Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strBookPath + jsonHeader.mstrSrc,
-								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight));
+								ScaleSize(jsonHeader.mnWidth), ScaleSize(jsonHeader.mnHeight), false);
 						imgView.setImageBitmap(bitmap);
 						imgView.setX(ScaleSize(jsonHeader.mnX));
 						imgView.setY(ScaleSize(jsonHeader.mnY));

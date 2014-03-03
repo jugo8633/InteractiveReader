@@ -52,16 +52,16 @@ public class BitmapHandler
 		return BitmapFactory.decodeStream(is, null, opt);
 	}
 
-	public static Bitmap readBitmap(Context context, String strFilePath, int reqWidth, int reqHeight)
+	public static Bitmap readBitmap(Context context, String strFilePath, int reqWidth, int reqHeight, boolean bResize)
 	{
 		ClearCache clearCache = new ClearCache();
 		clearCache.trimCache(context);
 		clearCache = null;
-		Bitmap bitmap = readBitmap(strFilePath, reqWidth, reqHeight);
+		Bitmap bitmap = readBitmap(strFilePath, reqWidth, reqHeight, bResize);
 		return bitmap;
 	}
 
-	public static Bitmap readBitmap(String strFilePath, int reqWidth, int reqHeight)
+	public static Bitmap readBitmap(String strFilePath, int reqWidth, int reqHeight, boolean bResize)
 	{
 		if (null == strFilePath)
 		{
@@ -114,7 +114,10 @@ public class BitmapHandler
 			//Bitmap originalBitmap = BitmapFactory.decodeFile(strFilePath, options);
 			fis.close();
 			fis = null;
-			//return originalBitmap;
+			if (!bResize)
+			{
+				return originalBitmap;
+			}
 
 			options.inDither = false;
 			options.inPurgeable = true;

@@ -10,7 +10,7 @@ public class EventMessage
 	public static final int	MSG_CUSTOM					= 1024;
 	public static final int	MSG_CHAPTER					= MSG_CUSTOM + 1;
 	public static final int	MSG_PAGE					= MSG_CUSTOM + 2;
-	public static final int	MSG_VIEW_INIT				= MSG_CUSTOM + 3;
+	public static final int	MSG_VIEW_INITED				= MSG_CUSTOM + 3;
 	public static final int	MSG_WEB						= MSG_CUSTOM + 4;
 	public static final int	MSG_JUMP					= MSG_CUSTOM + 5;
 	public static final int	MSG_VIEW_CHANGE				= MSG_CUSTOM + 6;

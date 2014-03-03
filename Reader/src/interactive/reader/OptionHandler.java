@@ -1,7 +1,6 @@
 package interactive.reader;
 
 import interactive.common.BitmapHandler;
-import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
@@ -44,6 +43,7 @@ public class OptionHandler
 	private Share				share					= null;
 	private int					mnFavoriteAddId			= Type.INVALID;
 	private int					mnFavoriteDeleteId		= Type.INVALID;
+	private GalleryView			galleryView				= null;
 
 	public class Header
 	{
@@ -141,8 +141,7 @@ public class OptionHandler
 		int nChapItemHeight = Global.ScaleSize(194);
 
 		theHeader.mnChapIndex = flipperView.addChild(Global.getResourceId(activity, "reader_chap", "layout"));
-		final GalleryView galleryView = (GalleryView) flipperView.findViewById(Global.getResourceId(activity,
-				"galleryViewChap", "id"));
+		galleryView = (GalleryView) flipperView.findViewById(Global.getResourceId(activity, "galleryViewChap", "id"));
 		galleryView.setActivity(activity);
 		galleryView.setNotifyHandler(Global.handlerActivity);
 
@@ -155,7 +154,8 @@ public class OptionHandler
 				ImageView img = new ImageView(activity);
 
 				Bitmap bmp = BitmapHandler.readBitmap(activity,
-						PageData.listPageData.get(nChapter).get(nPage).strShapTiny, nChapItemWidth, nChapItemHeight);
+						PageData.listPageData.get(nChapter).get(nPage).strShapTiny, nChapItemWidth, nChapItemHeight,
+						false);
 				img.setImageBitmap(bmp);
 				img.setLayoutParams(new LayoutParams(nChapItemWidth, nChapItemHeight));
 				img.setScaleType(ScaleType.FIT_XY);

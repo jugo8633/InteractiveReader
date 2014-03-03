@@ -4,6 +4,7 @@ import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.FileHandler;
+import interactive.common.Type;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.global.Global;
 import android.content.Context;
@@ -21,28 +22,87 @@ public class ButtonView extends ImageView
 {
 	private ImageSrc	imageSrc		= null;
 	private Handler		notifyHandler	= null;
+	private Runnable	runInitImage	= null;
+	private boolean		mbCurrentActive	= false;
 
 	class ImageSrc
 	{
 		public Bitmap	mBitmapSrc	= null;
 		public Bitmap	mBitmapDown	= null;
 		public Bitmap	mBitmapUp	= null;
+		public String	mstrSrc		= null;
+		public String	mstrDown	= null;
+		public String	mstrUp		= null;
+		private int		mnWidth		= Type.INVALID;
+		private int		mnHeight	= Type.INVALID;
 
 		public ImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
 		{
+			mnWidth = nWidth;
+			mnHeight = nHeight;
 			if (null != strSrc && FileHandler.isFileExist(strSrc))
 			{
-				mBitmapSrc = BitmapHandler.readBitmap(strSrc, nWidth, nHeight);
+				mstrSrc = strSrc;
 			}
 
 			if (null != strTouchDown && FileHandler.isFileExist(strTouchDown))
 			{
-				mBitmapDown = BitmapHandler.readBitmap(strTouchDown, nWidth, nHeight);
+				mstrDown = strTouchDown;
 			}
 
 			if (null != strTouchUp && FileHandler.isFileExist(strTouchUp))
 			{
-				mBitmapUp = BitmapHandler.readBitmap(strTouchUp, nWidth, nHeight);
+				mstrUp = strTouchUp;
+			}
+		}
+
+		public void initBitmap()
+		{
+			releaseBitmp();
+			if (null != mstrSrc)
+			{
+				mBitmapSrc = BitmapHandler.readBitmap(mstrSrc, mnWidth, mnHeight, false);
+			}
+
+			if (null != mstrDown)
+			{
+				mBitmapDown = BitmapHandler.readBitmap(mstrDown, mnWidth, mnHeight, false);
+			}
+
+			if (null != mstrUp)
+			{
+				mBitmapUp = BitmapHandler.readBitmap(mstrUp, mnWidth, mnHeight, false);
+			}
+			EventHandler.notify(selfHandler, EventMessage.MSG_VIEW_INITED, 0, 0, null);
+		}
+
+		public void releaseBitmp()
+		{
+			if (null != mBitmapSrc)
+			{
+				if (!mBitmapSrc.isRecycled())
+				{
+					mBitmapSrc.recycle();
+				}
+				mBitmapSrc = null;
+			}
+
+			if (null != mBitmapDown)
+			{
+				if (!mBitmapDown.isRecycled())
+				{
+					mBitmapDown.recycle();
+				}
+				mBitmapDown = null;
+			}
+
+			if (null != mBitmapUp)
+			{
+				if (!mBitmapUp.isRecycled())
+				{
+					mBitmapUp.recycle();
+				}
+				mBitmapUp = null;
 			}
 		}
 	}
@@ -77,19 +137,30 @@ public class ButtonView extends ImageView
 		this.setClickable(true);
 		this.setScaleType(ScaleType.FIT_CENTER);
 		this.setBackgroundColor(Color.TRANSPARENT);
+
+		runInitImage = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (null != imageSrc)
+				{
+					imageSrc.initBitmap();
+				}
+			}
+		};
+
+		setVisibility(View.GONE);
 	}
 
 	public void setImageSrc(String strSrc, String strTouchDown, String strTouchUp, int nWidth, int nHeight)
 	{
 		if (null != imageSrc)
 		{
-			imageSrc.mBitmapSrc.recycle();
-			imageSrc.mBitmapDown.recycle();
-			imageSrc.mBitmapUp.recycle();
+			imageSrc.releaseBitmp();
 		}
 		imageSrc = null;
 		imageSrc = new ImageSrc(strSrc, strTouchDown, strTouchUp, nWidth, nHeight);
-		this.setImageBitmap(imageSrc.mBitmapSrc);
 	}
 
 	public void setNotifyHandler(Handler handler)
@@ -130,7 +201,10 @@ public class ButtonView extends ImageView
 	public void reset()
 	{
 		setColorFilter(Color.TRANSPARENT);
-		ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
+		if (null != imageSrc.mBitmapSrc)
+		{
+			ButtonView.this.setImageBitmap(imageSrc.mBitmapSrc);
+		}
 	}
 
 	private OnTouchListener		onTouchListener		= new OnTouchListener()
@@ -192,15 +266,33 @@ public class ButtonView extends ImageView
 																reset();
 																break;
 															case EventMessage.MSG_CURRENT_ACTIVE:
+																mbCurrentActive = true;
+																if (null != imageSrc)
+																{
+																	EventHandler.notify(Global.handlerActivity,
+																			EventMessage.MSG_LOCK_PAGE, 0, 0, null);
+																	postDelayed(runInitImage, 500);
+																}
 
 																break;
 															case EventMessage.MSG_NOT_CURRENT_ACTIVE:
-																EventHandler.notify(
-																		Global.interactiveHandler.getNotifyHandler(),
-																		EventMessage.MSG_RESET,
-																		InteractiveDefine.OBJECT_CATEGORY_BUTTON, 0,
-																		ButtonView.this.getTag());
+																if (mbCurrentActive)
+																{
+																	ButtonView.this.setVisibility(View.GONE);
+																	EventHandler.notify(Global.interactiveHandler
+																			.getNotifyHandler(),
+																			EventMessage.MSG_RESET,
+																			InteractiveDefine.OBJECT_CATEGORY_BUTTON,
+																			0, ButtonView.this.getTag());
+																	imageSrc.releaseBitmp();
+																}
+																mbCurrentActive = false;
+																break;
+															case EventMessage.MSG_VIEW_INITED:
+																ButtonView.this.setVisibility(View.VISIBLE);
 																reset();
+																EventHandler.notify(Global.handlerActivity,
+																		EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 																break;
 															}
 														}

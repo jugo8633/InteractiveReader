@@ -86,7 +86,6 @@ public class SlideshowView extends RelativeLayout
 	private int										mnPage					= Type.INVALID;
 	private ImageViewHandler						imageHandler			= null;
 	private boolean									mbCurrentActive			= false;
-	private Runnable								runInitImage			= null;
 	private ProgressBar								progressBar				= null;
 
 	public interface OnSlideshowItemSwitched
@@ -266,23 +265,7 @@ public class SlideshowView extends RelativeLayout
 		listOnItemSwitched = new SparseArray<OnSlideshowItemSwitched>();
 
 		/** init image viewer */
-		imageHandler = new ImageViewHandler();
-		runInitImage = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				if (imageHandler.isRelease())
-				{
-					postDelayed(runInitImage, 500);
-					return;
-				}
-				imageHandler.initImageView();
-				SlideshowView.this.invalidate();
-				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
-				SlideshowView.this.removeView(progressBar);
-			}
-		};
+		imageHandler = new ImageViewHandler(selfHandler);
 
 		/** init progress bar */
 		progressBar = new ProgressBar(context);
@@ -598,10 +581,6 @@ public class SlideshowView extends RelativeLayout
 			{
 				nBitmapHeight = 800;
 			}
-
-			Logs.showTrace("Slideshow get image width=" + nBitmapWidth + " height=" + nBitmapHeight);
-			//Bitmap bmp = BitmapHandler.readBitmap(theActivity, strPath, nBitmapWidth, nBitmapHeight);
-			//	imageview.setImageBitmap(bmp);
 			imageHandler.addImageView(imageview, strPath, nBitmapWidth, nBitmapHeight);
 		}
 		else
@@ -924,26 +903,6 @@ public class SlideshowView extends RelativeLayout
 		mbShowThumbnail = bShow;
 	}
 
-	//	public void initThumbnail(SparseArray<Integer> listImageResId)
-	//	{
-	//		if (null == listImageResId || 0 >= listImageResId.size())
-	//		{
-	//			return;
-	//		}
-	//		lLayoutThumbnail.removeAllViewsInLayout();
-	//		for (int i = 0; i < listImageResId.size(); ++i)
-	//		{
-	//			ImageView img = new ImageView(getContext());
-	//			img.setImageResource(listImageResId.get(i));
-	//			img.setScaleType(ScaleType.FIT_CENTER);
-	//			img.setAdjustViewBounds(true);
-	//			img.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-	//			img.setPadding(3, 4, 3, 4);
-	//
-	//			lLayoutThumbnail.addView(img);
-	//		}
-	//	}
-
 	private void initThumbnail()
 	{
 		if (null == listGalleryItem || 0 >= listGalleryItem.size())
@@ -1000,8 +959,6 @@ public class SlideshowView extends RelativeLayout
 			nBitmapHeight = 200;
 		}
 		imageHandler.addImageView(imageView, strImagePath, nBitmapWidth, nBitmapHeight);
-		//	Bitmap bitmap = BitmapHandler.readBitmap(theActivity, strImagePath, nBitmapWidth / 4, nBitmapHeight / 4);
-		//	imageView.setImageBitmap(bitmap);
 	}
 
 	OnTouchListener	onHVTouchListener	= new OnTouchListener()
@@ -1032,7 +989,6 @@ public class SlideshowView extends RelativeLayout
 													}
 													break;
 												}
-
 												return false;
 											}
 										};
@@ -1163,7 +1119,6 @@ public class SlideshowView extends RelativeLayout
 
 	private Handler	selfHandler	= new Handler()
 								{
-
 									@Override
 									public void handleMessage(Message msg)
 									{
@@ -1173,9 +1128,7 @@ public class SlideshowView extends RelativeLayout
 											SlideshowView.this.removeView(progressBar);
 											SlideshowView.this.addView(progressBar);
 											mbCurrentActive = true;
-											EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0,
-													0, null);
-											this.postDelayed(runInitImage, 500);
+											imageHandler.runInitImageView();
 											break;
 										case EventMessage.MSG_NOT_CURRENT_ACTIVE:
 											if (mbCurrentActive)
@@ -1185,8 +1138,10 @@ public class SlideshowView extends RelativeLayout
 												imageHandler.releaseBitmap();
 											}
 											break;
+										case EventMessage.MSG_VIEW_INITED:
+											SlideshowView.this.removeView(progressBar);
+											break;
 										}
 									}
-
 								};
 }

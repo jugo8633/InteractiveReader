@@ -189,7 +189,7 @@ public class PageReader extends RelativeLayout
 		int nWidth = Global.ScaleSize(PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nWidth);
 		int nHeight = Global
 				.ScaleSize(PageData.listPageData.get(Global.currentChapter).get(Global.currentPage).nHeight);
-		mHideBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
+		mHideBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight, false);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(nWidth, nHeight);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mHideImage = new ImageView(getContext());
@@ -200,7 +200,7 @@ public class PageReader extends RelativeLayout
 		strImagePath = PageData.listPageData.get(nChapter).get(nPage).strShapLarge;
 		nWidth = Global.ScaleSize(PageData.listPageData.get(nChapter).get(nPage).nWidth);
 		nHeight = Global.ScaleSize(PageData.listPageData.get(nChapter).get(nPage).nHeight);
-		mShowBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight);
+		mShowBitmap = BitmapHandler.readBitmap(getContext(), strImagePath, nWidth, nHeight, false);
 		RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(nWidth, nHeight);
 		layoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mShowImage = new ImageView(getContext());
@@ -288,30 +288,15 @@ public class PageReader extends RelativeLayout
 											case EventMessage.MSG_PAGE:
 												pageEvent(msg.arg1, msg.arg2);
 												break;
-											//											case EventMessage.MSG_WEB:
-											//												WebEvent(msg.arg1, msg.arg2, msg.obj);
-											//												break;
 											}
 										}
 
 									};
 
-	//	private void WebEvent(int nEvent, int nPosition, Object object)
-	//	{
-	//		switch (nEvent)
-	//		{
-	//		case EventMessage.MSG_JUMP:
-	//			jumpPage(nPosition, (Integer) object);
-	//			break;
-	//		}
-	//	}
-
 	private void chapterEvent(int nEvent, int nPosition)
 	{
 		switch (nEvent)
 		{
-		case EventMessage.MSG_VIEW_INIT:
-			break;
 		case EventMessage.MSG_VIEW_CHANGE:
 			setCurrentPosition();
 			break;
@@ -322,8 +307,6 @@ public class PageReader extends RelativeLayout
 	{
 		switch (nEvent)
 		{
-		case EventMessage.MSG_VIEW_INIT:
-			break;
 		case EventMessage.MSG_VIEW_CHANGE:
 			setCurrentPosition();
 			break;

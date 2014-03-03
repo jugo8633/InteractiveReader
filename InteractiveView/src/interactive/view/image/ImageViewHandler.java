@@ -1,9 +1,12 @@
 package interactive.view.image;
 
 import interactive.common.BitmapHandler;
-import interactive.common.Logs;
+import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Type;
+import interactive.view.global.Global;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,11 +15,32 @@ public class ImageViewHandler
 {
 	private SparseArray<ImageViewData>	listImageView	= null;
 	private boolean						mbIsRelease		= false;
+	private Runnable					runInitImage	= null;
+	private Handler						theHandler		= null;
+	private Handler						notifyHandler	= null;
 
-	public ImageViewHandler()
+	public ImageViewHandler(Handler handler)
 	{
 		super();
+		notifyHandler = handler;
+		theHandler = new Handler();
 		listImageView = new SparseArray<ImageViewData>();
+
+		runInitImage = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (isRelease())
+				{
+					theHandler.postDelayed(runInitImage, 500);
+					return;
+				}
+				initImageView();
+				EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
+				EventHandler.notify(notifyHandler, EventMessage.MSG_VIEW_INITED, 0, 0, null);
+			}
+		};
 	}
 
 	@Override
@@ -30,6 +54,12 @@ public class ImageViewHandler
 	{
 		releaseBitmap(imageView.getId());
 		listImageView.put(imageView.getId(), new ImageViewData(imageView, null, strBitmapPath, nWidth, nHeight));
+	}
+
+	public void runInitImageView()
+	{
+		EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
+		theHandler.postDelayed(runInitImage, 500);
 	}
 
 	public void initImageView()
@@ -48,7 +78,7 @@ public class ImageViewHandler
 			nHeight = listImageView.get(nKey).mnHeight;
 			if (null != strBitmapPath && 0 < nWidth && 0 < nHeight)
 			{
-				Bitmap bitmap = BitmapHandler.readBitmap(strBitmapPath, nWidth, nHeight);
+				Bitmap bitmap = BitmapHandler.readBitmap(strBitmapPath, nWidth, nHeight, false);
 				if (null != bitmap)
 				{
 					listImageView.get(nKey).mImageView.setImageBitmap(bitmap);

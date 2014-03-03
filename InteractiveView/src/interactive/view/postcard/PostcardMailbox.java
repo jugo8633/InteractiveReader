@@ -62,7 +62,7 @@ public class PostcardMailbox extends RelativeLayout
 
 	public void setImage(String strPath)
 	{
-		Bitmap bitmap = BitmapHandler.readBitmap(strPath, mnWidth, mnHeight);
+		Bitmap bitmap = BitmapHandler.readBitmap(strPath, mnWidth, mnHeight, false);
 		imageView.setImageBitmap(bitmap);
 	}
 

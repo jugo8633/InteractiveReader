@@ -1,13 +1,10 @@
 package interactive.view.scrollable;
 
-import interactive.common.BitmapHandler;
 import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import interactive.view.scroll.ScrollHandler;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -19,12 +16,12 @@ import android.widget.ImageView.ScaleType;
 
 public class VerticalScrollableView extends ScrollView
 {
-
-	private int				mnOffsetY		= 0;
-	private int				mnWidth			= Type.INVALID;
-	private int				mnHeight		= Type.INVALID;
-	private Context			theContext		= null;
-	private ScrollHandler	scrollHandler	= null;
+	private int						mnOffsetY		= 0;
+	private int						mnWidth			= Type.INVALID;
+	private Context					theContext		= null;
+	private ScrollHandler			scrollHandler	= null;
+	private boolean					mbCurrentActive	= false;
+	private ScrollableImageHandler	imageHandler	= null;
 
 	public VerticalScrollableView(Context context)
 	{
@@ -58,14 +55,15 @@ public class VerticalScrollableView extends ScrollView
 		this.setVerticalFadingEdgeEnabled(false);
 		this.setHorizontalFadingEdgeEnabled(false);
 		this.setHorizontalScrollBarEnabled(false);
-		//		this.setOverScrollMode(OVER_SCROLL_NEVER);
 		this.setOnTouchListener(touchListener);
 		scrollHandler = new ScrollHandler(ScrollHandler.VERTICAL);
+		imageHandler = new ScrollableImageHandler(selfHandler);
 	}
 
 	public void setPosition(int nChapter, int nPage)
 	{
-		Global.addActiveNotify(nChapter, nPage, notifyHandler);
+		Global.addActiveNotify(nChapter, nPage, selfHandler);
+		Global.addUnActiveNotify(nChapter, nPage, selfHandler);
 		scrollHandler.setPosition(nChapter, nPage);
 	}
 
@@ -80,48 +78,15 @@ public class VerticalScrollableView extends ScrollView
 		setY(nY);
 		setLayoutParams(new LayoutParams(nWidth, nHeight));
 		mnWidth = nWidth;
-		mnHeight = nHeight;
+		imageHandler.setDisplay(nWidth, nHeight);
 	}
 
-	private ImageView getImageView(Bitmap bitmap, int nWidth, int nHeight)
+	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
 	{
 		ImageView imageView = new ImageView(theContext);
 		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setAdjustViewBounds(true);
 		imageView.setLayoutParams(new LayoutParams(nWidth, nHeight));
-		imageView.setImageBitmap(bitmap);
-		return imageView;
-	}
-
-	public void setImage(String strImagePath, int nWidth, int nHeight, int nOffsetX, int nOffsetY)
-	{
-		Bitmap bmp = null;
-
-		if (0 > nOffsetY)
-		{
-			Bitmap bitmapBack = Bitmap.createBitmap(nWidth, nHeight + (0 - nOffsetY), Config.ARGB_8888);
-			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
-			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, (0 - nOffsetY));
-			bitmapBack.recycle();
-			bitmapFront.recycle();
-			//	this.setOverScrollMode(OVER_SCROLL_NEVER);
-		}
-		else if (0 < nOffsetY && (nHeight - nOffsetY) < mnHeight)
-		{
-			Bitmap bitmapBack = Bitmap.createBitmap(nWidth, nHeight + nOffsetY, Config.ARGB_8888);
-			Bitmap bitmapFront = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
-			bmp = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, 0f, 0f);
-			bitmapBack.recycle();
-			bitmapFront.recycle();
-			//	this.setOverScrollMode(OVER_SCROLL_NEVER);
-		}
-		else
-		{
-			bmp = BitmapHandler.readBitmap(theContext, strImagePath, nWidth, nHeight);
-		}
-
-		ImageView imageView = getImageView(bmp, nWidth, nHeight);
-		bmp = null;
 
 		if ((nWidth - nOffsetX) < mnWidth)
 		{
@@ -144,6 +109,7 @@ public class VerticalScrollableView extends ScrollView
 
 		removeAllViewsInLayout();
 		addView(imageView);
+		imageHandler.setImage(imageView, strImagePath, nWidth, nHeight, nOffsetX, nOffsetY);
 	}
 
 	private void setPadding(int nLeft)
@@ -156,7 +122,7 @@ public class VerticalScrollableView extends ScrollView
 		mnOffsetY = nY;
 	}
 
-	private Handler			notifyHandler	= new Handler()
+	private Handler			selfHandler		= new Handler()
 											{
 												@Override
 												public void handleMessage(Message msg)
@@ -164,6 +130,17 @@ public class VerticalScrollableView extends ScrollView
 													switch (msg.what)
 													{
 													case EventMessage.MSG_CURRENT_ACTIVE:
+														mbCurrentActive = true;
+														imageHandler.runInitVerticalImage();
+														break;
+													case EventMessage.MSG_NOT_CURRENT_ACTIVE:
+														if (mbCurrentActive)
+														{
+															imageHandler.releaseImage();
+														}
+														mbCurrentActive = false;
+														break;
+													case EventMessage.MSG_VIEW_INITED:
 														initOffset();
 														break;
 													}

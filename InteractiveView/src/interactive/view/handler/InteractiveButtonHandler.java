@@ -16,6 +16,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -253,13 +254,15 @@ public class InteractiveButtonHandler
 		if (null != imageData && null == imageData.mImageView)
 		{
 			imageData.mBitmapSrc = BitmapHandler.readBitmap(buttonData.getContext(), imageData.mstrSrc,
-					imageData.mnWidth, imageData.mnHeight);
+					imageData.mnWidth, imageData.mnHeight, false);
 			imageData.mImageView = new ImageView(buttonData.getContext());
 			imageData.mImageView.setTag(imageData.mstrName);
-			imageData.mImageView.setScaleType(ScaleType.CENTER_CROP);
+			imageData.mImageView.setScaleType(ScaleType.FIT_XY);
+			imageData.mImageView.setAdjustViewBounds(true);
 			imageData.mImageView.setImageBitmap(imageData.mBitmapSrc);
 			imageData.mImageView.setX(imageData.mnX);
 			imageData.mImageView.setY(imageData.mnY);
+			imageData.mImageView.setLayoutParams(new LayoutParams(imageData.mnWidth, imageData.mnHeight));
 			buttonData.getContainer().addView(imageData.mImageView);
 			imageData.mImageView.setOnClickListener(new OnClickListener()
 			{

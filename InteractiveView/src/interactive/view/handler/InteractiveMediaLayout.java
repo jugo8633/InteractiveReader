@@ -100,7 +100,7 @@ public class InteractiveMediaLayout extends RelativeLayout
 	{
 		if (null != imgBackground && null != strImage && 0 < nWidth && 0 < nHeight)
 		{
-			Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strImage, nWidth, nHeight);
+			Bitmap bitmap = BitmapHandler.readBitmap(getContext(), strImage, nWidth, nHeight, false);
 			imgBackground.setImageBitmap(bitmap);
 		}
 	}
