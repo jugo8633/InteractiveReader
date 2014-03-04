@@ -4,6 +4,8 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class PagesAdapter extends VerticalPagerAdapter
 {

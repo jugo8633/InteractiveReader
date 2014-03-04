@@ -394,7 +394,6 @@ public class ReaderActivity extends Activity
 			for (int nPage = 0; nPage < nPages; ++nPage)
 			{
 				DisplayPage dpage = new DisplayPage(this);
-				dpage.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 				dpage.setBookPath(strBookPath);
 				pageData = new PageData();
 				PageData.Data data = pageData.createData();
@@ -408,7 +407,7 @@ public class ReaderActivity extends Activity
 							data.bIsFavorite = true;
 						}
 					}
-					dpage.setPageData(pageReader.getHandler(), data, nChapter, nPage);
+					dpage.setPageData(data);
 					listPageData.put(nPage, data);
 				}
 				else
@@ -419,6 +418,7 @@ public class ReaderActivity extends Activity
 				data = null;
 				pageData = null;
 				pages.put(pages.size(), dpage);
+				dpage = null;
 			}
 			PageData.listPageData.put(nChapter, listPageData);
 			listPageData = null;

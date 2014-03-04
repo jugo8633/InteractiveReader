@@ -5,6 +5,7 @@ import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
+import interactive.view.global.Global;
 import interactive.view.json.InteractiveAudio;
 import interactive.view.json.InteractiveButton;
 import interactive.view.json.InteractiveIframe;
@@ -24,19 +25,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class DisplayPage extends RelativeLayout
 {
-	private Context				theContext		= null;
+	private PageContainer		pageContainer	= null;
 	private InteractiveWebView	exdWebView		= null;
 	private String				mstrBookPath	= null;
 	private JSONObject			jsonAll			= null;
-	private DisplayMetrics		metrics			= null;
 
 	public DisplayPage(Context context)
 	{
@@ -58,9 +57,9 @@ public class DisplayPage extends RelativeLayout
 
 	public void init(Context context)
 	{
-		theContext = context;
-		metrics = context.getResources().getDisplayMetrics();
+		this.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.setGravity(Gravity.CENTER);
+		pageContainer = new PageContainer(context);
 	}
 
 	public void setBookPath(String strPath)
@@ -68,37 +67,43 @@ public class DisplayPage extends RelativeLayout
 		mstrBookPath = strPath;
 	}
 
-	public void setPageData(final Handler handler, PageData.Data pageData, int nChapter, int nPage)
+	public void setPageData(PageData.Data pageData)
 	{
-		Device device = new Device(theContext);
+		Device device = new Device(getContext());
 		int nDisplayWidth = device.getDeviceWidth();
 		int nDisplayHeight = device.getDeviceHeight();
 		device = null;
 
-		int nWebWidth = pageData.nWidth;
-		int nWebHeight = pageData.nHeight;
+		int nWidth = pageData.nWidth;
+		int nHeight = pageData.nHeight;
 
 		if (Type.INVALID != nDisplayWidth && nDisplayWidth < pageData.nWidth)
 		{
-			nWebWidth = nDisplayWidth;
+			nWidth = nDisplayWidth;
 		}
 
 		if (Type.INVALID != nDisplayHeight && nDisplayHeight < pageData.nHeight)
 		{
-			nWebHeight = nDisplayHeight;
+			nHeight = nDisplayHeight;
 		}
 
-		exdWebView = new InteractiveWebView(theContext);
+		//		pageContainer.setPosition(pageData.nChapter, pageData.nPage);
+		//		pageContainer.setTag(pageData.strName);
+		//		pageContainer.setDisplay(0, 0, Global.ScaleSize(nWidth), Global.ScaleSize(nHeight));
+		//		pageContainer.setBackground(pageData.strShapLarge, Global.ScaleSize(nWidth), Global.ScaleSize(nHeight));
+		//		addView(pageContainer);
+
+		exdWebView = new InteractiveWebView(getContext());
 		exdWebView.setPosition(pageData.nChapter, pageData.nPage);
 		exdWebView.setTag(pageData.strName);
-		exdWebView.setDisplay(0, 0, getScaleUnit(nWebWidth), getScaleUnit(nWebHeight));
+		exdWebView.setDisplay(0, 0, Global.ScaleSize(nWidth), Global.ScaleSize(nHeight));
 		exdWebView.loadUrl("file://" + pageData.strPath);
 		Logs.showTrace("Webview load file:" + pageData.strPath);
 
 		String jsonData = pageData.strPath.substring(0, pageData.strPath.lastIndexOf(".")) + ".json";
-		setJson(jsonData, nChapter, nPage);
+		setJson(jsonData, pageData.nChapter, pageData.nPage);
 
-		pageData.container = this;
+		pageData.container = pageContainer;
 		pageData.extWebView = exdWebView;
 
 		addView(exdWebView);
@@ -145,74 +150,75 @@ public class DisplayPage extends RelativeLayout
 			 */
 			jsonAll = new JSONObject(jsonData.toString());
 
+			ViewGroup container = exdWebView;
 			if (!jsonAll.isNull(InteractiveObject.JSON_WEB_PAGE))
 			{
-				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(theContext);
-				interactiveWebPage.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(getContext());
+				interactiveWebPage.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveWebPage = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_IFRAME))
 			{
-				InteractiveIframe interactiveIframe = new InteractiveIframe(theContext);
-				interactiveIframe.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveIframe interactiveIframe = new InteractiveIframe(getContext());
+				interactiveIframe.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveIframe = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_POSTCARD))
 			{
-				InteractivePostcard interactivePostcard = new InteractivePostcard(theContext);
-				interactivePostcard.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractivePostcard interactivePostcard = new InteractivePostcard(getContext());
+				interactivePostcard.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactivePostcard = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_AUDIO))
 			{
-				InteractiveAudio interactiveAudio = new InteractiveAudio(theContext);
-				interactiveAudio.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveAudio interactiveAudio = new InteractiveAudio(getContext());
+				interactiveAudio.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveAudio = null;
 			}
 
 			/**  note: vide 要放在slideshow前面*/
 			if (!jsonAll.isNull(InteractiveObject.JSON_VIDEO))
 			{
-				InteractiveVideo interactiveVideo = new InteractiveVideo(theContext);
-				interactiveVideo.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveVideo interactiveVideo = new InteractiveVideo(getContext());
+				interactiveVideo.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveVideo = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_SLIDESHOW))
 			{
-				InteractiveSlideshow interactiveSlideshow = new InteractiveSlideshow(theContext);
-				interactiveSlideshow.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveSlideshow interactiveSlideshow = new InteractiveSlideshow(getContext());
+				interactiveSlideshow.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveSlideshow = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_MAP))
 			{
-				InteractiveMap interactiveMap = new InteractiveMap(theContext);
-				interactiveMap.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveMap interactiveMap = new InteractiveMap(getContext());
+				interactiveMap.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveMap = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_IMAGE))
 			{
-				InteractiveImage interactiveImage = new InteractiveImage(theContext);
-				interactiveImage.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveImage interactiveImage = new InteractiveImage(getContext());
+				interactiveImage.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveImage = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_SCROLLABLE))
 			{
-				InteractiveScrollable interactiveScrollable = new InteractiveScrollable(theContext);
-				interactiveScrollable.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveScrollable interactiveScrollable = new InteractiveScrollable(getContext());
+				interactiveScrollable.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveScrollable = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_BUTTON))
 			{
-				InteractiveButton interactiveButton = new InteractiveButton(theContext);
-				interactiveButton.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				InteractiveButton interactiveButton = new InteractiveButton(getContext());
+				interactiveButton.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveButton = null;
 			}
 
@@ -224,15 +230,4 @@ public class DisplayPage extends RelativeLayout
 		}
 	}
 
-	private int getScaleUnit(int original)
-	{
-		if (metrics.densityDpi > 160)
-		{
-			return (int) (original * metrics.densityDpi / 160);// metrics.density
-		}
-		else
-		{
-			return original;
-		}
-	}
 }
