@@ -423,4 +423,16 @@ public class BitmapHandler
 
 		return null;
 	}
+
+	public static void releaseBitmap(Bitmap bitmap)
+	{
+		if (null != bitmap)
+		{
+			if (!bitmap.isRecycled())
+			{
+				bitmap.recycle();
+			}
+			bitmap = null;
+		}
+	}
 }

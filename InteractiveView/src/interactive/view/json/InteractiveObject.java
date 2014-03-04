@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 public abstract class InteractiveObject
 {
 	// main json key
+	public static final String		JSON_AUDIO					= "Audio";
 	public static final String		JSON_BUTTON					= "Button";
 	public static final String		JSON_DOODLE					= "Doodle";
 	public static final String		JSON_GROUP					= "Group";
@@ -91,6 +92,7 @@ public abstract class InteractiveObject
 	private final String			JSON_MAP_TYPE				= "MapType";
 	private final String			JSON_MAP_TYPE_NAME			= "MapTypeName";
 	private final String			JSON_MARK_AS				= "MarkAs";
+	private final String			JSON_MEDIA_INFORMATION		= "MediaInformation";
 	private final String			JSON_MEDIA_TYPE				= "MediaType";
 	private final String			JSON_MEDIA_SRC				= "MediaSrc";
 	private final String			JSON_METHOD					= "Method";
@@ -123,8 +125,6 @@ public abstract class InteractiveObject
 	private final String			JSON_TYPE					= "Type";
 	private final String			JSON_TYPE_NAME				= "TypeName";
 	private final String			JSON_URL					= "Url";
-	//private final String			JSON_VIDEO_SRC				= "VideoSrc";
-	//	private final String			JSON_VIDEO_TYPE				= "VideoType";
 	private final String			JSON_WIDTH					= "Width";
 	private final String			JSON_X						= "X";
 	private final String			JSON_Y						= "Y";
@@ -336,6 +336,49 @@ public abstract class InteractiveObject
 		public Appearance	appearance		= null;
 
 		public JsonVideo()
+		{
+			options = new Options();
+			appearance = new Appearance();
+		}
+
+		@Override
+		protected void finalize() throws Throwable
+		{
+			options = null;
+			appearance = null;
+		}
+	}
+
+	public class JsonAudio
+	{
+		class Options
+		{
+			public int		mnStart		= Type.INVALID;
+			public int		mnEnd		= Type.INVALID;
+			public boolean	mbAutoPlay	= false;
+			public boolean	mbLoop		= false;
+
+			public Options()
+			{
+			}
+		}
+
+		class Appearance
+		{
+			public boolean	mbPlayerControls	= false;
+			public boolean	mbMediaInformation	= false;
+
+			public Appearance()
+			{
+			}
+		}
+
+		public int			mnMediaType		= Type.INVALID;
+		public String		mstrMediaSrc	= null;
+		public Options		options			= null;
+		public Appearance	appearance		= null;
+
+		public JsonAudio()
 		{
 			options = new Options();
 			appearance = new Appearance();
@@ -771,6 +814,38 @@ public abstract class InteractiveObject
 		{
 			JSONObject jAppearance = jsonObject.getJSONObject(strKey);
 			jsonVideo.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS);
+		}
+
+		return true;
+	}
+
+	public boolean parseJsonAudio(JSONObject jsonObject, JsonAudio jsonAudio) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonAudio)
+		{
+			return false;
+		}
+
+		jsonAudio.mnMediaType = getJsonInt(jsonObject, JSON_MEDIA_TYPE);
+		jsonAudio.mstrMediaSrc = getJsonString(jsonObject, JSON_MEDIA_SRC);
+
+		strKey = getValidKey(jsonObject, JSON_OPTIONS);
+		if (null != strKey)
+		{
+			JSONObject jOptions = jsonObject.getJSONObject(strKey);
+			jsonAudio.options.mnStart = getJsonInt(jOptions, JSON_START);
+			jsonAudio.options.mnEnd = getJsonInt(jOptions, JSON_END);
+			jsonAudio.options.mbAutoPlay = getJsonBoolean(jOptions, JSON_AUTOPLAY);
+			jsonAudio.options.mbLoop = getJsonBoolean(jOptions, JSON_LOOP);
+		}
+
+		strKey = getValidKey(jsonObject, JSON_APPEARANCE);
+		if (null != strKey)
+		{
+			JSONObject jAppearance = jsonObject.getJSONObject(strKey);
+			jsonAudio.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS);
+			jsonAudio.appearance.mbMediaInformation = getJsonBoolean(jAppearance, JSON_MEDIA_INFORMATION);
 		}
 
 		return true;

@@ -97,14 +97,7 @@ public class ImageViewHandler
 	{
 		if (null != listImageView.get(nKey))
 		{
-			if (null != listImageView.get(nKey).mBitmap)
-			{
-				if (!listImageView.get(nKey).mBitmap.isRecycled())
-				{
-					listImageView.get(nKey).mBitmap.recycle();
-				}
-				listImageView.get(nKey).mBitmap = null;
-			}
+			BitmapHandler.releaseBitmap(listImageView.get(nKey).mBitmap);
 		}
 	}
 
@@ -119,14 +112,7 @@ public class ImageViewHandler
 			{
 				listImageView.get(nKey).mImageView.setVisibility(View.GONE);
 			}
-			if (null != listImageView.get(nKey).mBitmap)
-			{
-				if (!listImageView.get(nKey).mBitmap.isRecycled())
-				{
-					listImageView.get(nKey).mBitmap.recycle();
-				}
-				listImageView.get(nKey).mBitmap = null;
-			}
+			BitmapHandler.releaseBitmap(listImageView.get(nKey).mBitmap);
 		}
 		mbIsRelease = false;
 	}

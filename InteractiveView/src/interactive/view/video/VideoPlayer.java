@@ -155,47 +155,47 @@ public class VideoPlayer extends RelativeLayout
 		mbShowController = bShow;
 	}
 
-	OnPreparedListener	onPreparedListener	= new OnPreparedListener()
-											{
-												@Override
-												public void onPrepared(MediaPlayer mp)
-												{
-													mp.setLooping(mbIsLoop);
-												}
-											};
-
-	OnTouchListener		videoTouchListener	= new OnTouchListener()
-											{
-												@Override
-												public boolean onTouch(View v, MotionEvent event)
-												{
-													switch (event.getAction())
+	OnPreparedListener		onPreparedListener		= new OnPreparedListener()
 													{
-													case MotionEvent.ACTION_DOWN:
-														if (mbShowController)
+														@Override
+														public void onPrepared(MediaPlayer mp)
 														{
-															if (videoController.isShown())
-															{
-																videoController.hide();
-															}
-															else
-															{
-																videoController.show();
-															}
+															mp.setLooping(mbIsLoop);
 														}
-														else
+													};
+
+	OnTouchListener			videoTouchListener		= new OnTouchListener()
+													{
+														@Override
+														public boolean onTouch(View v, MotionEvent event)
 														{
-															if (!videoView.isPlaying())
+															switch (event.getAction())
 															{
-																videoView.start();
+															case MotionEvent.ACTION_DOWN:
+																if (mbShowController)
+																{
+																	if (videoController.isShown())
+																	{
+																		videoController.hide();
+																	}
+																	else
+																	{
+																		videoController.show();
+																	}
+																}
+																else
+																{
+																	if (!videoView.isPlaying())
+																	{
+																		videoView.start();
+																	}
+																}
+																break;
 															}
+															gestureDetector.onTouchEvent(event);
+															return true;
 														}
-														break;
-													}
-													gestureDetector.onTouchEvent(event);
-													return true;
-												}
-											};
+													};
 
 	SimpleOnGestureListener	simpleOnGestureListener	= new SimpleOnGestureListener()
 													{

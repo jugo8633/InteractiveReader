@@ -5,6 +5,7 @@ import interactive.common.FileHandler;
 import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.data.PageData;
+import interactive.view.json.InteractiveAudio;
 import interactive.view.json.InteractiveButton;
 import interactive.view.json.InteractiveIframe;
 import interactive.view.json.InteractiveImage;
@@ -163,6 +164,13 @@ public class DisplayPage extends RelativeLayout
 				InteractivePostcard interactivePostcard = new InteractivePostcard(theContext);
 				interactivePostcard.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
 				interactivePostcard = null;
+			}
+
+			if (!jsonAll.isNull(InteractiveObject.JSON_AUDIO))
+			{
+				InteractiveAudio interactiveAudio = new InteractiveAudio(theContext);
+				interactiveAudio.createInteractive(exdWebView, mstrBookPath, jsonAll, nChapter, nPage);
+				interactiveAudio = null;
 			}
 
 			/**  note: vide 要放在slideshow前面*/

@@ -69,7 +69,7 @@ public class InteractiveVideo extends InteractiveObject
 			jsonBody = null;
 			jsonHeader = null;
 		}
-		return false;
+		return true;
 	}
 
 	private InteractiveMediaLayout createMediaLayout(JsonHeader jsonHeader, JsonVideo jsonBody, ViewGroup viewParent,
