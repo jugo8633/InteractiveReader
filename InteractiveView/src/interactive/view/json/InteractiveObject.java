@@ -5,6 +5,7 @@ import interactive.view.global.Global;
 import interactive.view.webview.InteractiveWebView;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -538,6 +539,158 @@ public abstract class InteractiveObject
 		}
 	}
 
+	public class JsonDoodle
+	{
+		class EraserBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public EraserBtn()
+			{
+
+			}
+		}
+
+		class PaletteBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public PaletteBtn()
+			{
+
+			}
+		}
+
+		class PenBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public PenBtn()
+			{
+
+			}
+		}
+
+		class ResetBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public ResetBtn()
+			{
+
+			}
+		}
+
+		class SaveBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public SaveBtn()
+			{
+
+			}
+		}
+
+		public EraserBtn	eraserBtn	= null;
+		public PaletteBtn	paletteBtn	= null;
+		public PenBtn		penBtn		= null;
+		public ResetBtn		resetBtn	= null;
+		public SaveBtn		saveBtn		= null;
+		public int			mnBrushes	= Type.INVALID;
+		public int			mnPalette	= Type.INVALID;
+
+		public JsonDoodle()
+		{
+			eraserBtn = new EraserBtn();
+			paletteBtn = new PaletteBtn();
+			penBtn = new PenBtn();
+			resetBtn = new ResetBtn();
+			saveBtn = new SaveBtn();
+		}
+
+		@Override
+		protected void finalize() throws Throwable
+		{
+			eraserBtn = null;
+			paletteBtn = null;
+			penBtn = null;
+			resetBtn = null;
+			saveBtn = null;
+		}
+	}
+
+	public class JsonPuzzle
+	{
+		class ResetBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public ResetBtn()
+			{
+
+			}
+		}
+
+		class SolBtn
+		{
+			public int		mnHeight	= Type.INVALID;
+			public String	mstrSrc		= null;
+			public int		mnWidth		= Type.INVALID;
+			public int		mnX			= Type.INVALID;
+			public int		mnY			= Type.INVALID;
+
+			public SolBtn()
+			{
+
+			}
+		}
+
+		public SolBtn				solBtn			= null;
+		public ResetBtn				resetBtn		= null;
+		public String				mstrFinishObj	= null;
+		public SparseArray<Integer>	Piece			= null;
+
+		public JsonPuzzle()
+		{
+			Piece = new SparseArray<Integer>();
+			resetBtn = new ResetBtn();
+			solBtn = new SolBtn();
+		}
+
+		@Override
+		protected void finalize() throws Throwable
+		{
+			Piece.clear();
+			Piece = null;
+			resetBtn = null;
+			solBtn = null;
+		}
+	}
+
 	public class JsonButton
 	{
 		public String				mstrTouchDown	= null;
@@ -1001,17 +1154,148 @@ public abstract class InteractiveObject
 		return true;
 	}
 
-	//	public int getScaleUnit(int original)
-	//	{
-	//		if (null != metrics && metrics.densityDpi > 160)
-	//		{
-	//			return (int) (original * metrics.densityDpi / 160);// metrics.density
-	//		}
-	//		else
-	//		{
-	//			return original;
-	//		}
-	//	}
+	public boolean parseJsonDoodle(JSONObject jsonObject, JsonDoodle jsonDoodle) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonDoodle)
+		{
+			return false;
+		}
+
+		jsonDoodle.mnBrushes = getJsonInt(jsonObject, JSON_BRUSHES);
+		jsonDoodle.mnPalette = getJsonInt(jsonObject, JSON_PALETTE);
+
+		JSONObject jsonObj = null;
+		strKey = getValidKey(jsonObject, JSON_ERASER_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonDoodle.eraserBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonDoodle.eraserBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonDoodle.eraserBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonDoodle.eraserBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonDoodle.eraserBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+
+		}
+		else
+		{
+			jsonDoodle.eraserBtn = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_PALETTE_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonDoodle.paletteBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonDoodle.paletteBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonDoodle.paletteBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonDoodle.paletteBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonDoodle.paletteBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonDoodle.paletteBtn = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_PEN_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonDoodle.penBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonDoodle.penBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonDoodle.penBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonDoodle.penBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonDoodle.penBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonDoodle.penBtn = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_RESET_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonDoodle.resetBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonDoodle.resetBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonDoodle.resetBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonDoodle.resetBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonDoodle.resetBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonDoodle.resetBtn = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_SAVE_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonDoodle.saveBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonDoodle.saveBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonDoodle.saveBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonDoodle.saveBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonDoodle.saveBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonDoodle.saveBtn = null;
+		}
+		return true;
+	}
+
+	public boolean parseJsonPuzzle(JSONObject jsonObject, JsonPuzzle jsonPuzzle) throws JSONException
+	{
+		String strKey = null;
+		if (null == jsonObject || null == jsonPuzzle)
+		{
+			return false;
+		}
+
+		jsonPuzzle.mstrFinishObj = getJsonString(jsonObject, JSON_FINISH_OBJ);
+
+		strKey = getValidKey(jsonObject, JSON_PIECE);
+		if (null != strKey)
+		{
+			getJsonIntArray(jsonObject, strKey, jsonPuzzle.Piece);
+		}
+		else
+		{
+			jsonPuzzle.Piece = null;
+		}
+
+		JSONObject jsonObj = null;
+		strKey = getValidKey(jsonObject, JSON_RESET_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonPuzzle.resetBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonPuzzle.resetBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonPuzzle.resetBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonPuzzle.resetBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonPuzzle.resetBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonPuzzle.resetBtn = null;
+		}
+
+		strKey = getValidKey(jsonObject, JSON_SOL_BTN);
+		if (null != strKey)
+		{
+			jsonObj = jsonObject.getJSONObject(strKey);
+			jsonPuzzle.solBtn.mnX = getJsonInt(jsonObj, JSON_X);
+			jsonPuzzle.solBtn.mnY = getJsonInt(jsonObj, JSON_Y);
+			jsonPuzzle.solBtn.mnWidth = getJsonInt(jsonObj, JSON_WIDTH);
+			jsonPuzzle.solBtn.mnHeight = getJsonInt(jsonObj, JSON_HEIGHT);
+			jsonPuzzle.solBtn.mstrSrc = getJsonString(jsonObj, JSON_SRC);
+		}
+		else
+		{
+			jsonPuzzle.solBtn = null;
+		}
+		return true;
+	}
 
 	public int ScaleSize(int nSize)
 	{
@@ -1191,5 +1475,30 @@ public abstract class InteractiveObject
 		}
 
 		return dbValue;
+	}
+
+	private boolean getJsonIntArray(JSONObject jsonObject, String strKey, SparseArray<Integer> listInt)
+	{
+		String strValidKey = null;
+		int nValue = Type.INVALID;
+		strValidKey = getValidKey(jsonObject, strKey);
+		if (null != strValidKey && null != listInt)
+		{
+			try
+			{
+				JSONArray values = (JSONArray) jsonObject.get(strValidKey);
+				for (int i = 0; i < values.length(); ++i)
+				{
+					nValue = values.getInt(i);
+					listInt.put(listInt.size(), nValue);
+				}
+				return true;
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 }

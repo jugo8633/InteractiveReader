@@ -8,11 +8,13 @@ import interactive.view.data.PageData;
 import interactive.view.global.Global;
 import interactive.view.json.InteractiveAudio;
 import interactive.view.json.InteractiveButton;
+import interactive.view.json.InteractiveDoodle;
 import interactive.view.json.InteractiveIframe;
 import interactive.view.json.InteractiveImage;
 import interactive.view.json.InteractiveMap;
 import interactive.view.json.InteractiveObject;
 import interactive.view.json.InteractivePostcard;
+import interactive.view.json.InteractivePuzzle;
 import interactive.view.json.InteractiveScrollable;
 import interactive.view.json.InteractiveSlideshow;
 import interactive.view.json.InteractiveVideo;
@@ -156,6 +158,20 @@ public class DisplayPage extends RelativeLayout
 				InteractiveWebPage interactiveWebPage = new InteractiveWebPage(getContext());
 				interactiveWebPage.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
 				interactiveWebPage = null;
+			}
+
+			if (!jsonAll.isNull(InteractiveObject.JSON_PUZZLE))
+			{
+				InteractivePuzzle interactivePuzzle = new InteractivePuzzle(getContext());
+				interactivePuzzle.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
+				interactivePuzzle = null;
+			}
+
+			if (!jsonAll.isNull(InteractiveObject.JSON_DOODLE))
+			{
+				InteractiveDoodle interactiveDoodle = new InteractiveDoodle(getContext());
+				interactiveDoodle.createInteractive(container, mstrBookPath, jsonAll, nChapter, nPage);
+				interactiveDoodle = null;
 			}
 
 			if (!jsonAll.isNull(InteractiveObject.JSON_IFRAME))

@@ -10,6 +10,7 @@ import interactive.common.Logs;
 import interactive.common.Share;
 import interactive.view.animation.flipcard.Rotate3d;
 import interactive.view.animation.zoom.ZoomHandler;
+import interactive.view.fingerpaint.FingerPaintView;
 import interactive.view.global.Global;
 import interactive.view.pagereader.PageReader;
 import android.content.ClipData;
@@ -147,7 +148,7 @@ public class Postcard
 		if (null != strBack)
 		{
 			fingerPaintView = new FingerPaintView(theContext);
-			fingerPaintView.setId(++Global.mnUserId);
+			fingerPaintView.setId(Global.getUserId());
 			fingerPaintView.setBackground(strBack);
 			fingerPaintView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			postcardFrame.addView(fingerPaintView);
