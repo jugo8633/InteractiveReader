@@ -144,9 +144,10 @@ public class AudioPlayer extends RelativeLayout
 		}
 	}
 
-	public void setOption(boolean bAutoPlay, boolean bLoop, int nStart, int nEnd)
+	public void setOption(boolean bAutoPlay, boolean bAutoStop, boolean bLoop, int nStart, int nEnd)
 	{
 		mbAutoplay = bAutoPlay;
+		mbAutoStop = bAutoStop;
 		mbLoop = bLoop;
 		mnStart = nStart;
 		mnEnd = nEnd;

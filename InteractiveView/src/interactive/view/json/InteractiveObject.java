@@ -65,6 +65,7 @@ public abstract class InteractiveObject
 	private final String			JSON_ANIMATION				= "Animation";
 	private final String			JSON_APPEARANCE				= "Appearance";
 	private final String			JSON_AUTOPLAY				= "Autoplay";
+	private final String			JSON_AUTOSTOP				= "AutoStop";
 	private final String			JSON_BACKGROUND				= "Background";
 	private final String			JSON_BRUSHES				= "Brushes";
 	private final String			JSON_CAMERA					= "Camera";
@@ -356,6 +357,7 @@ public abstract class InteractiveObject
 			public int		mnStart		= Type.INVALID;
 			public int		mnEnd		= Type.INVALID;
 			public boolean	mbAutoPlay	= false;
+			public boolean	mbAutoStop	= true;
 			public boolean	mbLoop		= false;
 
 			public Options()
@@ -607,7 +609,7 @@ public abstract class InteractiveObject
 		jsonHeader.mnX = getJsonInt(jsonObject, JSON_X);
 		jsonHeader.mnY = getJsonInt(jsonObject, JSON_Y);
 		jsonHeader.mstrSrc = getJsonString(jsonObject, JSON_SRC);
-		jsonHeader.mbIsVisible = getJsonBoolean(jsonObject, JSON_ISVISIBLE);
+		jsonHeader.mbIsVisible = getJsonBoolean(jsonObject, JSON_ISVISIBLE, true);
 		jsonHeader.mstrGroupId = getJsonString(jsonObject, JSON_GROUP_ID);
 
 		return true;
@@ -690,7 +692,7 @@ public abstract class InteractiveObject
 		if (null != strKey)
 		{
 			JSONObject joptions = jsonObject.getJSONObject(strKey);
-			jsonWebPage.options.mbAutoplay = getJsonBoolean(joptions, JSON_AUTOPLAY);
+			jsonWebPage.options.mbAutoplay = getJsonBoolean(joptions, JSON_AUTOPLAY, false);
 		}
 		return true;
 	}
@@ -703,7 +705,7 @@ public abstract class InteractiveObject
 			return false;
 		}
 
-		jsonIframe.mbIsOpen = getJsonBoolean(jsonObject, JSON_IS_OPEN);
+		jsonIframe.mbIsOpen = getJsonBoolean(jsonObject, JSON_IS_OPEN, true);
 		jsonIframe.mstrUrl = getJsonString(jsonObject, JSON_URL);
 		return true;
 	}
@@ -727,7 +729,7 @@ public abstract class InteractiveObject
 			jsonSlideshow.mnStyle = Integer.parseInt(strStyle);
 		}
 
-		jsonSlideshow.mbFullScreen = getJsonBoolean(jsonObject, JSON_FULLSCREEN);
+		jsonSlideshow.mbFullScreen = getJsonBoolean(jsonObject, JSON_FULLSCREEN, false);
 		jsonSlideshow.mnItemCount = getJsonInt(jsonObject, JSON_ITEM_COUNT);
 
 		strKey = getValidKey(jsonObject, JSON_ITEM);
@@ -805,15 +807,15 @@ public abstract class InteractiveObject
 			JSONObject jOptions = jsonObject.getJSONObject(strKey);
 			jsonVideo.options.mnStart = getJsonInt(jOptions, JSON_START);
 			jsonVideo.options.mnEnd = getJsonInt(jOptions, JSON_END);
-			jsonVideo.options.mbAutoPlay = getJsonBoolean(jOptions, JSON_AUTOPLAY);
-			jsonVideo.options.mbLoop = getJsonBoolean(jOptions, JSON_LOOP);
+			jsonVideo.options.mbAutoPlay = getJsonBoolean(jOptions, JSON_AUTOPLAY, false);
+			jsonVideo.options.mbLoop = getJsonBoolean(jOptions, JSON_LOOP, false);
 		}
 
 		strKey = getValidKey(jsonObject, JSON_APPEARANCE);
 		if (null != strKey)
 		{
 			JSONObject jAppearance = jsonObject.getJSONObject(strKey);
-			jsonVideo.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS);
+			jsonVideo.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS, true);
 		}
 
 		return true;
@@ -836,16 +838,17 @@ public abstract class InteractiveObject
 			JSONObject jOptions = jsonObject.getJSONObject(strKey);
 			jsonAudio.options.mnStart = getJsonInt(jOptions, JSON_START);
 			jsonAudio.options.mnEnd = getJsonInt(jOptions, JSON_END);
-			jsonAudio.options.mbAutoPlay = getJsonBoolean(jOptions, JSON_AUTOPLAY);
-			jsonAudio.options.mbLoop = getJsonBoolean(jOptions, JSON_LOOP);
+			jsonAudio.options.mbAutoPlay = getJsonBoolean(jOptions, JSON_AUTOPLAY, false);
+			jsonAudio.options.mbAutoStop = getJsonBoolean(jOptions, JSON_AUTOSTOP, true);
+			jsonAudio.options.mbLoop = getJsonBoolean(jOptions, JSON_LOOP, false);
 		}
 
 		strKey = getValidKey(jsonObject, JSON_APPEARANCE);
 		if (null != strKey)
 		{
 			JSONObject jAppearance = jsonObject.getJSONObject(strKey);
-			jsonAudio.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS);
-			jsonAudio.appearance.mbMediaInformation = getJsonBoolean(jAppearance, JSON_MEDIA_INFORMATION);
+			jsonAudio.appearance.mbPlayerControls = getJsonBoolean(jAppearance, JSON_PLAYER_CONTROLS, true);
+			jsonAudio.appearance.mbMediaInformation = getJsonBoolean(jAppearance, JSON_MEDIA_INFORMATION, false);
 		}
 
 		return true;
@@ -870,7 +873,7 @@ public abstract class InteractiveObject
 			jsonMap.appearance.mnZoomLevel = getJsonInt(jAppearance, JSON_ZOOM_LEVEL);
 			jsonMap.appearance.mnMapType = getJsonInt(jAppearance, JSON_MAP_TYPE);
 			jsonMap.appearance.mstrMapTypeName = getJsonString(jAppearance, JSON_MAP_TYPE_NAME);
-			jsonMap.appearance.mbStreetView = getJsonBoolean(jAppearance, JSON_STREET_VIEW);
+			jsonMap.appearance.mbStreetView = getJsonBoolean(jAppearance, JSON_STREET_VIEW, false);
 			jsonMap.appearance.mstrMarkAs = getJsonString(jAppearance, JSON_MARK_AS);
 		}
 
@@ -1150,10 +1153,10 @@ public abstract class InteractiveObject
 		return nValue;
 	}
 
-	private boolean getJsonBoolean(JSONObject jsonObject, String strKey)
+	private boolean getJsonBoolean(JSONObject jsonObject, String strKey, boolean bDefault)
 	{
 		String strValidKey = null;
-		boolean bValue = false;
+		boolean bValue = bDefault;
 		strValidKey = getValidKey(jsonObject, strKey);
 		if (null != strValidKey)
 		{

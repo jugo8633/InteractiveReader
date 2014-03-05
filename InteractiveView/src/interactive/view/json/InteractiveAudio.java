@@ -60,8 +60,8 @@ public class InteractiveAudio extends InteractiveObject
 						audioPlayer.setImage(strBookPath + jsonHeader.mstrSrc, Global.ScaleSize(jsonHeader.mnWidth),
 								Global.ScaleSize(jsonHeader.mnHeight));
 					}
-					audioPlayer.setOption(jsonBody.options.mbAutoPlay, jsonBody.options.mbLoop,
-							jsonBody.options.mnStart, jsonBody.options.mnEnd);
+					audioPlayer.setOption(jsonBody.options.mbAutoPlay, jsonBody.options.mbAutoStop,
+							jsonBody.options.mbLoop, jsonBody.options.mnStart, jsonBody.options.mnEnd);
 					audioPlayer.setPlayerControls(jsonBody.appearance.mbPlayerControls);
 					container.addView(audioPlayer);
 				}
