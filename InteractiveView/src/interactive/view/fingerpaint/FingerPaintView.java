@@ -3,6 +3,7 @@ package interactive.view.fingerpaint;
 import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
+import interactive.common.Type;
 import interactive.view.global.Global;
 
 import java.io.FileOutputStream;
@@ -36,6 +37,8 @@ public class FingerPaintView extends View
 	private Paint				mpaintEraser	= null;
 	private String				mstrBackground	= null;
 	private String				mstrText		= null;
+	private int					mnWidth			= Type.INVALID;
+	private int					mnHeight		= Type.INVALID;
 
 	public FingerPaintView(Context context)
 	{
@@ -83,6 +86,8 @@ public class FingerPaintView extends View
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
 		super.onSizeChanged(w, h, oldw, oldh);
+		mnWidth = w;
+		mnHeight = h;
 		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		mCanvas = new Canvas(mBitmap);
 	}
@@ -179,11 +184,9 @@ public class FingerPaintView extends View
 
 	public void clear()
 	{
-		mPath.rewind();
-		init();
 		BitmapHandler.releaseBitmap(mBitmap);
-		mBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888);
-		mCanvas = new Canvas(mBitmap);
+		mBitmap = Bitmap.createBitmap(mnWidth, mnHeight, Bitmap.Config.ARGB_8888);
+		mPath = new Path();
 		invalidate();
 	}
 
