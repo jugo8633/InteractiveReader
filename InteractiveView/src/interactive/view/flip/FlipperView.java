@@ -20,7 +20,6 @@ public class FlipperView extends RelativeLayout
 	public final int		ANIMATION_DOWN		= 0;
 	public final int		ANIMATION_UP		= 1;
 	private AnimationType	animationType		= null;
-	private Context			theContext			= null;
 	private ThreadHandler	thdFlip				= null;
 	private Handler			theHandler			= null;
 
@@ -44,7 +43,6 @@ public class FlipperView extends RelativeLayout
 
 	private void init(Context context)
 	{
-		theContext = context;
 		animationType = new AnimationType();
 		flipper = new ViewFlipper(context);
 
@@ -77,7 +75,7 @@ public class FlipperView extends RelativeLayout
 	public int addChild(int nResId)
 	{
 		int nIndex = flipper.getChildCount();
-		LayoutInflater layInflater = (LayoutInflater) theContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater layInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		RelativeLayout viewChild = (RelativeLayout) layInflater.inflate(nResId, null, false);
 		flipper.addView(viewChild, nIndex);
 		return nIndex;

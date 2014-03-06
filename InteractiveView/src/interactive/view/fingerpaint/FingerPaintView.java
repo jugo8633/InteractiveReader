@@ -184,9 +184,8 @@ public class FingerPaintView extends View
 
 	public void clear()
 	{
-		BitmapHandler.releaseBitmap(mBitmap);
-		mBitmap = Bitmap.createBitmap(mnWidth, mnHeight, Bitmap.Config.ARGB_8888);
-		mPath = new Path();
+		mBitmap.eraseColor(Color.TRANSPARENT);
+		mPath.reset();
 		invalidate();
 	}
 
@@ -271,5 +270,21 @@ public class FingerPaintView extends View
 	public void setTextToDraw(String strText)
 	{
 		mstrText = strText;
+	}
+
+	public void setPenStrokeWidth(int nWidth)
+	{
+		if (0 <= nWidth)
+		{
+			mPaint.setStrokeWidth(nWidth);
+		}
+	}
+
+	public void setEraseStrokeWidth(int nWidth)
+	{
+		if (0 <= nWidth)
+		{
+			mpaintEraser.setStrokeWidth(nWidth);
+		}
 	}
 }

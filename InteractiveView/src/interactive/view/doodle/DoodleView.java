@@ -3,17 +3,20 @@ package interactive.view.doodle;
 import interactive.common.EventMessage;
 import interactive.common.Type;
 import interactive.view.fingerpaint.FingerPaintView;
+import interactive.view.flip.FlipperView;
 import interactive.view.global.Global;
 import interactive.view.image.ImageViewHandler;
-import interactive.view.slideshow.SlideshowView;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 public class DoodleView extends RelativeLayout
@@ -29,6 +32,9 @@ public class DoodleView extends RelativeLayout
 	private int					mnPenBtn		= Type.INVALID;
 	private int					mnResetBtn		= Type.INVALID;
 	private int					mnSaveBtn		= Type.INVALID;
+	private RelativeLayout		leftRL			= null;
+	private RelativeLayout		rightRL			= null;
+	private DrawerLayout		drawerLayout	= null;
 
 	private DoodleView(Context context)
 	{
@@ -47,6 +53,37 @@ public class DoodleView extends RelativeLayout
 		addView(fingerPaintView);
 		fingerPaintView.setIsCapturing(true);
 		fingerPaintView.setEraser(false);
+		initSlidingMenu();
+	}
+
+	private void initSlidingMenu()
+	{
+		ListView listView = new ListView(getContext());
+		listView.setLayoutParams(new LayoutParams(100, LayoutParams.MATCH_PARENT));
+		listView.setBackgroundColor(Color.GREEN);
+		ListView listView2 = new ListView(getContext());
+		listView2.setLayoutParams(new LayoutParams(100, LayoutParams.MATCH_PARENT));
+		listView2.setBackgroundColor(Color.BLUE);
+		leftRL = new RelativeLayout(getContext());
+		rightRL = new RelativeLayout(getContext());
+		drawerLayout = new DrawerLayout(getContext());
+
+		leftRL.setGravity(Gravity.START);
+		rightRL.setGravity(Gravity.RIGHT);
+
+		leftRL.setLayoutParams(new LayoutParams(100, LayoutParams.MATCH_PARENT));
+		rightRL.setLayoutParams(new LayoutParams(100, LayoutParams.MATCH_PARENT));
+
+		leftRL.setBackgroundColor(Color.GRAY);
+		rightRL.setBackgroundColor(Color.RED);
+
+		leftRL.addView(listView);
+		rightRL.addView(listView2);
+
+		drawerLayout.setLayoutParams(new LayoutParams(800, 800));
+		drawerLayout.addView(leftRL);
+		drawerLayout.addView(rightRL);
+		container.addView(drawerLayout);
 	}
 
 	public void SetDisplay(float fX, float fY, int nWidth, int nHeight)
@@ -76,6 +113,12 @@ public class DoodleView extends RelativeLayout
 	public void setBrushes(int nBrushes)
 	{
 		mnBrushes = nBrushes;
+		fingerPaintView.setPenStrokeWidth(nBrushes);
+	}
+
+	public void setEraseWidth(int nWidth)
+	{
+		fingerPaintView.setEraseStrokeWidth(nWidth);
 	}
 
 	public void setPalette(int nPalette)
@@ -107,11 +150,12 @@ public class DoodleView extends RelativeLayout
 				}
 				else if (nId == mnPaletteBtn)
 				{
-
+					drawerLayout.openDrawer(Gravity.END);
 				}
 				else if (nId == mnPenBtn)
 				{
 					fingerPaintView.setEraser(false);
+					drawerLayout.openDrawer(Gravity.LEFT);
 				}
 				else if (nId == mnResetBtn)
 				{

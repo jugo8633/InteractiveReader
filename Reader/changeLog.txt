@@ -1,3 +1,4 @@
+2014/03/06 : 新增finger paint reset功能
 2014/03/06 : 修正audio activity close停播功能
 2014/03/05 : 新增audio auto stop功能,換頁時自動停播
 2014/03/04 : 新增audio播放功能
