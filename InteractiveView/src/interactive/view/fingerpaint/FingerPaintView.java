@@ -180,9 +180,10 @@ public class FingerPaintView extends View
 	public void clear()
 	{
 		mPath.rewind();
-		//		BitmapHandler.releaseBitmap(mBitmap);
-		//		mBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888);
-		//		mCanvas = new Canvas(mBitmap);
+		init();
+		BitmapHandler.releaseBitmap(mBitmap);
+		mBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888);
+		mCanvas = new Canvas(mBitmap);
 		invalidate();
 	}
 
