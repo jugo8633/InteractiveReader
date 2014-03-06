@@ -3,6 +3,7 @@ package interactive.view.handler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.view.audio.AudioPlayer;
 import interactive.view.define.InteractiveDefine;
 import interactive.view.postcard.Postcard;
 import android.app.Activity;
@@ -19,6 +20,7 @@ public class InteractiveHandler
 	private boolean						mbDraging			= false;
 	private InteractiveButtonHandler	buttonHandler		= null;
 	private InteractiveMediaHandler		mediaHandler		= null;
+	private InteractiveAudioHandler		audioHandler		= null;
 
 	public InteractiveHandler()
 	{
@@ -26,6 +28,7 @@ public class InteractiveHandler
 		mediaHandler = new InteractiveMediaHandler();
 		buttonHandler = new InteractiveButtonHandler();
 		listPostcard = new SparseArray<Postcard>();
+		audioHandler = new InteractiveAudioHandler();
 	}
 
 	@Override
@@ -62,14 +65,6 @@ public class InteractiveHandler
 		buttonHandler.addEventData(strButtonTag, nType, strTypeName, nEvent, strEventName, nTargetType, strTargetID,
 				nDisplay);
 	}
-
-	//	public void addButtonMedia(String strButtonTag, String strName, int nWidth, int nHeight, int nX, int nY,
-	//			String strSrc, int nMediaType, String strMediaSrc, int nStart, int nEnd, boolean bAutoplay, boolean bLoop,
-	//			boolean bPlayerControls, boolean bIsVisible, ViewGroup viewParent, boolean bIsCurrentPlayer)
-	//	{
-	//		buttonHandler.addMediaData(strButtonTag, strName, nWidth, nHeight, nX, nY, strSrc, nMediaType, strMediaSrc,
-	//				nStart, nEnd, bAutoplay, bLoop, bPlayerControls, bIsVisible, viewParent, bIsCurrentPlayer);
-	//	}
 
 	synchronized private void handleButtonEvent(String strTag)
 	{
@@ -218,6 +213,20 @@ public class InteractiveHandler
 	public void setMediaContainer(String strTagName, ViewGroup viewContainer)
 	{
 		mediaHandler.setMediaContainer(strTagName, viewContainer);
+	}
+
+	/** audio handle **************************************/
+	public void addAudioPlayer(AudioPlayer audioPlayer)
+	{
+		audioHandler.addAudioPlayer(audioPlayer);
+	}
+
+	/**
+	 * stop all audio background play when activity is finished.
+	 */
+	public void releaseAllAudio()
+	{
+		audioHandler.releaseAllAudio();
 	}
 
 	/********************************************************************************/

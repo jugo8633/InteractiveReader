@@ -85,6 +85,7 @@ public class MediaController extends FrameLayout
 	private void init()
 	{
 		hide();
+		this.setAlpha(0.5f);
 	}
 
 	// This is called whenever mAnchor's layout bound changes
@@ -313,6 +314,10 @@ public class MediaController extends FrameLayout
 											hide();
 											break;
 										case SHOW_PROGRESS:
+											if (null == mPlayer)
+											{
+												return;
+											}
 											pos = setProgress();
 											if (MediaController.this.getVerticalFadingEdgeLength() == View.VISIBLE
 													&& mPlayer.isPlaying())
@@ -389,6 +394,10 @@ public class MediaController extends FrameLayout
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event)
 	{
+		if (null == mPlayer)
+		{
+			return false;
+		}
 		int keyCode = event.getKeyCode();
 		final boolean uniqueDown = event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN;
 		if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
@@ -455,6 +464,10 @@ public class MediaController extends FrameLayout
 
 	public void updatePausePlay()
 	{
+		if (null == mPlayer)
+		{
+			return;
+		}
 		if (mPlayer.isPlaying())
 		{
 			mPauseButton.setImageResource(getResourceId("ic_media_pause", "drawable"));
@@ -467,6 +480,10 @@ public class MediaController extends FrameLayout
 
 	private void doPauseResume()
 	{
+		if (null == mPlayer)
+		{
+			return;
+		}
 		if (mPlayer.isPlaying())
 		{
 			mPlayer.pause();
@@ -514,7 +531,10 @@ public class MediaController extends FrameLayout
 																// the progress bar's position.
 																return;
 															}
-
+															if (null == mPlayer)
+															{
+																return;
+															}
 															long duration = mPlayer.getDuration();
 															long newposition = (duration * progress) / 1000L;
 															mPlayer.seekTo((int) newposition);
@@ -585,6 +605,10 @@ public class MediaController extends FrameLayout
 													{
 														public void onClick(View v)
 														{
+															if (null == mPlayer)
+															{
+																return;
+															}
 															int pos = mPlayer.getCurrentPosition();
 															pos -= 5000; // milliseconds
 															mPlayer.seekTo(pos);
@@ -598,6 +622,10 @@ public class MediaController extends FrameLayout
 													{
 														public void onClick(View v)
 														{
+															if (null == mPlayer)
+															{
+																return;
+															}
 															int pos = mPlayer.getCurrentPosition();
 															pos += 15000; // milliseconds
 															mPlayer.seekTo(pos);

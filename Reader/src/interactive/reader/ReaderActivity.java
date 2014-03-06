@@ -30,7 +30,6 @@ import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,6 +119,7 @@ public class ReaderActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
+		Global.interactiveHandler.releaseAllAudio();
 		ClearCache clearCache = new ClearCache();
 		clearCache.clearApplicationData(this);
 		clearCache = null;

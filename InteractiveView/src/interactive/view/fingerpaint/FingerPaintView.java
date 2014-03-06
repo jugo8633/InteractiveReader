@@ -1,5 +1,6 @@
 package interactive.view.fingerpaint;
 
+import interactive.common.BitmapHandler;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.view.global.Global;
@@ -160,6 +161,7 @@ public class FingerPaintView extends View
 		switch (event.getAction())
 		{
 		case MotionEvent.ACTION_DOWN:
+			EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
 			touch_start(x, y);
 			invalidate();
 			break;
@@ -170,6 +172,7 @@ public class FingerPaintView extends View
 		case MotionEvent.ACTION_UP:
 			touch_up();
 			invalidate();
+			EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 			break;
 		}
 	}
@@ -177,6 +180,9 @@ public class FingerPaintView extends View
 	public void clear()
 	{
 		mPath.rewind();
+		//		BitmapHandler.releaseBitmap(mBitmap);
+		//		mBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888);
+		//		mCanvas = new Canvas(mBitmap);
 		invalidate();
 	}
 
@@ -188,14 +194,6 @@ public class FingerPaintView extends View
 	public void setIsCapturing(boolean mCapturing)
 	{
 		this.mbCapturing = mCapturing;
-		if (mCapturing)
-		{
-			EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
-		}
-		else
-		{
-			EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
-		}
 	}
 
 	public void setEraser(boolean bEraser)

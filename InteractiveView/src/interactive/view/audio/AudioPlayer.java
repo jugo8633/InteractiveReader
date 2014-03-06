@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +36,7 @@ public class AudioPlayer extends RelativeLayout
 	private int					mnEnd			= Type.INVALID;
 	private boolean				mbLoop			= false;
 	private int					mnStart			= 0;
+	private boolean				mbAudioPrepared	= false;
 
 	public AudioPlayer(Context context)
 	{
@@ -57,6 +59,7 @@ public class AudioPlayer extends RelativeLayout
 	private void init()
 	{
 		mediaPlayer = new MediaPlayer();
+		mediaPlayer.reset();
 		mediaPlayer.setOnCompletionListener(new OnCompletionListener()
 		{
 			@Override
@@ -69,6 +72,25 @@ public class AudioPlayer extends RelativeLayout
 						audioController.hide();
 					}
 				}
+			}
+		});
+
+		mediaPlayer.setOnPreparedListener(new OnPreparedListener()
+		{
+			@Override
+			public void onPrepared(MediaPlayer mp)
+			{
+				mbAudioPrepared = true;
+			}
+		});
+
+		mediaPlayer.setOnErrorListener(new OnErrorListener()
+		{
+			@Override
+			public boolean onError(MediaPlayer mp, int what, int extra)
+			{
+				Logs.showTrace("Audio player error, error=" + what + " extra=" + extra + " !!!!!!!!!!!!!!!!!");
+				return false;
 			}
 		});
 
@@ -105,8 +127,7 @@ public class AudioPlayer extends RelativeLayout
 	@Override
 	protected void finalize() throws Throwable
 	{
-		mediaPlayer.stop();
-		mediaPlayer.release();
+		release();
 		super.finalize();
 	}
 
@@ -175,6 +196,7 @@ public class AudioPlayer extends RelativeLayout
 	{
 		try
 		{
+			mbAudioPrepared = false;
 			mediaPlayer.setDataSource(strFile);
 			mediaPlayer.prepare();
 			Logs.showTrace("Audio play set data source=" + strFile);
@@ -199,16 +221,28 @@ public class AudioPlayer extends RelativeLayout
 
 	private void play()
 	{
-		if (mediaPlayer.isPlaying())
+		if (!mbAudioPrepared)
 		{
-			mediaPlayer.pause();
+			Logs.showTrace("Audio play fail, audio not prepared");
+			return;
 		}
-		mediaPlayer.seekTo(mnStart * 1000);
-		mediaPlayer.start();
-		if (null != audioController)
+		try
 		{
-			audioController.show(0);
-			audioController.updatePausePlay();
+			if (mediaPlayer.isPlaying())
+			{
+				mediaPlayer.pause();
+			}
+			mediaPlayer.seekTo(mnStart * 1000);
+			mediaPlayer.start();
+			if (null != audioController)
+			{
+				audioController.show(0);
+				audioController.updatePausePlay();
+			}
+		}
+		catch (IllegalStateException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -224,6 +258,17 @@ public class AudioPlayer extends RelativeLayout
 			audioController.updatePausePlay();
 			audioController.hide();
 		}
+	}
+
+	public void release()
+	{
+		if (null != audioController)
+		{
+			audioController.setMediaPlayer(null);
+			audioController.hide();
+		}
+
+		mediaPlayer.release();
 	}
 
 	private Handler	selfHandler	= new Handler()

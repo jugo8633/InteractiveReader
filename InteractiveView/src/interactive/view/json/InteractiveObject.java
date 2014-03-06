@@ -1407,6 +1407,13 @@ public abstract class InteractiveObject
 			try
 			{
 				strValue = jsonObject.getString(strValidKey);
+				if (null != strValue)
+				{
+					if (0 == strValue.length())
+					{
+						strValue = null;
+					}
+				}
 			}
 			catch (JSONException e)
 			{

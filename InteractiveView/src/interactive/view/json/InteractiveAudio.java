@@ -64,6 +64,7 @@ public class InteractiveAudio extends InteractiveObject
 							jsonBody.options.mbLoop, jsonBody.options.mnStart, jsonBody.options.mnEnd);
 					audioPlayer.setPlayerControls(jsonBody.appearance.mbPlayerControls);
 					container.addView(audioPlayer);
+					Global.interactiveHandler.addAudioPlayer(audioPlayer);
 				}
 			}
 		}
