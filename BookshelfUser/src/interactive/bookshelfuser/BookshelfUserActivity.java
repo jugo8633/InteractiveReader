@@ -37,7 +37,7 @@ public class BookshelfUserActivity extends Activity
 		this.setContentView(nResId);
 		flipper = (ViewFlipper) this.findViewById(Global.getResourceId(this, "viewflipper", "id"));
 		animationType = new AnimationType();
-		flipper.setOutAnimation(animationType.outToLeftAnimation(100));
+		flipper.setOutAnimation(animationType.outToLeftAnimation(200));
 		flipper.setInAnimation(animationType.inFromRightAnimation(500));
 
 		/** init footbar handler */

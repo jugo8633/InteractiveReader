@@ -75,6 +75,10 @@
                 <include
                     android:id="@+id/subBookshelf"
                     layout="@layout/bookshelf" />
+
+                <include
+                    android:id="@+id/subReader"
+                    layout="@layout/reader" />
             </ViewFlipper>
 
             <View
