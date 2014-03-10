@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bookLogoMain"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:paddingBottom="20dp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="20dp" >
+
+    <ImageView
+        android:id="@+id/magazineLogo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:layout_weight="0.3"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/magazine_logo" />
+
+    <ImageView
+        android:id="@+id/vendorLogo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_weight="0.7"
+        android:adjustViewBounds="true"
+        android:paddingLeft="38dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/vendor_logo" />
+
+</LinearLayout>
