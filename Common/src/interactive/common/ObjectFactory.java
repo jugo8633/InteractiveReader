@@ -22,8 +22,9 @@ public class ObjectFactory
 		}
 	}
 
-	private SparseArray<ImageButton>	listImgBtn	= null;
-	private Activity					theActivity	= null;
+	private boolean						mbSingleSelect	= false;
+	private SparseArray<ImageButton>	listImgBtn		= null;
+	private Activity					theActivity		= null;
 
 	public ObjectFactory(Activity activity)
 	{
@@ -72,6 +73,18 @@ public class ObjectFactory
 			ImageView imgview = getImageButton(nId);
 			imgview.setImageResource(imgbtn.mnTouchUpSrcId);
 		}
+
+		if (mbSingleSelect)
+		{
+			for (int i = 0; i < listImgBtn.size(); ++i)
+			{
+				int nKey = listImgBtn.keyAt(i);
+				if (nKey != nId)
+				{
+					setImgBtnNormal(nKey);
+				}
+			}
+		}
 	}
 
 	public void setImgBtnNormal(int nId)
@@ -82,6 +95,11 @@ public class ObjectFactory
 			ImageView imgview = getImageButton(nId);
 			imgview.setImageResource(imgbtn.mnNormalSrcId);
 		}
+	}
+
+	public void setSingleSelect(boolean bSingle)
+	{
+		mbSingleSelect = bSingle;
 	}
 
 }

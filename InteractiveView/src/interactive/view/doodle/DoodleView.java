@@ -112,6 +112,10 @@ public class DoodleView extends RelativeLayout
 			@Override
 			public void onClick(View view)
 			{
+				if (null == fingerPaintView)
+				{
+					return;
+				}
 				int nId = view.getId();
 				if (nId == mnEraserBtn)
 				{
@@ -119,12 +123,12 @@ public class DoodleView extends RelativeLayout
 				}
 				else if (nId == mnPaletteBtn)
 				{
-					
+
 				}
 				else if (nId == mnPenBtn)
 				{
 					fingerPaintView.setEraser(false);
-				
+
 				}
 				else if (nId == mnResetBtn)
 				{
