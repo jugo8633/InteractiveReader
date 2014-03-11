@@ -3,5 +3,9 @@
 
     <string name="app_name">BookshelfUser</string>
     <string name="content_descript" />
+    <string name="all_book">所有刊物</string>
+    <string name="free_book">免費</string>
+    <string name="special_book">特刊</string>
+    <string name="previous_book">前期</string>
 
 </resources>
