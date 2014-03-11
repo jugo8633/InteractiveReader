@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/White" >
+
+    <LinearLayout
+        android:id="@+id/listTabButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal" >
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageTabIndicate"
+        android:layout_width="80dp"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/listTabButton"
+        android:scaleType="centerInside"
+        android:src="@drawable/triangle_indicate" />
+
+</RelativeLayout>
