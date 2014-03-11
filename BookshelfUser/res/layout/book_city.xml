@@ -13,4 +13,12 @@
         android:id="@+id/subAd"
         layout="@layout/ad_layout" />
 
+    <interactive.widget.TabButton
+        android:id="@+id/tabButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp" >
+
+    </interactive.widget.TabButton>
+
 </LinearLayout>

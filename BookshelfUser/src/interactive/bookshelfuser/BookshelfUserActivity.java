@@ -5,6 +5,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
+import interactive.widget.TabButton;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +29,7 @@ public class BookshelfUserActivity extends Activity
 	private int				mnListMenuBtnId			= Type.INVALID;
 	private DrawerLayout	drawerLayout			= null;
 	private ImageView		listMenuBtn				= null;
+	private TabButton		tabButton				= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -101,6 +103,14 @@ public class BookshelfUserActivity extends Activity
 
 			}
 		});
+
+		/** init tab button */
+		tabButton = (TabButton) this.findViewById(Global.getResourceId(this, "tabButton", "id"));
+		tabButton.addTextButton(this.getString(Global.getResourceId(this, "all_book", "string")));
+		tabButton.addTextButton(this.getString(Global.getResourceId(this, "free_book", "string")));
+		tabButton.addTextButton(this.getString(Global.getResourceId(this, "special_book", "string")));
+		tabButton.addTextButton(this.getString(Global.getResourceId(this, "previous_book", "string")));
+		tabButton.setItemSelect(0);
 
 	}
 
