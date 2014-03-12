@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 依字母排序 -->
+    <item name="bookCityBookListMain" type="id"/>
+    <item name="book_city_flipper" type="id"/>
+    <item name="book_list_flipper" type="id"/>
+    <item name="down_line" type="id"/>
+    <item name="left_drawer_main" type="id"/>
+    <item name="sub_book_city_all_book" type="id"/>
+    <item name="sub_book_city_free_book" type="id"/>
+    <item name="sub_book_city_previous_book" type="id"/>
+    <item name="sub_book_city_special_book" type="id"/>
+    <item name="up_line" type="id"/>
+
+</resources>
