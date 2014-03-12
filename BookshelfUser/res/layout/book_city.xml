@@ -18,7 +18,45 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginLeft="30dp" >
-
     </interactive.widget.TabButton>
+
+    <RelativeLayout
+        android:id="@id/bookCityBookListMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <View
+            android:id="@id/up_line"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/shadow_up" />
+
+        <ViewFlipper
+            android:id="@id/book_city_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="25dp" >
+
+            <include
+                android:id="@id/sub_book_city_all_book"
+                layout="@layout/book_city_all_book" />
+
+            <include
+                android:id="@id/sub_book_city_free_book"
+                layout="@layout/book_city_free_book" />
+
+            <include
+                android:id="@id/sub_book_city_special_book"
+                layout="@layout/book_city_special_book" />
+
+            <include
+                android:id="@id/sub_book_city_previous_book"
+                layout="@layout/book_city_previous_book" >
+            </include>
+        </ViewFlipper>
+    </RelativeLayout>
 
 </LinearLayout>

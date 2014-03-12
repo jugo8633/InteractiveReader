@@ -25,7 +25,6 @@
             android:paddingTop="10dp"
             android:scaleType="fitStart"
             android:src="@drawable/list_normal" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -66,7 +65,6 @@
             android:contentDescription="@string/content_descript"
             android:padding="10dp"
             android:src="@drawable/reader_normal" />
-
     </RelativeLayout>
 
     <android.support.v4.widget.DrawerLayout
@@ -83,7 +81,7 @@
             android:layout_height="match_parent" >
 
             <ViewFlipper
-                android:id="@+id/viewflipper"
+                android:id="@id/book_list_flipper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
@@ -101,29 +99,27 @@
             </ViewFlipper>
 
             <View
-                android:id="@+id/HeaderLine"
+                android:id="@id/up_line"
                 android:layout_width="match_parent"
                 android:layout_height="12dp"
                 android:layout_alignParentTop="true"
                 android:background="@drawable/shadow_up" />
 
             <View
-                android:id="@+id/FootbarLine"
+                android:id="@id/down_line"
                 android:layout_width="match_parent"
                 android:layout_height="12dp"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/shadow_down" />
         </RelativeLayout>
 
-        <ListView
-            android:id="@+id/left_drawer"
-            android:layout_width="240dp"
+        <RelativeLayout
+            android:id="@id/left_drawer_main"
+            android:layout_width="360dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@color/Gray"
-            android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" />
+            android:background="@color/drawer_menu_background" >
+        </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
 
 </RelativeLayout>
