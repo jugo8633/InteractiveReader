@@ -20,20 +20,21 @@ public class MoveHandler
 	public static void move(final View view, int nX1, int nX2, int nY1, int nY2, int nDuration,
 			final Handler notifyHandler)
 	{
-		AnimationSet animSet = new AnimationSet(false);
+		AnimationSet animSet = new AnimationSet(true);
 
 		// 動畫設定 (指定移動動畫) (x1, x2, y1, y2)
 		Animation am = new TranslateAnimation(nX1, nX2, nY1, nY2);
 
 		// 動畫開始到結束的執行時間 (1000 = 1 秒)
-		am.setDuration(nDuration);
+		animSet.setDuration(nDuration);
 
 		//避免元件又回到初始位置
-		am.setFillEnabled(true);
-		am.setFillAfter(true);
+		animSet.setFillEnabled(true);
+		animSet.setFillAfter(true);
+		animSet.setFillBefore(true);
 
 		// 動畫重複次數 (-1 表示一直重複)
-		am.setRepeatCount(0);
+		animSet.setRepeatCount(0);
 
 		am.setAnimationListener(new AnimationListener()
 		{
@@ -61,6 +62,8 @@ public class MoveHandler
 
 		// 動畫開始
 		animSet.addAnimation(am);
+		view.offsetLeftAndRight(nX2);
+		view.offsetTopAndBottom(nY2);
 		view.startAnimation(animSet);
 	}
 
