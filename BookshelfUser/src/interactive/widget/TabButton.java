@@ -1,8 +1,6 @@
 package interactive.widget;
 
-import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.view.animation.move.MoveHandler;
 import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.Color;
@@ -11,10 +9,6 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -24,11 +18,18 @@ import android.widget.TextView;
 public class TabButton extends RelativeLayout
 {
 
-	private final int			BUTTON_WIDTH	= 80;
-	private LinearLayout		linearLayout	= null;
-	private ImageView			imageIndicate	= null;
-	private SparseArray<Items>	listItem		= null;
-	private float				mfX				= 0;
+	private final int							BUTTON_WIDTH	= 80;
+	private LinearLayout						linearLayout	= null;
+	private ImageView							imageIndicate	= null;
+	private SparseArray<Items>					listItem		= null;
+	private float								mfX				= 0;
+	private SparseArray<OnItemSwitchedListener>	listItemSwitch	= null;
+	private int									mnSelectedId	= Type.INVALID;
+
+	public static interface OnItemSwitchedListener
+	{
+		public void onItemSwitched(int nIndex);
+	}
 
 	private class Items
 	{
@@ -67,7 +68,8 @@ public class TabButton extends RelativeLayout
 		linearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.addView(linearLayout);
 
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BUTTON_WIDTH, 10);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(Global.ScaleSize(BUTTON_WIDTH),
+				Global.ScaleSize(10));
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		imageIndicate = new ImageView(context);
 		imageIndicate.setLayoutParams(layoutParams);
@@ -77,6 +79,7 @@ public class TabButton extends RelativeLayout
 		imageIndicate.bringToFront();
 
 		listItem = new SparseArray<Items>();
+		listItemSwitch = new SparseArray<OnItemSwitchedListener>();
 	}
 
 	public void setDisplay(float fX, float fY, int nWidth, int nHeight)
@@ -94,7 +97,7 @@ public class TabButton extends RelativeLayout
 		textView.setTextSize(16);
 		textView.setTextColor(Color.GRAY);
 		textView.setGravity(Gravity.CENTER);
-		textView.setLayoutParams(new LayoutParams(BUTTON_WIDTH, LayoutParams.MATCH_PARENT));
+		textView.setLayoutParams(new LayoutParams(Global.ScaleSize(BUTTON_WIDTH), LayoutParams.MATCH_PARENT));
 		linearLayout.addView(textView);
 		listItem.put(listItem.size(), new Items(textView, textView.getId()));
 
@@ -114,11 +117,13 @@ public class TabButton extends RelativeLayout
 		{
 			if (nIndex == i)
 			{
+				mnSelectedId = listItem.get(i).mnId;
 				imageIndicate.clearAnimation();
 				mfX = listItem.get(i).mTextView.getX();
 				imageIndicate.animate().translationX(mfX).setDuration(200)
 						.setInterpolator(new AccelerateDecelerateInterpolator());
 				listItem.get(i).mTextView.setTextColor(Color.BLUE);
+				notifyItemSwitched(nIndex);
 			}
 			else
 			{
@@ -130,13 +135,34 @@ public class TabButton extends RelativeLayout
 	private void setItemSelect(TextView textView)
 	{
 		int nId = textView.getId();
+		if (mnSelectedId == nId)
+		{
+			return;
+		}
+		mnSelectedId = nId;
 		for (int i = 0; i < listItem.size(); ++i)
 		{
-			if (listItem.get(i).mnId == nId)
+			if (listItem.get(i).mnId == mnSelectedId)
 			{
 				setItemSelect(i);
 				break;
 			}
+		}
+	}
+
+	public void setOnItemSwitchedListener(TabButton.OnItemSwitchedListener listener)
+	{
+		if (null != listener)
+		{
+			listItemSwitch.put(listItemSwitch.size(), listener);
+		}
+	}
+
+	private void notifyItemSwitched(int nIndex)
+	{
+		for (int i = 0; i < listItemSwitch.size(); ++i)
+		{
+			listItemSwitch.get(i).onItemSwitched(nIndex);
 		}
 	}
 }

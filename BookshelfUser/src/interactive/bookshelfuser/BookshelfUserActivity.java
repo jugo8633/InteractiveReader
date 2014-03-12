@@ -9,13 +9,13 @@ import interactive.widget.TabButton;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.app.Activity;
 
@@ -24,6 +24,7 @@ public class BookshelfUserActivity extends Activity
 
 	private FootbarHandler	footbar					= null;
 	private ViewFlipper		flipper					= null;
+	private ViewFlipper		flipperBookCityBookList	= null;
 	private int				mnCurrentFootbarItem	= 0;
 	private WelcomePage		welcomePage				= null;
 	private int				mnListMenuBtnId			= Type.INVALID;
@@ -51,11 +52,10 @@ public class BookshelfUserActivity extends Activity
 		this.setContentView(nResId);
 
 		/** init flip */
-		flipper = (ViewFlipper) this.findViewById(Global.getResourceId(this, "viewflipper", "id"));
+		flipper = (ViewFlipper) this.findViewById(Global.getResourceId(this, "book_list_flipper", "id"));
 		AnimationType animationType = new AnimationType();
 		flipper.setOutAnimation(animationType.outToLeftAnimation(200));
 		flipper.setInAnimation(animationType.inFromRightAnimation(500));
-		animationType = null;
 
 		/** init footbar handler */
 		footbar = new FootbarHandler(this);
@@ -70,6 +70,13 @@ public class BookshelfUserActivity extends Activity
 			}
 		});
 
+		/** init book city book list */
+		flipperBookCityBookList = (ViewFlipper) this
+				.findViewById(Global.getResourceId(this, "book_city_flipper", "id"));
+		flipperBookCityBookList.setOutAnimation(animationType.outToLeftAnimation(200));
+		flipperBookCityBookList.setInAnimation(animationType.inFromRightAnimation(500));
+		animationType = null;
+
 		/** init list menu button */
 		mnListMenuBtnId = Global.getResourceId(this, "listMenuBtn", "id");
 		listMenuBtn = (ImageView) this.findViewById(mnListMenuBtnId);
@@ -77,6 +84,7 @@ public class BookshelfUserActivity extends Activity
 
 		/** init drawer layout */
 		drawerLayout = (DrawerLayout) this.findViewById(Global.getResourceId(this, "drawer_layout", "id"));
+		drawerLayout.setDrawerShadow(Global.getResourceId(this, "drawer_shadow", "drawable"), GravityCompat.START);
 		drawerLayout.setDrawerListener(new DrawerListener()
 		{
 			@Override
@@ -111,6 +119,15 @@ public class BookshelfUserActivity extends Activity
 		tabButton.addTextButton(this.getString(Global.getResourceId(this, "special_book", "string")));
 		tabButton.addTextButton(this.getString(Global.getResourceId(this, "previous_book", "string")));
 		tabButton.setItemSelect(0);
+		tabButton.setOnItemSwitchedListener(new TabButton.OnItemSwitchedListener()
+		{
+			@Override
+			public void onItemSwitched(int nIndex)
+			{
+				switchBookCityBookList(nIndex);
+				Logs.showTrace("tab button item switch index=" + nIndex);
+			}
+		});
 
 	}
 
@@ -150,6 +167,11 @@ public class BookshelfUserActivity extends Activity
 		flipper.setDisplayedChild(mnCurrentFootbarItem);
 
 		Logs.showTrace("Flipper show child index=" + nIndex);
+	}
+
+	private void switchBookCityBookList(int nIndex)
+	{
+		flipperBookCityBookList.setDisplayedChild(nIndex);
 	}
 
 	private void handleButtonClick(View view)
