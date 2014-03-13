@@ -119,6 +119,12 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/drawer_menu_background" >
+
+            <interactive.widget.PullToRefreshListView
+                android:id="@id/pull_to_refresh_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </interactive.widget.PullToRefreshListView>
         </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
 

@@ -5,6 +5,8 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
+import interactive.widget.PullToRefreshListView;
+import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,6 +111,16 @@ public class BookshelfUserActivity extends Activity
 			public void onDrawerStateChanged(int arg0)
 			{
 
+			}
+		});
+		PullToRefreshListView pullRefreshList = (PullToRefreshListView) this.findViewById(Global.getResourceId(this,
+				"pull_to_refresh_list", "id"));
+		pullRefreshList.setOnRefreshListener(new OnRefreshListener()
+		{
+			@Override
+			public void onRefresh()
+			{
+				Logs.showTrace("Refresh.......");
 			}
 		});
 

@@ -12,5 +12,6 @@
     <item name="sub_book_city_previous_book" type="id"/>
     <item name="sub_book_city_special_book" type="id"/>
     <item name="up_line" type="id"/>
+    <item name="pull_to_refresh_list" type="id"/>
 
 </resources>
