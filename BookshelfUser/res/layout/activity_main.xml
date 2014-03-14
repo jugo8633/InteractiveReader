@@ -123,8 +123,20 @@
             <interactive.widget.PullToRefreshListView
                 android:id="@id/pull_to_refresh_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:divider="@color/separate_line"
+                android:dividerHeight="1dp"
+                android:listSelector="@color/transparent_background" >
             </interactive.widget.PullToRefreshListView>
+
+            <TextView
+                android:id="@id/drawer_menu_item_update_time"
+                style="@style/drawer_menu_item_text_style"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="20dp"
+                android:text="更新時間 2014/03/14" />
+
         </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
 

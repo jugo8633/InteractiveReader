@@ -1,5 +1,6 @@
 package interactive.bookshelfuser;
 
+
 import interactive.common.Device;
 import interactive.common.Logs;
 import interactive.common.Type;
@@ -8,6 +9,7 @@ import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,15 +26,16 @@ import android.app.Activity;
 public class BookshelfUserActivity extends Activity
 {
 
-	private FootbarHandler	footbar					= null;
-	private ViewFlipper		flipper					= null;
-	private ViewFlipper		flipperBookCityBookList	= null;
-	private int				mnCurrentFootbarItem	= 0;
-	private WelcomePage		welcomePage				= null;
-	private int				mnListMenuBtnId			= Type.INVALID;
-	private DrawerLayout	drawerLayout			= null;
-	private ImageView		listMenuBtn				= null;
-	private TabButton		tabButton				= null;
+	private FootbarHandler			footbar					= null;
+	private ViewFlipper				flipper					= null;
+	private ViewFlipper				flipperBookCityBookList	= null;
+	private int						mnCurrentFootbarItem	= 0;
+	private WelcomePage				welcomePage				= null;
+	private int						mnListMenuBtnId			= Type.INVALID;
+	private DrawerLayout			drawerLayout			= null;
+	private ImageView				listMenuBtn				= null;
+	private TabButton				tabButton				= null;
+	private PullToRefreshListView	pullRefreshList			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -113,14 +116,20 @@ public class BookshelfUserActivity extends Activity
 
 			}
 		});
-		PullToRefreshListView pullRefreshList = (PullToRefreshListView) this.findViewById(Global.getResourceId(this,
-				"pull_to_refresh_list", "id"));
+
+		/** init pull to refresh listview */
+		pullRefreshList = (PullToRefreshListView) this.findViewById(Global.getResourceId(this, "pull_to_refresh_list",
+				"id"));
+		DrawerMenuAdapter menuAdapter = new DrawerMenuAdapter(this);
+		pullRefreshList.setAdapter(menuAdapter);
+		menuAdapter = null;
 		pullRefreshList.setOnRefreshListener(new OnRefreshListener()
 		{
 			@Override
 			public void onRefresh()
 			{
 				Logs.showTrace("Refresh.......");
+				new GetDataTask().execute();
 			}
 		});
 
@@ -141,6 +150,32 @@ public class BookshelfUserActivity extends Activity
 			}
 		});
 
+	}
+
+	private class GetDataTask extends AsyncTask<Void, Void, String[]>
+	{
+
+		@Override
+		protected String[] doInBackground(Void... params)
+		{
+			// Simulates a background job.
+			try
+			{
+				Thread.sleep(2000);
+			}
+			catch (InterruptedException e)
+			{
+				;
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String[] result)
+		{
+			pullRefreshList.onRefreshComplete();
+			super.onPostExecute(result);
+		}
 	}
 
 	private void drawerHandler(boolean bOpen)

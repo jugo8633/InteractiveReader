@@ -11,5 +11,9 @@
     <string name="pull_to_refresh_release_label">Release to refresh</string>
     <string name="pull_to_refresh_refreshing_label">Loading</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh</string>
+    <string name="login">登入</string>
+    <string name="config">設定</string>
+    <string name="news">最新消息</string>
+    <string name="subscript">訂閱</string>
 
 </resources>

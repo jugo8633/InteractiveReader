@@ -1,5 +1,9 @@
 package interactive.widget;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
@@ -11,7 +15,9 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -104,8 +110,8 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		mRefreshViewLastUpdated = (TextView) mRefreshView.findViewById(Global.getResourceId(context,
 				"pull_to_refresh_updated_at", "id"));
 
-		mRefreshViewImage.setMinimumHeight(50);
-		mRefreshView.setOnClickListener(new OnClickRefreshListener());
+		//	mRefreshViewImage.setMinimumHeight(50);
+		//		mRefreshView.setOnClickListener(new OnClickRefreshListener());
 		mnRefreshOriginalTopPadding = mRefreshView.getPaddingTop();
 
 		mnRefreshState = TAP_TO_REFRESH;
@@ -117,6 +123,20 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		measureView(mRefreshView);
 
 		mnRefreshViewHeight = mRefreshView.getMeasuredHeight();
+		setVerticalScrollBarEnabled(false);
+
+		this.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+			{
+				//		setSelection(1);
+				//		clearChoices();
+				Logs.showTrace("item click indexx=" + arg2 + " ################################");
+			}
+		});
+
+		setFastScrollEnabled(false);
 
 	}
 
@@ -143,6 +163,23 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 	}
 
 	@Override
+	protected void onAttachedToWindow()
+	{
+		super.onAttachedToWindow();
+		setSelection(1);
+		this.clearChoices();
+	}
+
+	@Override
+	public void setAdapter(ListAdapter adapter)
+	{
+		super.setAdapter(adapter);
+
+		setSelection(1);
+		this.clearChoices();
+	}
+
+	@Override
 	public void setOnScrollListener(OnScrollListener l)
 	{
 		mOnScrollListener = l;
@@ -163,10 +200,6 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		switch (event.getAction())
 		{
 		case MotionEvent.ACTION_UP:
-			if (!isVerticalScrollBarEnabled())
-			{
-				setVerticalScrollBarEnabled(true);
-			}
 			if (getFirstVisiblePosition() == 0 && mnRefreshState != REFRESHING)
 			{
 				if ((mRefreshView.getBottom() >= mnRefreshViewHeight || mRefreshView.getTop() >= 0)
@@ -177,13 +210,10 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 					prepareForRefresh();
 					onRefresh();
 				}
-				else if (mRefreshView.getBottom() < mnRefreshViewHeight || mRefreshView.getTop() <= 0)
-				{
-					// Abort refresh and scroll down below the refresh view
-					resetHeader();
-					setSelection(1);
-				}
 			}
+			//			setSelection(1);
+			//			clearChoices();
+
 			break;
 		case MotionEvent.ACTION_DOWN:
 			mnLastMotionY = y;
@@ -235,11 +265,13 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		else if (mnCurrentScrollState == SCROLL_STATE_FLING && firstVisibleItem == 0 && mnRefreshState != REFRESHING)
 		{
 			setSelection(1);
+			this.clearChoices();
 			mbBounceHack = true;
 		}
 		else if (mbBounceHack && mnCurrentScrollState == SCROLL_STATE_FLING)
 		{
 			setSelection(1);
+			this.clearChoices();
 		}
 
 		if (mOnScrollListener != null)
@@ -257,6 +289,11 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		if (mnCurrentScrollState == SCROLL_STATE_IDLE)
 		{
 			mbBounceHack = false;
+			if (mnRefreshState != REFRESHING)
+			{
+				setSelection(1);
+				clearChoices();
+			}
 		}
 
 		if (mOnScrollListener != null)
@@ -314,11 +351,6 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		{
 			if (mnRefreshState == RELEASE_TO_REFRESH)
 			{
-				if (isVerticalFadingEdgeEnabled())
-				{
-					setVerticalScrollBarEnabled(false);
-				}
-
 				int historicalY = (int) ev.getHistoricalY(p);
 
 				// Calculate the padding to apply, we divide by 1.7 to
@@ -389,6 +421,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		{
 			invalidateViews();
 			setSelection(1);
+			this.clearChoices();
 		}
 	}
 }

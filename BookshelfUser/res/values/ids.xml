@@ -6,6 +6,13 @@
     <item name="book_city_flipper" type="id"/>
     <item name="book_list_flipper" type="id"/>
     <item name="down_line" type="id"/>
+    <item name="drawer_menu_item" type="id"/>
+    <item name="drawer_menu_item_layout" type="id"/>
+    <item name="drawer_menu_item_text" type="id"/>
+    <item name="drawer_menu_item_image" type="id"/>
+    <item name="drawer_menu_item_ad_layout" type="id"/>
+    <item name="drawer_menu_item_ad_image" type="id"/>
+    <item name="drawer_menu_item_update_time" type="id"/>
     <item name="left_drawer_main" type="id"/>
     <item name="sub_book_city_all_book" type="id"/>
     <item name="sub_book_city_free_book" type="id"/>
