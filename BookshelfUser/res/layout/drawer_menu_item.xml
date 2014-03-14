@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/drawer_menu_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@id/drawer_menu_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" >
+
+        <TextView
+            android:id="@id/drawer_menu_item_text"
+            style="@style/drawer_menu_item_text_style"
+            android:layout_centerHorizontal="false"
+            android:layout_gravity="center"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@id/drawer_menu_item_image"
+            android:text="Large Text" />
+
+        <ImageView
+            android:id="@id/drawer_menu_item_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="68dp"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_launcher" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@id/drawer_menu_item_ad_layout"
+        android:layout_width="match_parent"
+        android:layout_height="2048dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="45dp"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@id/drawer_menu_item_ad_image"
+            android:layout_width="300dp"
+            android:layout_height="500dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/c1" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="2048dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+</LinearLayout>
