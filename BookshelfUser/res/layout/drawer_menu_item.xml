@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="40dp"
             android:layout_toRightOf="@id/drawer_menu_item_image"
-            android:text="Large Text" />
+            android:contentDescription="@string/content_descript" />
 
         <ImageView
             android:id="@id/drawer_menu_item_image"
@@ -28,9 +28,16 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="68dp"
+            android:contentDescription="@string/content_descript"
             android:padding="10dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_launcher" />
+            android:scaleType="centerInside" />
+
+        <View
+            android:id="@id/separate_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/separate_line" />
 
     </RelativeLayout>
 
@@ -39,7 +46,6 @@
         android:layout_width="match_parent"
         android:layout_height="2048dp"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
@@ -51,15 +57,9 @@
             android:layout_width="300dp"
             android:layout_height="500dp"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/content_descript"
             android:scaleType="centerInside"
             android:src="@drawable/c1" />
     </LinearLayout>
-
-    <View
-        android:id="@+id/viewSpace"
-        android:layout_width="wrap_content"
-        android:layout_height="2048dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
 
 </LinearLayout>

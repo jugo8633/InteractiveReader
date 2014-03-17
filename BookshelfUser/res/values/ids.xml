@@ -14,6 +14,7 @@
     <item name="drawer_menu_item_ad_image" type="id"/>
     <item name="drawer_menu_item_update_time" type="id"/>
     <item name="left_drawer_main" type="id"/>
+    <item name="separate_line" type="id"/>
     <item name="sub_book_city_all_book" type="id"/>
     <item name="sub_book_city_free_book" type="id"/>
     <item name="sub_book_city_previous_book" type="id"/>

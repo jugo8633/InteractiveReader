@@ -1,12 +1,11 @@
 package interactive.widget;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
+import interactive.bookshelfuser.DrawerMenuAdapter;
 import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,8 +48,9 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 	private boolean				mbBounceHack				= false;
 
 	private OnScrollListener	mOnScrollListener			= null;
-
 	private OnRefreshListener	mOnRefreshListener			= null;
+
+	private View				mSelectedView				= null;
 
 	public interface OnRefreshListener
 	{
@@ -110,8 +110,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		mRefreshViewLastUpdated = (TextView) mRefreshView.findViewById(Global.getResourceId(context,
 				"pull_to_refresh_updated_at", "id"));
 
-		//	mRefreshViewImage.setMinimumHeight(50);
-		//		mRefreshView.setOnClickListener(new OnClickRefreshListener());
+		mRefreshViewImage.setMinimumHeight(50);
 		mnRefreshOriginalTopPadding = mRefreshView.getPaddingTop();
 
 		mnRefreshState = TAP_TO_REFRESH;
@@ -128,10 +127,79 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		this.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+			public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3)
 			{
-				//		setSelection(1);
-				//		clearChoices();
+				String strTag = (String) view.getTag();
+				if (null == strTag)
+				{
+					return;
+				}
+
+				if (null != mSelectedView)
+				{
+					RelativeLayout itemLayout = (RelativeLayout) mSelectedView.findViewById(Global.getResourceId(
+							getContext(), "drawer_menu_item_layout", "id"));
+					TextView itemText = (TextView) mSelectedView.findViewById(Global.getResourceId(getContext(),
+							"drawer_menu_item_text", "id"));
+					ImageView itemImage = (ImageView) mSelectedView.findViewById(Global.getResourceId(getContext(),
+							"drawer_menu_item_image", "id"));
+
+					itemLayout.setBackgroundResource(Global.getResourceId(getContext(), "drawer_menu_background",
+							"color"));
+					itemText.setTextColor(Color.parseColor("#494949"));
+
+					String strSelectedTag = (String) mSelectedView.getTag();
+					if (strSelectedTag.equals(DrawerMenuAdapter.TAG_LOGIN))
+					{
+						itemImage.setImageResource(Global.getResourceId(getContext(), "signin_normal", "drawable"));
+					}
+					if (strSelectedTag.equals(DrawerMenuAdapter.TAG_CONFIG))
+					{
+						itemImage.setImageResource(Global.getResourceId(getContext(), "setting_normal", "drawable"));
+					}
+					if (strSelectedTag.equals(DrawerMenuAdapter.TAG_NEWS))
+					{
+						itemImage.setImageResource(Global
+								.getResourceId(getContext(), "notification_normal", "drawable"));
+					}
+					if (strSelectedTag.equals(DrawerMenuAdapter.TAG_SUBSCRIPT))
+					{
+						itemImage.setImageResource(Global.getResourceId(getContext(), "subscribe_normal", "drawable"));
+					}
+				}
+
+				RelativeLayout itemLayout = (RelativeLayout) view.findViewById(Global.getResourceId(getContext(),
+						"drawer_menu_item_layout", "id"));
+				TextView itemText = (TextView) view.findViewById(Global.getResourceId(getContext(),
+						"drawer_menu_item_text", "id"));
+				ImageView itemImage = (ImageView) view.findViewById(Global.getResourceId(getContext(),
+						"drawer_menu_item_image", "id"));
+
+				itemLayout.setBackgroundResource(Global.getResourceId(getContext(), "drawer_menu_background_click",
+						"color"));
+				itemText.setTextColor(Color.parseColor("#efefef"));
+
+				if (strTag.equals(DrawerMenuAdapter.TAG_LOGIN))
+				{
+					itemImage.setImageResource(Global.getResourceId(getContext(), "signin_click", "drawable"));
+				}
+				if (strTag.equals(DrawerMenuAdapter.TAG_CONFIG))
+				{
+					itemImage.setImageResource(Global.getResourceId(getContext(), "setting_click", "drawable"));
+				}
+				if (strTag.equals(DrawerMenuAdapter.TAG_NEWS))
+				{
+					itemImage.setImageResource(Global.getResourceId(getContext(), "notification_click", "drawable"));
+				}
+				if (strTag.equals(DrawerMenuAdapter.TAG_SUBSCRIPT))
+				{
+					itemImage.setImageResource(Global.getResourceId(getContext(), "subscribe_click", "drawable"));
+				}
+				if (null != strTag)
+				{
+					mSelectedView = view;
+				}
+				Logs.showTrace("menu item : " + view.getTag() + " clicked");
 				Logs.showTrace("item click indexx=" + arg2 + " ################################");
 			}
 		});
@@ -183,7 +251,6 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 	public void setOnScrollListener(OnScrollListener l)
 	{
 		mOnScrollListener = l;
-		//super.setOnScrollListener(l);
 	}
 
 	public void setOnRefreshListener(OnRefreshListener onRefreshListener)
@@ -211,9 +278,6 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 					onRefresh();
 				}
 			}
-			//			setSelection(1);
-			//			clearChoices();
-
 			break;
 		case MotionEvent.ACTION_DOWN:
 			mnLastMotionY = y;
@@ -301,24 +365,6 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 			mOnScrollListener.onScrollStateChanged(view, scrollState);
 		}
 
-	}
-
-	/**
-	 * Invoked when the refresh view is clicked on. This is mainly used when
-	 * there's only a few items in the list and it's not possible to drag the
-	 * list.
-	 */
-	private class OnClickRefreshListener implements OnClickListener
-	{
-		@Override
-		public void onClick(View v)
-		{
-			if (mnRefreshState != REFRESHING)
-			{
-				prepareForRefresh();
-				onRefresh();
-			}
-		}
 	}
 
 	private void resetHeader()
@@ -419,7 +465,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 		// the next item.
 		if (getFirstVisiblePosition() == 0)
 		{
-			invalidateViews();
+			//		invalidateViews();
 			setSelection(1);
 			this.clearChoices();
 		}
