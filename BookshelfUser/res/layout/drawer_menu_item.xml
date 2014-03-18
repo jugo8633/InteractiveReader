@@ -58,7 +58,7 @@
             android:layout_height="500dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/content_descript"
-            android:scaleType="centerInside"
+            android:scaleType="fitXY"
             android:src="@drawable/c1" />
     </LinearLayout>
 

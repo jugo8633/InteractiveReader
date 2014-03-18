@@ -12,8 +12,13 @@
     <string name="pull_to_refresh_refreshing_label">Loading</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh</string>
     <string name="login">登入</string>
+    <string name="facebook_login">Facebook 登入</string>
     <string name="config">設定</string>
     <string name="news">最新消息</string>
     <string name="subscript">訂閱</string>
+    <string name="hint_login_name">帳號</string>
+    <string name="hint_login_password">密碼</string>
+    <string name="forget_password">忘記密碼</string>
+    <string name="add_account">註冊帳戶</string>
 
 </resources>

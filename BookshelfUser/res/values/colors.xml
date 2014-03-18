@@ -30,5 +30,7 @@
     <color name="separate_line">#8b8a8a</color>
     <color name="touch_list_item_background">#efefef</color>
     <color name="transparent_background">#00000000</color>
+    <color name="facebook_background">#245f90</color>
+    <color name="menu_option_background">#f3f4f5</color>
 
 </resources>

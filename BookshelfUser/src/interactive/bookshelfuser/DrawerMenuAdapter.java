@@ -19,6 +19,11 @@ public class DrawerMenuAdapter extends BaseAdapter
 	public static final String	TAG_CONFIG		= "config";
 	public static final String	TAG_NEWS		= "news";
 	public static final String	TAG_SUBSCRIPT	= "subscript";
+	public static final int		INDEX_LOGIN		= 1;
+	public static final int		INDEX_SETTING	= 2;
+	public static final int		INDEX_NEWS		= 3;
+	public static final int		INDEX_SUBSCRIPT	= 4;
+
 	private Context				theContext		= null;
 
 	public DrawerMenuAdapter(Context context)
@@ -63,9 +68,6 @@ public class DrawerMenuAdapter extends BaseAdapter
 				"drawer_menu_item_ad_layout", "id"));
 		switch (position)
 		{
-//		case 0:
-//			itemLayout.setVisibility(View.GONE); // for pull refresh temp area
-//			break;
 		case 0: //登入
 			view.setTag(TAG_LOGIN);
 			itemText.setText(theContext.getString(Global.getResourceId(theContext, "login", "string")));

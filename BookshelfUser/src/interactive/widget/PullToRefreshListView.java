@@ -6,6 +6,7 @@ import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,31 +27,37 @@ import android.widget.AbsListView.OnScrollListener;
 public class PullToRefreshListView extends ListView implements OnScrollListener
 {
 
-	private final int			TAP_TO_REFRESH				= 1;
-	private final int			PULL_TO_REFRESH				= 2;
-	private final int			RELEASE_TO_REFRESH			= 3;
-	private final int			REFRESHING					= 4;
+	private final int				TAP_TO_REFRESH				= 1;
+	private final int				PULL_TO_REFRESH				= 2;
+	private final int				RELEASE_TO_REFRESH			= 3;
+	private final int				REFRESHING					= 4;
 
-	private RelativeLayout		mRefreshView				= null;
-	private TextView			mRefreshViewText			= null;
-	private ImageView			mRefreshViewImage			= null;
-	private ProgressBar			mRefreshViewProgress		= null;
-	private TextView			mRefreshViewLastUpdated		= null;
+	private RelativeLayout			mRefreshView				= null;
+	private TextView				mRefreshViewText			= null;
+	private ImageView				mRefreshViewImage			= null;
+	private ProgressBar				mRefreshViewProgress		= null;
+	private TextView				mRefreshViewLastUpdated		= null;
 
-	private RotateAnimation		mFlipAnimation				= null;
-	private RotateAnimation		mReverseFlipAnimation		= null;
+	private RotateAnimation			mFlipAnimation				= null;
+	private RotateAnimation			mReverseFlipAnimation		= null;
 
-	private int					mnRefreshOriginalTopPadding	= 0;
-	private int					mnRefreshState				= Type.INVALID;
-	private int					mnRefreshViewHeight			= 0;
-	private int					mnLastMotionY				= 0;
-	private int					mnCurrentScrollState		= Type.INVALID;
-	private boolean				mbBounceHack				= false;
+	private int						mnRefreshOriginalTopPadding	= 0;
+	private int						mnRefreshState				= Type.INVALID;
+	private int						mnRefreshViewHeight			= 0;
+	private int						mnLastMotionY				= 0;
+	private int						mnCurrentScrollState		= Type.INVALID;
+	private boolean					mbBounceHack				= false;
 
-	private OnScrollListener	mOnScrollListener			= null;
-	private OnRefreshListener	mOnRefreshListener			= null;
+	private OnScrollListener		mOnScrollListener			= null;
+	private OnRefreshListener		mOnRefreshListener			= null;
 
-	private View				mSelectedView				= null;
+	private View					mSelectedView				= null;
+	private OnItemSelectedListener	mOnItemSelectedListener		= null;
+
+	public static interface OnItemSelectedListener
+	{
+		public void onItemSelected(int nIndex);
+	}
 
 	public interface OnRefreshListener
 	{
@@ -199,8 +206,8 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 				{
 					mSelectedView = view;
 				}
-				Logs.showTrace("menu item : " + view.getTag() + " clicked");
-				Logs.showTrace("item click indexx=" + arg2 + " ################################");
+				Logs.showTrace("item click index=" + arg2);
+				mOnItemSelectedListener.onItemSelected(arg2);
 			}
 		});
 
@@ -469,5 +476,18 @@ public class PullToRefreshListView extends ListView implements OnScrollListener
 			setSelection(1);
 			this.clearChoices();
 		}
+	}
+
+	public void setOnItemSelectedListener(PullToRefreshListView.OnItemSelectedListener listener)
+	{
+		if (null != listener)
+		{
+			mOnItemSelectedListener = listener;
+		}
+	}
+
+	public void clearSelected()
+	{
+		invalidateViews();
 	}
 }

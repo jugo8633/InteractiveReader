@@ -139,4 +139,12 @@
         </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
 
+    <interactive.view.flip.FlipperView
+        android:id="@id/fliper_menu_option"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:background="@color/Trans_Black" >
+    </interactive.view.flip.FlipperView>
+
 </RelativeLayout>

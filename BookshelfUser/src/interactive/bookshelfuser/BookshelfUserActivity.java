@@ -1,7 +1,7 @@
 package interactive.bookshelfuser;
 
-
 import interactive.common.Device;
+import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.AnimationType;
@@ -36,6 +36,7 @@ public class BookshelfUserActivity extends Activity
 	private ImageView				listMenuBtn				= null;
 	private TabButton				tabButton				= null;
 	private PullToRefreshListView	pullRefreshList			= null;
+	private MenuOptionHandler		menuOptionHandler		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -117,6 +118,10 @@ public class BookshelfUserActivity extends Activity
 			}
 		});
 
+		/** init menu option */
+		menuOptionHandler = new MenuOptionHandler(this);
+		menuOptionHandler.setNotifyHandler(selfHandler);
+
 		/** init pull to refresh listview */
 		pullRefreshList = (PullToRefreshListView) this.findViewById(Global.getResourceId(this, "pull_to_refresh_list",
 				"id"));
@@ -130,6 +135,27 @@ public class BookshelfUserActivity extends Activity
 			{
 				Logs.showTrace("Refresh.......");
 				new GetDataTask().execute();
+			}
+		});
+
+		pullRefreshList.setOnItemSelectedListener(new PullToRefreshListView.OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(int nIndex)
+			{
+				Logs.showTrace("Menu item selected index=" + nIndex);
+				switch (nIndex)
+				{
+				case DrawerMenuAdapter.INDEX_LOGIN:
+					menuOptionHandler.showLogin();
+					break;
+				case DrawerMenuAdapter.INDEX_SETTING:
+					break;
+				case DrawerMenuAdapter.INDEX_NEWS:
+					break;
+				case DrawerMenuAdapter.INDEX_SUBSCRIPT:
+					break;
+				}
 			}
 		});
 
@@ -149,7 +175,6 @@ public class BookshelfUserActivity extends Activity
 				Logs.showTrace("tab button item switch index=" + nIndex);
 			}
 		});
-
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]>
@@ -250,7 +275,12 @@ public class BookshelfUserActivity extends Activity
 											@Override
 											public void handleMessage(Message msg)
 											{
-												super.handleMessage(msg);
+												switch (msg.what)
+												{
+												case EventMessage.MSG_FLIPPER_CLOSE:
+													pullRefreshList.clearSelected();
+													break;
+												}
 											}
 
 										};
