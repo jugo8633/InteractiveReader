@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="360dp"
+        android:layout_height="430dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/menu_option" >
+
+        <TextView
+            android:id="@id/login_title"
+            style="@style/drawer_menu_item_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="@string/login"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <View
+            android:id="@id/separate_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/login_title"
+            android:background="@color/separate_line" />
+
+        <TextView
+            android:id="@id/facebook_login"
+            android:layout_width="275dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/separate_line"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:background="@color/facebook_background"
+            android:gravity="center"
+            android:text="@string/facebook_login"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/separate_line2"
+            android:layout_width="126dp"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@id/facebook_login"
+            android:layout_below="@id/facebook_login"
+            android:layout_marginTop="25dp"
+            android:background="#707171" />
+
+        <TextView
+            android:id="@+id/textViewOr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_login"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="13dp"
+            android:text="or"
+            android:textColor="#707171"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/separate_line3"
+            android:layout_width="126dp"
+            android:layout_height="1dp"
+            android:layout_alignRight="@id/facebook_login"
+            android:layout_below="@id/facebook_login"
+            android:layout_marginTop="25dp"
+            android:background="#707171" />
+
+        <EditText
+            android:id="@id/login_name"
+            android:layout_width="275dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/textViewOr"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/style_edit_text"
+            android:hint="@string/hint_login_name"
+            android:inputType="textPersonName"
+            android:maxEms="20"
+            android:paddingLeft="10dp"
+            android:textColor="@color/Black_Gray"
+            android:textColorHint="#9e9e9e"
+            android:textSize="16sp" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@id/login_password"
+            android:layout_width="275dp"
+            android:layout_height="35dp"
+            android:layout_below="@id/login_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/style_edit_text"
+            android:ems="10"
+            android:hint="@string/hint_login_password"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp"
+            android:textColor="@color/Black_Gray"
+            android:textColorHint="#9e9e9e"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@id/forget_password"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignLeft="@id/login_password"
+            android:layout_below="@id/login_password"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:text="@string/forget_password"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#0079ff"
+            android:textSize="18sp" />
+
+        <View
+            android:id="@+id/separate_line4"
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@id/forget_password"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:background="#0079ff" />
+
+        <TextView
+            android:id="@id/add_account"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignRight="@id/login_password"
+            android:layout_below="@id/login_password"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:text="@string/add_account"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#0079ff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@id/start_login"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="@string/login"
+            android:textColor="#0079ff"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/separate_line5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignTop="@id/start_login"
+            android:background="#707171" />
+    </RelativeLayout>
+
+</RelativeLayout>
