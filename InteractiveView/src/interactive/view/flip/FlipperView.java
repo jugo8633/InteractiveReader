@@ -16,7 +16,7 @@ import android.widget.ViewFlipper;
 public class FlipperView extends RelativeLayout
 {
 	private ViewFlipper		flipper				= null;
-	private final int		mnAnimationDuration	= 500;
+	private final int		mnAnimationDuration	= 300;
 	public final int		ANIMATION_DOWN		= 0;
 	public final int		ANIMATION_UP		= 1;
 	private AnimationType	animationType		= null;
@@ -49,6 +49,7 @@ public class FlipperView extends RelativeLayout
 		RelativeLayout viewChild = new RelativeLayout(context);
 		viewChild.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
+		viewChild.setVisibility(View.INVISIBLE);
 		flipper.addView(viewChild, 0);
 		flipper.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
@@ -112,6 +113,8 @@ public class FlipperView extends RelativeLayout
 												if (null != flipper)
 												{
 													FlipperView.this.setVisibility(View.GONE);
+													EventHandler.notify(theHandler, EventMessage.MSG_FLIPPER_CLOSE, 0,
+															0, null);
 												}
 												break;
 											}
@@ -120,7 +123,7 @@ public class FlipperView extends RelativeLayout
 
 	synchronized public void close()
 	{
-		EventHandler.notify(theHandler, EventMessage.MSG_FLIPPER_CLOSE, 0, 0, null);
+
 		flipper.setDisplayedChild(0);
 		if (null != thdFlip)
 		{

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/Trans_Black" >
 
     <RelativeLayout
+        android:id="@id/login_main_layout"
         android:layout_width="360dp"
         android:layout_height="430dp"
         android:layout_centerInParent="true"
@@ -11,11 +13,10 @@
 
         <TextView
             android:id="@id/login_title"
-            style="@style/drawer_menu_item_text_style"
+            style="@style/menu_option_title"
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="@string/login"
             android:textAppearance="?android:attr/textAppearanceLarge" />

@@ -15,6 +15,7 @@
     <item name="drawer_menu_item_update_time" type="id"/>
     <item name="fliper_menu_option" type="id"/>
     <item name="left_drawer_main" type="id"/>
+    <item name="login_main_layout" type="id"/>
     <item name="login_title" type="id"/>
     <item name="separate_line" type="id"/>
     <item name="sub_book_city_all_book" type="id"/>
@@ -29,5 +30,26 @@
     <item name="forget_password" type="id"/>
     <item name="add_account" type="id"/>
     <item name="start_login" type="id"/>
+    <item name="setting_title" type="id"/>
+    <item name="setting_main_layout" type="id"/>
+    <item name="member_and_subscript" type="id"/>
+    <item name="account_manager" type="id"/>
+    <item name="account_manager_email" type="id"/>
+    <item name="subscript_info" type="id"/>
+    <item name="subscript_end_date" type="id"/>
+    <item name="reply_buy_book" type="id"/>
+    <item name="clear_downloaded_book" type="id"/>
+    <item name="member_and_subscript_layout" type="id"/>
+    <item name="function_setting" type="id"/>
+    <item name="function_setting_layout" type="id"/>
+    <item name="message_push" type="id"/>
+    <item name="message_push_switch" type="id"/>
+    <item name="option_descript" type="id"/>
+    <item name="option_descript_switch" type="id"/>
+    <item name="clear_push_message" type="id"/>
+    <item name="about_ous" type="id"/>
+    <item name="about_ous_layout" type="id"/>
+    <item name="recommend_back" type="id"/>
+    <item name="vendor_info" type="id"/>
 
 </resources>

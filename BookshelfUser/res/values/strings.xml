@@ -11,14 +11,28 @@
     <string name="pull_to_refresh_release_label">Release to refresh</string>
     <string name="pull_to_refresh_refreshing_label">Loading</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh</string>
-    <string name="login">登入</string>
+    <string name="login">登  入</string>
     <string name="facebook_login">Facebook 登入</string>
-    <string name="config">設定</string>
-    <string name="news">最新消息</string>
-    <string name="subscript">訂閱</string>
+    <string name="config">設  定</string>
+    <string name="news">最 新 消 息</string>
+    <string name="subscript">訂  閱</string>
     <string name="hint_login_name">帳號</string>
     <string name="hint_login_password">密碼</string>
     <string name="forget_password">忘記密碼</string>
     <string name="add_account">註冊帳戶</string>
+    <string name="member_and_subscript">會員與訂閱</string>
+    <string name="account_manager">帳戶管理</string>
+    <string name="account_manager_email">></string>
+    <string name="subscript_info">訂閱資訊</string>
+    <string name="subscript_end_date">訂閱到期日</string>
+    <string name="reply_buy_book">回復購買書籍</string>
+    <string name="clear_downloaded_book">清除已下載書籍</string>
+    <string name="function_setting">功能設置</string>
+    <string name="message_push">訊息推播</string>
+    <string name="option_descript">操作說明開關</string>
+    <string name="clear_push_message">清除推播訊息</string>
+    <string name="about_ous">關於我們</string>
+    <string name="recommend_back">意見反饋</string>
+    <string name="vendor_info">開發商資訊</string>
 
 </resources>

@@ -6,12 +6,18 @@ import interactive.view.flip.FlipperView;
 import interactive.view.global.Global;
 import android.app.Activity;
 import android.os.Handler;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.RelativeLayout;
 
 public class MenuOptionHandler
 {
 
-	private FlipperView	flipperView	= null;
-	private MenuID		menuId		= null;
+	private FlipperView		flipperView			= null;
+	private MenuID			menuId				= null;
+	private RelativeLayout	settingMainLayout	= null;
+	private RelativeLayout	loginMainLayout		= null;
 
 	private class MenuID
 	{
@@ -39,6 +45,41 @@ public class MenuOptionHandler
 		}
 
 		menuId.mnLoginId = flipperView.addChild(Global.getResourceId(activity, "login", "layout"));
+		menuId.mnSettingId = flipperView.addChild(Global.getResourceId(activity, "setting", "layout"));
+
+		settingMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity,
+				"setting_main_layout", "id"));
+
+		loginMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity, "login_main_layout",
+				"id"));
+
+		loginMainLayout.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					return true;
+				}
+				return false;
+			}
+		});
+
+		settingMainLayout.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 
 	public void setNotifyHandler(Handler handler)
@@ -48,7 +89,19 @@ public class MenuOptionHandler
 
 	public void showLogin()
 	{
+		loginMainLayout.setVisibility(View.VISIBLE);
 		flipperView.showView(menuId.mnLoginId);
 	}
 
+	public void showSetting()
+	{
+		settingMainLayout.setVisibility(View.VISIBLE);
+		flipperView.showView(menuId.mnSettingId);
+	}
+
+	public void hideAllView()
+	{
+		loginMainLayout.setVisibility(View.GONE);
+		settingMainLayout.setVisibility(View.GONE);
+	}
 }

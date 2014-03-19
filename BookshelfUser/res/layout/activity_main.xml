@@ -143,8 +143,7 @@
         android:id="@id/fliper_menu_option"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:background="@color/Trans_Black" >
+        android:layout_alignParentBottom="true" >
     </interactive.view.flip.FlipperView>
 
 </RelativeLayout>

@@ -150,6 +150,7 @@ public class BookshelfUserActivity extends Activity
 					menuOptionHandler.showLogin();
 					break;
 				case DrawerMenuAdapter.INDEX_SETTING:
+					menuOptionHandler.showSetting();
 					break;
 				case DrawerMenuAdapter.INDEX_NEWS:
 					break;
@@ -279,6 +280,7 @@ public class BookshelfUserActivity extends Activity
 												{
 												case EventMessage.MSG_FLIPPER_CLOSE:
 													pullRefreshList.clearSelected();
+													menuOptionHandler.hideAllView();
 													break;
 												}
 											}
