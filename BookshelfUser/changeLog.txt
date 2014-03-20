@@ -1,2 +1,4 @@
-2014/03/18 : 新增login視窗 透過flipper滑出
-2014/03/17 : 新增menu list視窗
+2014/03/20 : 新增Switch Button元件 套用於書城的setting畫面
+2014/03/19 : 新增書城setting視窗 透過flipper滑出
+2014/03/18 : 新增書城login視窗 透過flipper滑出
+2014/03/17 : 新增書城menu list視窗

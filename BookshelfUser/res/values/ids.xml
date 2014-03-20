@@ -51,5 +51,8 @@
     <item name="about_ous_layout" type="id"/>
     <item name="recommend_back" type="id"/>
     <item name="vendor_info" type="id"/>
+    <item name="news_main_layout" type="id"/>
+    <item name="news_title" type="id"/>
+    <item name="news_list_layout" type="id"/>
 
 </resources>

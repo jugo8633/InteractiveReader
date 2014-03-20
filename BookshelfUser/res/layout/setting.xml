@@ -216,21 +216,14 @@
                 android:textColor="#0d0d0d"
                 android:textSize="18sp" />
 
-            <Switch
+            <interactive.widget.SwitchButton
                 android:id="@id/message_push_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="55dp"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:checked="true"
-                android:gravity="center"
-                android:switchMinWidth="50dp"
-                android:textColor="@color/White"
-                android:textColorHint="@color/White"
-                android:textOff="Off"
-                android:textOn="On"
-                android:thumb="@drawable/switch_thumb"
-                android:track="@drawable/switch_bg" />
+                android:layout_marginTop="10dp"
+                android:checked="true" />
 
             <View
                 android:id="@+id/separate_line8"
@@ -252,21 +245,14 @@
                 android:textColor="#0d0d0d"
                 android:textSize="18sp" />
 
-            <Switch
+            <interactive.widget.SwitchButton
                 android:id="@id/option_descript_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="55dp"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/separate_line8"
-                android:checked="true"
-                android:gravity="center"
-                android:switchMinWidth="50dp"
-                android:textColor="@color/White"
-                android:textColorHint="@color/White"
-                android:textOff="Off"
-                android:textOn="On"
-                android:thumb="@drawable/switch_thumb"
-                android:track="@drawable/switch_bg" />
+                android:layout_marginTop="10dp"
+                android:checked="true" />
 
             <View
                 android:id="@+id/separate_line9"
