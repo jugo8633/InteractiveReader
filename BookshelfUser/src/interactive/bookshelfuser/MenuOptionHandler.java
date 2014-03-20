@@ -8,16 +8,18 @@ import android.app.Activity;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MenuOptionHandler
 {
 
 	private FlipperView		flipperView			= null;
 	private MenuID			menuId				= null;
-	private RelativeLayout	settingMainLayout	= null;
 	private RelativeLayout	loginMainLayout		= null;
+	private RelativeLayout	accountMainLayout	= null;
 
 	private class MenuID
 	{
@@ -25,6 +27,7 @@ public class MenuOptionHandler
 		public int	mnSettingId		= Type.INVALID;
 		public int	mnNewsId		= Type.INVALID;
 		public int	mnSubscribeId	= Type.INVALID;
+		public int	mnAccountAdd	= Type.INVALID;
 	}
 
 	public MenuOptionHandler(Activity activity)
@@ -46,40 +49,26 @@ public class MenuOptionHandler
 
 		menuId.mnLoginId = flipperView.addChild(Global.getResourceId(activity, "login", "layout"));
 		menuId.mnSettingId = flipperView.addChild(Global.getResourceId(activity, "setting", "layout"));
+		menuId.mnNewsId = flipperView.addChild(Global.getResourceId(activity, "news", "layout"));
+		menuId.mnAccountAdd = flipperView.addChild(Global.getResourceId(activity, "account_add", "layout"));
 
-		settingMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity,
-				"setting_main_layout", "id"));
+		flipperView.findViewById(Global.getResourceId(activity, "setting_main_layout", "id")).setOnTouchListener(
+				mainLayoutTouch);
 
 		loginMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity, "login_main_layout",
 				"id"));
+		loginMainLayout.setOnTouchListener(mainLayoutTouch);
 
-		loginMainLayout.setOnTouchListener(new OnTouchListener()
-		{
-			@Override
-			public boolean onTouch(View v, MotionEvent event)
-			{
-				switch (event.getAction())
-				{
-				case MotionEvent.ACTION_DOWN:
-					return true;
-				}
-				return false;
-			}
-		});
+		flipperView.findViewById(Global.getResourceId(activity, "news_main_layout", "id")).setOnTouchListener(
+				mainLayoutTouch);
 
-		settingMainLayout.setOnTouchListener(new OnTouchListener()
-		{
-			@Override
-			public boolean onTouch(View v, MotionEvent event)
-			{
-				switch (event.getAction())
-				{
-				case MotionEvent.ACTION_DOWN:
-					return true;
-				}
-				return false;
-			}
-		});
+		accountMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity,
+				"account_add_main_layout", "id"));
+		accountMainLayout.setOnTouchListener(mainLayoutTouch);
+
+		loginHandle(activity);
+		accountAddHandle(activity);
+
 	}
 
 	public void setNotifyHandler(Handler handler)
@@ -89,19 +78,59 @@ public class MenuOptionHandler
 
 	public void showLogin()
 	{
-		loginMainLayout.setVisibility(View.VISIBLE);
 		flipperView.showView(menuId.mnLoginId);
 	}
 
 	public void showSetting()
 	{
-		settingMainLayout.setVisibility(View.VISIBLE);
 		flipperView.showView(menuId.mnSettingId);
 	}
 
-	public void hideAllView()
+	public void showNews()
 	{
-		loginMainLayout.setVisibility(View.GONE);
-		settingMainLayout.setVisibility(View.GONE);
+		flipperView.showView(menuId.mnNewsId);
 	}
+
+	private void loginHandle(Activity activity)
+	{
+		TextView addAccount = (TextView) loginMainLayout.findViewById(Global.getResourceId(activity, "add_account",
+				"id"));
+		addAccount.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				flipperView.showView(menuId.mnAccountAdd);
+			}
+		});
+	}
+
+	private void accountAddHandle(Activity activity)
+	{
+		TextView cancel = (TextView) accountMainLayout.findViewById(Global.getResourceId(activity, "button_cancel",
+				"id"));
+		cancel.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				flipperView.showView(menuId.mnLoginId);
+			}
+		});
+	}
+
+	private OnTouchListener	mainLayoutTouch	= new OnTouchListener()
+											{
+
+												@Override
+												public boolean onTouch(View v, MotionEvent event)
+												{
+													switch (event.getAction())
+													{
+													case MotionEvent.ACTION_DOWN:
+														return true;
+													}
+													return false;
+												}
+											};
 }

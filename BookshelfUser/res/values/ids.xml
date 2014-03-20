@@ -54,5 +54,14 @@
     <item name="news_main_layout" type="id"/>
     <item name="news_title" type="id"/>
     <item name="news_list_layout" type="id"/>
+    <item name="login_error" type="id"/>
+    <item name="account_add_main_layout" type="id"/>
+    <item name="account_add_title" type="id"/>
+    <item name="button_cancel" type="id"/>
+    <item name="button_login" type="id"/>
+    <item name="button_ok" type="id"/>
+    <item name="account_add_info" type="id"/>
+    <item name="recheck_password" type="id"/>
+    <item name="email" type="id"/>
 
 </resources>

@@ -159,6 +159,20 @@
             android:layout_height="1dp"
             android:layout_alignTop="@id/start_login"
             android:background="#707171" />
+
+        <TextView
+            android:id="@id/login_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/login_password"
+            android:layout_below="@id/login_password"
+            android:paddingTop="10dp"
+            android:text="@string/login_error"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#d11e25"
+            android:textSize="16sp"
+            android:visibility="invisible" />
+
     </RelativeLayout>
 
 </RelativeLayout>

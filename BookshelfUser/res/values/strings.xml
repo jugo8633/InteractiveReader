@@ -16,10 +16,10 @@
     <string name="config">設  定</string>
     <string name="news">最 新 消 息</string>
     <string name="subscript">訂  閱</string>
-    <string name="hint_login_name">帳號</string>
-    <string name="hint_login_password">密碼</string>
-    <string name="forget_password">忘記密碼</string>
-    <string name="add_account">註冊帳戶</string>
+    <string name="hint_login_name">帳 號</string>
+    <string name="hint_login_password">密 碼</string>
+    <string name="forget_password">忘 記 密 碼</string>
+    <string name="add_account">註 冊 帳 戶</string>
     <string name="member_and_subscript">會員與訂閱</string>
     <string name="account_manager">帳戶管理</string>
     <string name="account_manager_email">></string>
@@ -34,5 +34,10 @@
     <string name="about_ous">關於我們</string>
     <string name="recommend_back">意見反饋</string>
     <string name="vendor_info">開發商資訊</string>
+    <string name="login_error">帳號密碼錯誤</string>
+    <string name="cancel">取 消</string>
+    <string name="account_add_info">請輸入資料建立新帳戶</string>
+    <string name="recheck_password">確 認 密 碼</string>
+    <string name="email">信 箱</string>
 
 </resources>

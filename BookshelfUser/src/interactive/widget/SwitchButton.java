@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -104,6 +103,7 @@ public class SwitchButton extends CompoundButton
 		if (this.isChecked())
 		{
 			paint.setColor(Color.parseColor("#4B96C2"));
+			//paint.setColor(Color.parseColor("#5a7fc0"));
 			canvas.drawRoundRect(oval, radius, radius, paint);
 			paint.setColor(Color.WHITE);
 			canvas.drawCircle(right - radius, radius, radius - SWITCH_BOUND, paint);
