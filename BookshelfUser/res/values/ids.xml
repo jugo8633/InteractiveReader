@@ -63,5 +63,10 @@
     <item name="account_add_info" type="id"/>
     <item name="recheck_password" type="id"/>
     <item name="email" type="id"/>
+    <item name="forget_password_main_layout" type="id"/>
+    <item name="forget_password_title" type="id"/>
+    <item name="forget_password_info" type="id"/>
+    <item name="forget_password_email" type="id"/>
+    <item name="forget_password_button" type="id"/>
 
 </resources>

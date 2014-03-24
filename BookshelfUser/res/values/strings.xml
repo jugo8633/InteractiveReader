@@ -39,5 +39,7 @@
     <string name="account_add_info">請輸入資料建立新帳戶</string>
     <string name="recheck_password">確 認 密 碼</string>
     <string name="email">信 箱</string>
+    <string name="forget_password_info">請輸入註冊信箱，我們會寄重設密碼通知信到您的帳號信箱</string>
+    <string name="send">送 出</string>
 
 </resources>

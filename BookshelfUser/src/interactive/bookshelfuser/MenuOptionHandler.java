@@ -4,6 +4,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.FlipperView;
 import interactive.view.global.Global;
+import interactive.widget.ShapButton;
 import android.app.Activity;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -16,18 +17,20 @@ import android.widget.TextView;
 public class MenuOptionHandler
 {
 
-	private FlipperView		flipperView			= null;
-	private MenuID			menuId				= null;
-	private RelativeLayout	loginMainLayout		= null;
-	private RelativeLayout	accountMainLayout	= null;
+	private FlipperView		flipperView					= null;
+	private MenuID			menuId						= null;
+	private RelativeLayout	loginMainLayout				= null;
+	private RelativeLayout	accountMainLayout			= null;
+	private RelativeLayout	forgetPasswordMainLayout	= null;
 
 	private class MenuID
 	{
-		public int	mnLoginId		= Type.INVALID;
-		public int	mnSettingId		= Type.INVALID;
-		public int	mnNewsId		= Type.INVALID;
-		public int	mnSubscribeId	= Type.INVALID;
-		public int	mnAccountAdd	= Type.INVALID;
+		public int	mnLoginId			= Type.INVALID;
+		public int	mnSettingId			= Type.INVALID;
+		public int	mnNewsId			= Type.INVALID;
+		public int	mnSubscribeId		= Type.INVALID;
+		public int	mnAccountAdd		= Type.INVALID;
+		public int	mnForgetPassword	= Type.INVALID;
 	}
 
 	public MenuOptionHandler(Activity activity)
@@ -51,6 +54,7 @@ public class MenuOptionHandler
 		menuId.mnSettingId = flipperView.addChild(Global.getResourceId(activity, "setting", "layout"));
 		menuId.mnNewsId = flipperView.addChild(Global.getResourceId(activity, "news", "layout"));
 		menuId.mnAccountAdd = flipperView.addChild(Global.getResourceId(activity, "account_add", "layout"));
+		menuId.mnForgetPassword = flipperView.addChild(Global.getResourceId(activity, "forget_password", "layout"));
 
 		flipperView.findViewById(Global.getResourceId(activity, "setting_main_layout", "id")).setOnTouchListener(
 				mainLayoutTouch);
@@ -65,6 +69,10 @@ public class MenuOptionHandler
 		accountMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity,
 				"account_add_main_layout", "id"));
 		accountMainLayout.setOnTouchListener(mainLayoutTouch);
+
+		forgetPasswordMainLayout = (RelativeLayout) flipperView.findViewById(Global.getResourceId(activity,
+				"forget_password_main_layout", "id"));
+		forgetPasswordMainLayout.setOnTouchListener(mainLayoutTouch);
 
 		loginHandle(activity);
 		accountAddHandle(activity);
@@ -91,16 +99,30 @@ public class MenuOptionHandler
 		flipperView.showView(menuId.mnNewsId);
 	}
 
-	private void loginHandle(Activity activity)
+	private void loginHandle(final Activity activity)
 	{
 		TextView addAccount = (TextView) loginMainLayout.findViewById(Global.getResourceId(activity, "add_account",
 				"id"));
+		TextView forgetPassword = (TextView) loginMainLayout.findViewById(Global.getResourceId(activity,
+				"forget_password", "id"));
 		addAccount.setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
 				flipperView.showView(menuId.mnAccountAdd);
+			}
+		});
+
+		forgetPassword.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				ShapButton shapButton = (ShapButton) forgetPasswordMainLayout.findViewById(Global.getResourceId(
+						activity, "forget_password_button", "id"));
+				shapButton.setClick(false);
+				flipperView.showView(menuId.mnForgetPassword);
 			}
 		});
 	}

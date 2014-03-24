@@ -42,6 +42,7 @@
             android:layout_centerVertical="true"
             android:contentDescription="@string/content_descript"
             android:padding="10dp"
+            android:soundEffectsEnabled="false"
             android:src="@drawable/books_normal" />
 
         <ImageView
@@ -53,6 +54,7 @@
             android:layout_toLeftOf="@+id/bookshelfBtn"
             android:contentDescription="@string/content_descript"
             android:padding="10dp"
+            android:soundEffectsEnabled="false"
             android:src="@drawable/cart_normal" />
 
         <ImageView
@@ -64,6 +66,7 @@
             android:layout_toRightOf="@+id/bookshelfBtn"
             android:contentDescription="@string/content_descript"
             android:padding="10dp"
+            android:soundEffectsEnabled="false"
             android:src="@drawable/reader_normal" />
     </RelativeLayout>
 
