@@ -23,7 +23,8 @@
     <RelativeLayout
         android:id="@id/bookCityBookListMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_marginBottom="12dp" >
 
         <View
             android:id="@id/up_line"

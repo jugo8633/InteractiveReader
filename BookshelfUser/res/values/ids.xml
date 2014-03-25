@@ -68,5 +68,7 @@
     <item name="forget_password_info" type="id"/>
     <item name="forget_password_email" type="id"/>
     <item name="forget_password_button" type="id"/>
+    <item name="gallery_all_book" type="id"/>
+    <item name="gallery_book_image" type="id"/>
 
 </resources>

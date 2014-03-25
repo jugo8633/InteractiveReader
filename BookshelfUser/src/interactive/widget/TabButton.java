@@ -1,5 +1,6 @@
 package interactive.widget;
 
+import interactive.common.Device;
 import interactive.common.Type;
 import interactive.view.global.Global;
 import android.content.Context;
@@ -68,8 +69,8 @@ public class TabButton extends RelativeLayout
 		linearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.addView(linearLayout);
 
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(Global.ScaleSize(BUTTON_WIDTH),
-				Global.ScaleSize(10));
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ScaleSize(context, BUTTON_WIDTH),
+				ScaleSize(context, 10));
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		imageIndicate = new ImageView(context);
 		imageIndicate.setLayoutParams(layoutParams);
@@ -80,6 +81,16 @@ public class TabButton extends RelativeLayout
 
 		listItem = new SparseArray<Items>();
 		listItemSwitch = new SparseArray<OnItemSwitchedListener>();
+	}
+
+	private int ScaleSize(Context context, int nSize)
+	{
+		Device device = new Device(context);
+		float fScale = device.getScaleSize();
+		device = null;
+
+		int nResultSize = (int) Math.floor(nSize * fScale);
+		return nResultSize;
 	}
 
 	public void setDisplay(float fX, float fY, int nWidth, int nHeight)

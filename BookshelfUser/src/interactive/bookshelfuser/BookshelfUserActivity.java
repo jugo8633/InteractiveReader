@@ -6,6 +6,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
+import interactive.widget.BookGallery;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
@@ -17,11 +18,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 
 public class BookshelfUserActivity extends Activity
 {
@@ -37,11 +42,15 @@ public class BookshelfUserActivity extends Activity
 	private TabButton				tabButton				= null;
 	private PullToRefreshListView	pullRefreshList			= null;
 	private MenuOptionHandler		menuOptionHandler		= null;
+	private BookGallery				bookCityGallery			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		/** init orientation*/
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 		/** show device information */
 		getDeviceInfo(this);
 
@@ -177,6 +186,14 @@ public class BookshelfUserActivity extends Activity
 				Logs.showTrace("tab button item switch index=" + nIndex);
 			}
 		});
+
+		/** init book city book gallery */
+		bookCityGallery = (BookGallery) this.findViewById(Global.getResourceId(this, "gallery_all_book", "id"));
+		LayoutInflater layInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		RelativeLayout viewChild = (RelativeLayout) layInflater.inflate(
+				Global.getResourceId(this, "book_city_all_book_first", "layout"), null, false);
+		bookCityGallery.addPageView(viewChild);
+		bookCityGallery.updateGallery();
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]>
