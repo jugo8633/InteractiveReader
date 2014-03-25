@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@id/gallery_book_image"
+        android:layout_width="270dp"
+        android:layout_height="360dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/content_descript"
+        android:scaleType="fitXY"
+        android:src="@drawable/c1" />
+
+</RelativeLayout>
