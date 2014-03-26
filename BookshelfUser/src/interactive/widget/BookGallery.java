@@ -1,31 +1,23 @@
 package interactive.widget;
 
 import interactive.common.Device;
-import interactive.common.Logs;
 import interactive.view.global.Global;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class BookGallery extends RelativeLayout
 {
 
-	private final int				INDICATOR_SIZE		= 25;
-	private ViewPager				viewPager			= null;
-	private RelativeLayout			rLayoutIndicator	= null;
-	private LinearLayout			lLayoutIndicator	= null;
-	private SparseArray<ImageView>	listIndicator		= null;
-	private BookGalleryAdapter		galleryAdapter		= null;
+	private ViewPager			viewPager		= null;
+	private BookGalleryAdapter	galleryAdapter	= null;
+	private IndicatorView		indicator		= null;
 
 	public BookGallery(Context context)
 	{
@@ -49,28 +41,19 @@ public class BookGallery extends RelativeLayout
 	{
 
 		/** init indicator layout */
-		rLayoutIndicator = new RelativeLayout(context);
-		rLayoutIndicator.setId(Global.getUserId());
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+				ScaleSize(context, 10));
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		rLayoutIndicator.setLayoutParams(layoutParams);
 
-		lLayoutIndicator = new LinearLayout(context);
-		lLayoutIndicator.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, ScaleSize(context,
-				INDICATOR_SIZE)));
-
-		lLayoutIndicator.setGravity(Gravity.CENTER);
-		lLayoutIndicator.setOrientation(LinearLayout.HORIZONTAL);
-		rLayoutIndicator.addView(lLayoutIndicator);
-		addView(rLayoutIndicator);
-
-		listIndicator = new SparseArray<ImageView>();
+		indicator = new IndicatorView(context);
+		indicator.setId(Global.getUserId());
+		indicator.setLayoutParams(layoutParams);
+		addView(indicator);
 
 		/** init book gallery */
 		RelativeLayout.LayoutParams gallerylayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
-		gallerylayoutParams.addRule(RelativeLayout.ABOVE, rLayoutIndicator.getId());
+		gallerylayoutParams.addRule(RelativeLayout.ABOVE, indicator.getId());
 
 		viewPager = new ViewPager(context);
 		viewPager.setLayoutParams(gallerylayoutParams);
@@ -91,7 +74,7 @@ public class BookGallery extends RelativeLayout
 			@Override
 			public void onPageSelected(int arg0)
 			{
-
+				indicator.setPosition(arg0);
 			}
 		});
 
@@ -114,7 +97,8 @@ public class BookGallery extends RelativeLayout
 	{
 		viewPager.removeAllViewsInLayout();
 		viewPager.setAdapter(galleryAdapter);
-		initIndicator(galleryAdapter.size());
+		indicator.setCount(galleryAdapter.size());
+		indicator.setPosition(0);
 	}
 
 	public void addPageView(View view)
@@ -180,28 +164,6 @@ public class BookGallery extends RelativeLayout
 		public int size()
 		{
 			return listPage.size();
-		}
-
-	}
-
-	private void initIndicator(int nCount)
-	{
-		if (0 >= nCount)
-		{
-			return;
-		}
-		lLayoutIndicator.removeAllViewsInLayout();
-		listIndicator.clear();
-		for (int i = 0; i < nCount; ++i)
-		{
-			ImageView img = new ImageView(getContext());
-			img.setLayoutParams(new LinearLayout.LayoutParams(ScaleSize(getContext(), 18), ScaleSize(getContext(), 18)));
-			img.setImageResource(Global.getResourceId(getContext(), "dot_unfocuse", "drawable"));
-			img.setPadding(0, 0, 10, 0);
-			img.setBackgroundColor(Color.RED);
-			lLayoutIndicator.addView(img);
-			Logs.showTrace("indicator=" + nCount + " #####################");
-			listIndicator.put(listIndicator.size(), img);
 		}
 	}
 }
