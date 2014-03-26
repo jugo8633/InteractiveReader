@@ -1,34 +1,45 @@
 package interactive.widget;
 
+import interactive.common.Device;
 import interactive.view.global.Global;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
+import android.graphics.drawable.shapes.Shape;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class ShapButton extends View implements OnClickListener
 {
-	private final int	DEFAULT_TEXT_SIZE	= 16;
-	private Paint		mPaintText			= null;
-	private Paint		mPaintBorder		= null;
-	private String		mstrText			= null;
-	int					mAscent				= 0;
-	private Path		path				= null;
-	private boolean		mbClicked			= false;
-	private int			mnColorText			= 0;
-	private int			mnColorTextClick	= 0;
-	private int			mnColorBorder		= 0;
-	private int			mnColorBorderClick	= 0;
+	private final int			DEFAULT_TEXT_SIZE	= 16;
+	private Paint				mPaintText			= null;
+	private Paint				mPaintBorder		= null;
+	private String				mstrText			= null;
+	int							mAscent				= 0;
+	private Path				path				= null;
+	private boolean				mbClicked			= false;
+	private int					mnColorText			= Color.TRANSPARENT;
+	private int					mnColorTextClick	= Color.TRANSPARENT;
+	private int					mnColorBorder		= Color.TRANSPARENT;
+	private int					mnColorBorderClick	= Color.TRANSPARENT;
+	private CustomShapeDrawable	shapDrawer			= null;
+	private int					mnStrockWidth		= 0;
+	private int					mnTextType			= Typeface.NORMAL;
 
 	public ShapButton(Context context)
 	{
 		super(context);
 		init();
+		initShap(context);
 	}
 
 	public ShapButton(Context context, AttributeSet attrs)
@@ -43,10 +54,12 @@ public class ShapButton extends View implements OnClickListener
 				Global.getResourceId(context, "textColorClick", "attr"),
 				Global.getResourceId(context, "borderColor", "attr"),
 				Global.getResourceId(context, "borderColorClick", "attr") };
+		int[] typeAttrs = new int[] { Global.getResourceId(context, "textType", "attr") };
 
 		final TypedArray stringA = context.obtainStyledAttributes(attrs, stringAttrs);
 		final TypedArray intA = context.obtainStyledAttributes(attrs, intAttrs);
 		final TypedArray colorA = context.obtainStyledAttributes(attrs, colorAttrs);
+		final TypedArray typeA = context.obtainStyledAttributes(attrs, typeAttrs);
 
 		CharSequence s = stringA.getString(0);
 		if (s != null)
@@ -68,16 +81,22 @@ public class ShapButton extends View implements OnClickListener
 		setTextColor(mnColorText);
 		setBorderColor(mnColorBorder);
 
+		mnTextType = typeA.getInt(0, 0);
+		setTextType(mnTextType);
+
 		stringA.recycle();
 		intA.recycle();
 		colorA.recycle();
+		typeA.recycle();
 
+		initShap(context);
 	}
 
 	public ShapButton(Context context, AttributeSet attrs, int defStyleAttr)
 	{
 		super(context, attrs, defStyleAttr);
 		init();
+		initShap(context);
 	}
 
 	private void init()
@@ -88,11 +107,32 @@ public class ShapButton extends View implements OnClickListener
 		mPaintText.setAntiAlias(true);
 		mPaintText.setTextSize(DEFAULT_TEXT_SIZE);
 
+		Typeface tf = Typeface.create("Helvetica", mnTextType);
+		mPaintText.setTypeface(tf);
+
 		mPaintBorder = new Paint();
 		mPaintBorder.setAntiAlias(true);
 		mPaintBorder.setStyle(Paint.Style.STROKE);
 
 		path = new Path();
+	}
+
+	private void initShap(Context context)
+	{
+		RoundRectShape rs = new RoundRectShape(new float[] { 10, 10, 10, 10, 10, 10, 10, 10 }, null, null);
+		mnStrockWidth = ScaleSize(context, 3);
+		shapDrawer = new CustomShapeDrawable(rs, Color.TRANSPARENT, mnColorBorder, mnStrockWidth);
+		setBackground(shapDrawer);
+	}
+
+	private int ScaleSize(Context context, int nSize)
+	{
+		Device device = new Device(context);
+		float fScale = device.getScaleSize();
+		device = null;
+
+		int nResultSize = (int) Math.floor(nSize * fScale);
+		return nResultSize;
 	}
 
 	public void setText(String strText)
@@ -106,6 +146,13 @@ public class ShapButton extends View implements OnClickListener
 	{
 		mPaintText.setTextSize(nSize);
 		this.requestLayout();
+		this.invalidate();
+	}
+
+	public void setTextType(int nType)
+	{
+		Typeface tf = Typeface.create("Helvetica", nType);
+		mPaintText.setTypeface(tf);
 		this.invalidate();
 	}
 
@@ -193,6 +240,11 @@ public class ShapButton extends View implements OnClickListener
 	protected void onDraw(Canvas canvas)
 	{
 		super.onDraw(canvas);
+		if (null == shapDrawer)
+		{
+			return;
+		}
+
 		int nTextWidth = (int) mPaintText.measureText(mstrText) + getPaddingLeft() + getPaddingRight();
 		int nCenterX = (this.getWidth() - nTextWidth) / 2;
 		int nTextHeight = (int) (mPaintText.descent() + mPaintText.ascent()) + getPaddingTop() + getPaddingBottom();
@@ -201,21 +253,25 @@ public class ShapButton extends View implements OnClickListener
 		if (mbClicked)
 		{
 			mPaintText.setColor(mnColorTextClick);
-			mPaintBorder.setColor(mnColorBorderClick);
+			//	mPaintBorder.setColor(mnColorBorderClick);
+			shapDrawer.setStrokeColor(mnColorBorderClick);
 		}
 		else
 		{
 			mPaintText.setColor(mnColorText);
-			mPaintBorder.setColor(mnColorBorder);
+			//	mPaintBorder.setColor(mnColorBorder);
+			shapDrawer.setStrokeColor(mnColorBorder);
 		}
 
-		path.moveTo(0, 0);
-		path.lineTo(this.getWidth(), 0);
-		path.lineTo(this.getWidth(), this.getHeight());
-		path.lineTo(0, this.getHeight());
-		path.close();
+		setBackground(shapDrawer);
 
-		canvas.drawPath(path, mPaintBorder);
+		//		path.moveTo(0, 0);
+		//		path.lineTo(this.getWidth(), 0);
+		//		path.lineTo(this.getWidth(), this.getHeight());
+		//		path.lineTo(0, this.getHeight());
+		//		path.close();
+		//	canvas.drawPath(path, mPaintBorder);
+
 		canvas.drawText(mstrText, nCenterX, nCenterY, mPaintText);
 	}
 
@@ -230,5 +286,48 @@ public class ShapButton extends View implements OnClickListener
 	{
 		mbClicked = bClick;
 		this.invalidate();
+	}
+
+	public class CustomShapeDrawable extends ShapeDrawable
+	{
+		private final Paint	fillpaint, strokepaint;
+
+		public CustomShapeDrawable(Shape s, int fill, int stroke, int strokeWidth)
+		{
+			super(s);
+			fillpaint = new Paint(this.getPaint());
+			fillpaint.setColor(fill);
+			strokepaint = new Paint(fillpaint);
+			strokepaint.setStyle(Paint.Style.STROKE);
+			strokepaint.setStrokeWidth(strokeWidth);
+			strokepaint.setColor(stroke);
+		}
+
+		public void setStrokeColor(int nColor)
+		{
+			strokepaint.setColor(nColor);
+			this.invalidateSelf();
+		}
+
+		public void setFillColor(int nColor)
+		{
+			fillpaint.setColor(nColor);
+			this.invalidateSelf();
+		}
+
+		@Override
+		protected void onDraw(Shape shape, Canvas canvas, Paint paint)
+		{
+			shape.resize(canvas.getClipBounds().right, canvas.getClipBounds().bottom);
+			shape.draw(canvas, fillpaint);
+
+			Matrix matrix = new Matrix();
+			matrix.setRectToRect(new RectF(0, 0, canvas.getClipBounds().right, canvas.getClipBounds().bottom),
+					new RectF(mnStrockWidth / 2, mnStrockWidth / 2, canvas.getClipBounds().right - mnStrockWidth / 2,
+							canvas.getClipBounds().bottom - mnStrockWidth / 2), Matrix.ScaleToFit.FILL);
+			canvas.concat(matrix);
+
+			shape.draw(canvas, strokepaint);
+		}
 	}
 }

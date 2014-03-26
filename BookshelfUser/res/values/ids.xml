@@ -70,5 +70,11 @@
     <item name="forget_password_button" type="id"/>
     <item name="gallery_all_book" type="id"/>
     <item name="gallery_book_image" type="id"/>
+    <item name="gallery_book_image2" type="id"/>
+    <item name="gallery_book_image3" type="id"/>
+    <item name="book_city_all_book_first_title" type="id"/>
+    <item name="book_city_all_book_first_date" type="id"/>
+    <item name="book_city_all_book_first_description" type="id"/>
+    <item name="book_city_all_book_first_subscribt" type="id"/>
 
 </resources>

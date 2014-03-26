@@ -9,6 +9,21 @@
         <attr name="textColorClick" format="color" />
         <attr name="borderColor" format="color" />
         <attr name="borderColorClick" format="color" />
+        <attr name="textType">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
     </declare-styleable>
 
-</resources>
+</resources><!--
+format:
+"reference" //引用  
+"color" //颜色  
+"boolean" //布尔值  
+"dimension" //尺寸值  
+"float" //浮点值  
+"integer" //整型值  
+"string" //字符串  
+"fraction" //百分数,比如200%
+-->
