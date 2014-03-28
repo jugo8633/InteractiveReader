@@ -127,7 +127,7 @@ public class IndicatorView extends View
 		{
 			if (i == mnPosition)
 			{
-				mPaint.setColor(Color.BLACK);
+				mPaint.setColor(Color.DKGRAY);
 			}
 			else
 			{

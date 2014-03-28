@@ -1,3 +1,4 @@
+2014/03/28 : 新增書城首頁Book List layout , 多加Device高度判斷 如果Device高度大於1200 pix 則Book list會出現3列
 2014/03/26 : 新增所有書籍畫面page view layout
 2014/03/26 : 新增indicator view
 2014/03/20 : 新增account add視窗

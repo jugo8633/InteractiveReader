@@ -70,11 +70,29 @@
     <item name="forget_password_button" type="id"/>
     <item name="gallery_all_book" type="id"/>
     <item name="gallery_book_image" type="id"/>
+    <item name="gallery_book_image1" type="id"/>
     <item name="gallery_book_image2" type="id"/>
     <item name="gallery_book_image3" type="id"/>
     <item name="book_city_all_book_first_title" type="id"/>
     <item name="book_city_all_book_first_date" type="id"/>
     <item name="book_city_all_book_first_description" type="id"/>
     <item name="book_city_all_book_first_subscribt" type="id"/>
+    <item name="book_city_all_book_first_title2" type="id"/>
+    <item name="book_city_all_book_first_title3" type="id"/>
+    <item name="book_city_all_book_first_date2" type="id"/>
+    <item name="book_city_all_book_first_date3" type="id"/>
+    <item name="book_city_all_book_first_subscribt2" type="id"/>
+    <item name="book_city_all_book_first_subscribt3" type="id"/>
+    <item name="book_city_all_book_first_list_layout" type="id"/>
+    <item name="book_city_all_book_first_extend_layout" type="id"/>
+    <item name="book_city_all_book_first_extend_image1" type="id"/>
+    <item name="book_city_all_book_first_extend_image2" type="id"/>
+    <item name="book_city_all_book_first_extend_title1" type="id"/>
+    <item name="book_city_all_book_first_extend_date1" type="id"/>
+    <item name="book_city_all_book_first_extend_subscribt1" type="id"/>
+    <item name="book_city_all_book_first_extend_title2" type="id"/>
+    <item name="book_city_all_book_first_extend_date2" type="id"/>
+    <item name="book_city_all_book_first_extend_subscribt2" type="id"/>
+    <item name="book_city_all_book_list_layout" type="id"/>
 
 </resources>

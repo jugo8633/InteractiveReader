@@ -190,10 +190,26 @@ public class BookshelfUserActivity extends Activity
 		/** init book city book gallery */
 		bookCityGallery = (BookGallery) this.findViewById(Global.getResourceId(this, "gallery_all_book", "id"));
 		LayoutInflater layInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 		RelativeLayout viewChild = (RelativeLayout) layInflater.inflate(
 				Global.getResourceId(this, "book_city_all_book_first", "layout"), null, false);
 		bookCityGallery.addPageView(viewChild);
+
+		viewChild = (RelativeLayout) layInflater.inflate(
+				Global.getResourceId(this, "book_city_all_book_list", "layout"), null, false);
+		bookCityGallery.addPageView(viewChild);
+
 		bookCityGallery.updateGallery();
+
+		RelativeLayout extendLayout = (RelativeLayout) viewChild.findViewById(Global.getResourceId(this,
+				"book_city_all_book_first_extend_layout", "id"));
+
+		Device device = new Device(this);
+		if (1200 > device.getDeviceHeight())
+		{
+			extendLayout.setVisibility(View.GONE);
+		}
+		device = null;
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]>
