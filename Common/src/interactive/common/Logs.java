@@ -6,7 +6,10 @@
 
 package interactive.common;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.util.Log;
+
 import java.lang.Throwable;
 
 public class Logs
@@ -23,7 +26,7 @@ public class Logs
 		int		nLine			= Type.INVALID;
 	}
 
-	private static LogInfo	logInfo = new LogInfo();
+	private static LogInfo	logInfo	= new LogInfo();
 
 	@SuppressWarnings("unused")
 	public static void showTrace(String msg)
@@ -53,7 +56,8 @@ public class Logs
 				strLog = "[TRACE] " + " class: " + logInfo.strClassPath + " line: " + logInfo.nLine + " Msg: " + msg;
 				break;
 			case Type.TRACE_LEVEL_DETAIL:
-				strLog = "[TRACE] " + "file: " + logInfo.strFile + " class: " + logInfo.strClassPath + " method: " + logInfo.strMethod + " line: " + logInfo.nLine + " Msg: " + msg;
+				strLog = "[TRACE] " + "file: " + logInfo.strFile + " class: " + logInfo.strClassPath + " method: "
+						+ logInfo.strMethod + " line: " + logInfo.nLine + " Msg: " + msg;
 				break;
 			default:
 				return;
@@ -78,5 +82,13 @@ public class Logs
 	public Logs()
 	{
 
+	}
+
+	public static void complain(Context context, String message)
+	{
+		AlertDialog.Builder bld = new AlertDialog.Builder(context);
+		bld.setMessage("Error : " + message);
+		bld.setNeutralButton("OK", null);
+		bld.create().show();
 	}
 }

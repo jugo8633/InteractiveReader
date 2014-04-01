@@ -1,280 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/interactive.bookshelfuser"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:id="@id/book_city_all_book_list_layout"
-        android:layout_width="match_parent"
-        android:layout_height="185dp"
-        android:layout_below="@id/gallery_book_image"
-        android:layout_marginTop="30dp" >
-
-        <ImageView
-            android:id="@id/gallery_book_image1"
-            android:layout_width="120dp"
-            android:layout_height="160dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_descript"
-            android:scaleType="fitXY"
-            android:src="@drawable/demo" />
-
-        <View
-            android:id="@id/separate_line"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@color/separate_line" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/gallery_book_image2"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/separate_line"
-            android:layout_toRightOf="@id/gallery_book_image2"
-            android:orientation="vertical"
-            android:paddingLeft="20dp" >
-
-            <TextView
-                android:id="@id/book_city_all_book_first_title2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:scrollHorizontally="false"
-                android:text="@string/demo_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#0d0d0d"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@id/book_city_all_book_first_date2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/demo_date"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#9a9a9a"
-                android:textSize="16sp" />
-
-            <interactive.widget.ShapButton
-                android:id="@id/book_city_all_book_first_subscribt2"
-                android:layout_width="110dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom"
-                app:borderColor="#0079ff"
-                app:borderColorClick="#c2defd"
-                app:borderSize="3dp"
-                app:text="NT $"
-                app:textColor="#0079ff"
-                app:textColorClick="#c2defd"
-                app:textSize="16sp"
-                app:textType="bold" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@id/gallery_book_image3"
-            android:layout_width="120dp"
-            android:layout_height="160dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@id/separate_line"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_descript"
-            android:scaleType="fitXY"
-            android:src="@drawable/demo" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/gallery_book_image3"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/gallery_book_image3"
-            android:orientation="vertical"
-            android:paddingLeft="20dp" >
-
-            <TextView
-                android:id="@id/book_city_all_book_first_title3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:text="@string/demo_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#0d0d0d"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@id/book_city_all_book_first_date3"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/demo_date"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#9a9a9a"
-                android:textSize="16sp" />
-
-            <interactive.widget.ShapButton
-                android:id="@id/book_city_all_book_first_subscribt3"
-                android:layout_width="110dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom"
-                app:borderColor="#0079ff"
-                app:borderColorClick="#c2defd"
-                app:borderSize="3dp"
-                app:text="NT $"
-                app:textColor="#0079ff"
-                app:textColorClick="#c2defd"
-                app:textSize="16sp"
-                app:textType="bold" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@id/book_city_all_book_first_extend_layout"
+    <FrameLayout
+        android:id="@id/book_city_all_book_list_layout1"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/book_city_all_book_first_list_layout" >
+        android:layout_alignParentTop="true" >
 
-        <View
-            android:id="@+id/separate_line2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="25dp"
-            android:background="@color/separate_line" />
+        <include
+            android:id="@+id/subBookList1"
+            layout="@layout/book_list_item" />
+    </FrameLayout>
 
-        <ImageView
-            android:id="@id/book_city_all_book_first_extend_image1"
-            android:layout_width="120dp"
-            android:layout_height="160dp"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/separate_line2"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_descript"
-            android:scaleType="fitXY"
-            android:src="@drawable/demo" />
+    <View
+        android:id="@id/separate_line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/book_city_all_book_list_layout1"
+        android:background="@color/separate_line" />
 
-        <View
-            android:id="@+id/separate_line3"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@id/book_city_all_book_first_extend_image1"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@color/separate_line" />
+    <FrameLayout
+        android:id="@id/book_city_all_book_list_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/separate_line1" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/book_city_all_book_first_extend_image1"
-            android:layout_alignTop="@id/book_city_all_book_first_extend_image1"
-            android:layout_toLeftOf="@id/separate_line3"
-            android:layout_toRightOf="@id/book_city_all_book_first_extend_image1"
-            android:orientation="vertical"
-            android:paddingLeft="20dp" >
+        <include
+            android:id="@+id/subBookList2"
+            layout="@layout/book_list_item" />
+    </FrameLayout>
 
-            <TextView
-                android:id="@id/book_city_all_book_first_extend_title1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:scrollHorizontally="false"
-                android:text="@string/demo_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#0d0d0d"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+    <View
+        android:id="@id/separate_line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/book_city_all_book_list_layout2"
+        android:background="@color/separate_line" />
 
-            <TextView
-                android:id="@id/book_city_all_book_first_extend_date1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/demo_date"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#9a9a9a"
-                android:textSize="16sp" />
+    <FrameLayout
+        android:id="@id/book_city_all_book_list_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/separate_line2" >
 
-            <interactive.widget.ShapButton
-                android:id="@id/book_city_all_book_first_extend_subscribt1"
-                android:layout_width="110dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom"
-                app:borderColor="#0079ff"
-                app:borderColorClick="#c2defd"
-                app:borderSize="3dp"
-                app:text="NT $"
-                app:textColor="#0079ff"
-                app:textColorClick="#c2defd"
-                app:textSize="16sp"
-                app:textType="bold" />
-        </LinearLayout>
+        <include
+            android:id="@+id/subBookList3"
+            layout="@layout/book_list_item" />
+    </FrameLayout>
 
-        <ImageView
-            android:id="@id/book_city_all_book_first_extend_image2"
-            android:layout_width="120dp"
-            android:layout_height="160dp"
-            android:layout_below="@+id/separate_line2"
-            android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@+id/separate_line3"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_descript"
-            android:scaleType="fitXY"
-            android:src="@drawable/demo" />
+    <View
+        android:id="@id/separate_line3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/book_city_all_book_list_layout3"
+        android:background="@color/separate_line" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@id/book_city_all_book_first_extend_image2"
-            android:layout_alignTop="@id/book_city_all_book_first_extend_image2"
-            android:layout_toRightOf="@id/book_city_all_book_first_extend_image2"
-            android:orientation="vertical"
-            android:paddingLeft="20dp" >
+    <FrameLayout
+        android:id="@id/book_city_all_book_list_layout4"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/separate_line3" >
 
-            <TextView
-                android:id="@id/book_city_all_book_first_extend_title2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:scrollHorizontally="false"
-                android:text="@string/demo_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#0d0d0d"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@id/book_city_all_book_first_extend_date2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/demo_date"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#9a9a9a"
-                android:textSize="16sp" />
-
-            <interactive.widget.ShapButton
-                android:id="@id/book_city_all_book_first_extend_subscribt2"
-                android:layout_width="110dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom"
-                app:borderColor="#0079ff"
-                app:borderColorClick="#c2defd"
-                app:borderSize="3dp"
-                app:text="NT $"
-                app:textColor="#0079ff"
-                app:textColorClick="#c2defd"
-                app:textSize="16sp"
-                app:textType="bold" />
-        </LinearLayout>
-    </RelativeLayout>
+        <include
+            android:id="@+id/subBookList4"
+            layout="@layout/book_list_item_last" />
+    </FrameLayout>
 
 </RelativeLayout>

@@ -20,20 +20,31 @@ import android.view.View.OnClickListener;
 
 public class ShapButton extends View implements OnClickListener
 {
-	private final int			DEFAULT_TEXT_SIZE	= 16;
-	private Paint				mPaintText			= null;
-	private Paint				mPaintBorder		= null;
-	private String				mstrText			= null;
-	int							mAscent				= 0;
-	private Path				path				= null;
-	private boolean				mbClicked			= false;
-	private int					mnColorText			= Color.TRANSPARENT;
-	private int					mnColorTextClick	= Color.TRANSPARENT;
-	private int					mnColorBorder		= Color.TRANSPARENT;
-	private int					mnColorBorderClick	= Color.TRANSPARENT;
-	private CustomShapeDrawable	shapDrawer			= null;
-	private int					mnStrockWidth		= 0;
-	private int					mnTextType			= Typeface.NORMAL;
+	private final int				DEFAULT_TEXT_SIZE			= 16;
+	private Paint					mPaintText					= null;
+	private Paint					mPaintBorder				= null;
+	private String					mstrText					= null;
+	int								mAscent						= 0;
+	private Path					path						= null;
+	private boolean					mbClicked					= false;
+	private int						mnColorText					= Color.TRANSPARENT;
+	private int						mnColorTextClick			= Color.TRANSPARENT;
+	private int						mnColorBorder				= Color.TRANSPARENT;
+	private int						mnColorBorderClick			= Color.TRANSPARENT;
+	private CustomShapeDrawable		shapDrawer					= null;
+	private int						mnStrockWidth				= 0;
+	private int						mnTextType					= Typeface.NORMAL;
+	private OnButtonClickedListener	mOnButtonClickedListener	= null;
+
+	public static interface OnButtonClickedListener
+	{
+		public void OnButtonClicked();
+	}
+
+	public void setOnButtonClickedListener(ShapButton.OnButtonClickedListener listener)
+	{
+		mOnButtonClickedListener = listener;
+	}
 
 	public ShapButton(Context context)
 	{
@@ -280,6 +291,10 @@ public class ShapButton extends View implements OnClickListener
 	{
 		mbClicked = mbClicked ? false : true;
 		this.invalidate();
+		if (null != mOnButtonClickedListener)
+		{
+			mOnButtonClickedListener.OnButtonClicked();
+		}
 	}
 
 	public void setClick(boolean bClick)

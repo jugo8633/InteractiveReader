@@ -18,6 +18,14 @@
     <item name="login_main_layout" type="id"/>
     <item name="login_title" type="id"/>
     <item name="separate_line" type="id"/>
+    <item name="separate_line1" type="id"/>
+    <item name="separate_line2" type="id"/>
+    <item name="separate_line3" type="id"/>
+    <item name="separate_line4" type="id"/>
+    <item name="separate_line5" type="id"/>
+    <item name="separate_line6" type="id"/>
+    <item name="separate_line7" type="id"/>
+    <item name="separate_line8" type="id"/>
     <item name="sub_book_city_all_book" type="id"/>
     <item name="sub_book_city_free_book" type="id"/>
     <item name="sub_book_city_previous_book" type="id"/>
@@ -69,10 +77,9 @@
     <item name="forget_password_email" type="id"/>
     <item name="forget_password_button" type="id"/>
     <item name="gallery_all_book" type="id"/>
-    <item name="gallery_book_image" type="id"/>
-    <item name="gallery_book_image1" type="id"/>
-    <item name="gallery_book_image2" type="id"/>
-    <item name="gallery_book_image3" type="id"/>
+    <item name="gallery_free_book" type="id"/>
+    <item name="gallery_special_book" type="id"/>
+    <item name="gallery_previous_book" type="id"/>
     <item name="book_city_all_book_first_title" type="id"/>
     <item name="book_city_all_book_first_date" type="id"/>
     <item name="book_city_all_book_first_description" type="id"/>
@@ -93,6 +100,52 @@
     <item name="book_city_all_book_first_extend_title2" type="id"/>
     <item name="book_city_all_book_first_extend_date2" type="id"/>
     <item name="book_city_all_book_first_extend_subscribt2" type="id"/>
-    <item name="book_city_all_book_list_layout" type="id"/>
+    <item name="book_city_all_book_list_layout1" type="id"/>
+    <item name="book_city_all_book_list_layout2" type="id"/>
+    <item name="book_city_all_book_list_layout3" type="id"/>
+    <item name="book_city_all_book_list_layout4" type="id"/>
+    <item name="book_list_book_item_layout_left" type="id"/>
+    <item name="book_list_book_item_layout_right" type="id"/>
+    <item name="book_list_book_item_image_left" type="id"/>
+    <item name="book_list_book_item_image_right" type="id"/>
+    <item name="book_list_book_item_title_left" type="id"/>
+    <item name="book_list_book_item_title_right" type="id"/>
+    <item name="book_list_book_item_date_left" type="id"/>
+    <item name="book_list_book_item_date_right" type="id"/>
+    <item name="book_list_book_item_subscribt_left" type="id"/>
+    <item name="book_list_book_item_subscribt_right" type="id"/>
+    <item name="gallery_book_image" type="id"/>
+    <item name="gallery_book_image1" type="id"/>
+    <item name="gallery_book_image2" type="id"/>
+    <item name="gallery_book_image3" type="id"/>
+    <item name="gallery_book_image4" type="id"/>
+    <item name="gallery_book_image5" type="id"/>
+    <item name="gallery_book_image6" type="id"/>
+    <item name="gallery_book_image7" type="id"/>
+    <item name="gallery_book_image8" type="id"/>
+    <item name="book_city_all_book_title1" type="id"/>
+    <item name="book_city_all_book_title2" type="id"/>
+    <item name="book_city_all_book_title3" type="id"/>
+    <item name="book_city_all_book_title4" type="id"/>
+    <item name="book_city_all_book_title5" type="id"/>
+    <item name="book_city_all_book_title6" type="id"/>
+    <item name="book_city_all_book_title7" type="id"/>
+    <item name="book_city_all_book_title8" type="id"/>
+    <item name="book_city_all_book_date1" type="id"/>
+    <item name="book_city_all_book_date2" type="id"/>
+    <item name="book_city_all_book_date3" type="id"/>
+    <item name="book_city_all_book_date4" type="id"/>
+    <item name="book_city_all_book_date5" type="id"/>
+    <item name="book_city_all_book_date6" type="id"/>
+    <item name="book_city_all_book_date7" type="id"/>
+    <item name="book_city_all_book_date8" type="id"/>
+    <item name="book_city_all_book_subscribt1" type="id"/>
+    <item name="book_city_all_book_subscribt2" type="id"/>
+    <item name="book_city_all_book_subscribt3" type="id"/>
+    <item name="book_city_all_book_subscribt4" type="id"/>
+    <item name="book_city_all_book_subscribt5" type="id"/>
+    <item name="book_city_all_book_subscribt6" type="id"/>
+    <item name="book_city_all_book_subscribt7" type="id"/>
+    <item name="book_city_all_book_subscribt8" type="id"/>
 
 </resources>

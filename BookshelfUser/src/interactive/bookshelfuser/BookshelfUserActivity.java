@@ -6,7 +6,6 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
-import interactive.widget.BookGallery;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
@@ -17,15 +16,14 @@ import android.os.Message;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 
 public class BookshelfUserActivity extends Activity
@@ -42,7 +40,8 @@ public class BookshelfUserActivity extends Activity
 	private TabButton				tabButton				= null;
 	private PullToRefreshListView	pullRefreshList			= null;
 	private MenuOptionHandler		menuOptionHandler		= null;
-	private BookGallery				bookCityGallery			= null;
+	private BookListHandler			bookListHandler			= null;
+	private BillingHandler			billingHandler			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -188,28 +187,42 @@ public class BookshelfUserActivity extends Activity
 		});
 
 		/** init book city book gallery */
-		bookCityGallery = (BookGallery) this.findViewById(Global.getResourceId(this, "gallery_all_book", "id"));
-		LayoutInflater layInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		bookListHandler = new BookListHandler();
+		bookListHandler.setNotifyHandler(selfHandler);
+		bookListHandler.initAllBookList(this);
+		bookListHandler.initFreeBookList(this);
+		bookListHandler.initSpecialBookList(this);
+		bookListHandler.initPreviousBookList(this);
 
-		RelativeLayout viewChild = (RelativeLayout) layInflater.inflate(
-				Global.getResourceId(this, "book_city_all_book_first", "layout"), null, false);
-		bookCityGallery.addPageView(viewChild);
+		/** init billing handler */
+		billingHandler = new BillingHandler(this);
+	}
 
-		viewChild = (RelativeLayout) layInflater.inflate(
-				Global.getResourceId(this, "book_city_all_book_list", "layout"), null, false);
-		bookCityGallery.addPageView(viewChild);
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		Logs.showTrace("onActivityResult(" + requestCode + "," + resultCode + "," + data);
 
-		bookCityGallery.updateGallery();
-
-		RelativeLayout extendLayout = (RelativeLayout) viewChild.findViewById(Global.getResourceId(this,
-				"book_city_all_book_first_extend_layout", "id"));
-
-		Device device = new Device(this);
-		if (1200 > device.getDeviceHeight())
+		// Pass on the activity result to the helper for handling
+		if (!billingHandler.handleActivityResult(requestCode, resultCode, data))
 		{
-			extendLayout.setVisibility(View.GONE);
+			// not handled, so handle it ourselves (here's where you'd
+			// perform any handling of activity results not related to in-app
+			// billing...
+			super.onActivityResult(requestCode, resultCode, data);
 		}
-		device = null;
+		else
+		{
+			Logs.showTrace("onActivityResult handled by IABUtil.");
+		}
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		billingHandler.closeService();
+		billingHandler = null;
+		super.onDestroy();
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]>
@@ -314,6 +327,9 @@ public class BookshelfUserActivity extends Activity
 												{
 												case EventMessage.MSG_FLIPPER_CLOSE:
 													pullRefreshList.clearSelected();
+													break;
+												case BookListHandler.MSG_SUBSCRIBT:
+													billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
 													break;
 												}
 											}
