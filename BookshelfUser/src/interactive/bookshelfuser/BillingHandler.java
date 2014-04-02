@@ -17,7 +17,7 @@ public class BillingHandler
 
 	// for our products
 	private final String	SKU_BOOK				= "android.test.purchased";
-	//	private final String	SKU_BOOK				= "book";
+	//private final String	SKU_BOOK				= "book";
 
 	// (arbitrary) request code for the purchase flow
 	private final int		RC_REQUEST				= 10001;
@@ -81,14 +81,12 @@ public class BillingHandler
 				Logs.showTrace("Setup successful. Querying inventory.");
 				//mHelper.queryInventoryAsync(mQueryFinishedListener);
 
-				List<String> additionalSkuList = new ArrayList<String>();
-				additionalSkuList.add(SKU_BOOK);
-
 				// 查詢可購買的商品
 				//mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
 
 				// 查詢已購買產品
-				mHelper.queryInventoryAsync(mGotInventoryListener);
+				//mHelper.queryInventoryAsync(mGotInventoryListener);
+				queryInventory(true);
 			}
 		});
 	}
@@ -118,8 +116,7 @@ public class BillingHandler
 																						{
 																							Logs.showTrace("We had purchased this product");
 																							mHelper.consumeAsync(
-																									inventory
-																											.getPurchase(SKU_BOOK),
+																									bookPurchase,
 																									mConsumeFinishedListener);
 																							return;
 																						}
@@ -286,5 +283,26 @@ public class BillingHandler
 		}
 
 		return mHelper.handleActivityResult(requestCode, resultCode, data);
+	}
+
+	public void queryInventory(boolean bBuyed)
+	{
+		if (bBuyed)
+		{
+			// 查詢已購買產品
+			mHelper.queryInventoryAsync(mGotInventoryListener);
+		}
+		else
+		{
+			// 查詢可購買的商品
+			List<String> additionalSkuList = new ArrayList<String>();
+			additionalSkuList.add(SKU_BOOK);
+			mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+		}
+	}
+
+	public void consumeSKU(Purchase purchase)
+	{
+		mHelper.consumeAsync(purchase, mConsumeFinishedListener);
 	}
 }
