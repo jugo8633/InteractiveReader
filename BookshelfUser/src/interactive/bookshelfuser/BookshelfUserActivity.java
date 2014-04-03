@@ -1,5 +1,9 @@
 package interactive.bookshelfuser;
 
+import java.util.Calendar;
+
+import com.google.android.gcm.GCMRegistrar;
+
 import interactive.common.Device;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
@@ -9,10 +13,12 @@ import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
@@ -22,8 +28,14 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class BookshelfUserActivity extends Activity
 {
@@ -195,6 +207,9 @@ public class BookshelfUserActivity extends Activity
 
 		/** init billing handler */
 		billingHandler = new BillingHandler(this);
+
+		/** register GCM */
+		setRegisteringGCM();
 	}
 
 	@Override
@@ -221,6 +236,7 @@ public class BookshelfUserActivity extends Activity
 	{
 		billingHandler.closeService();
 		billingHandler = null;
+		//	setUnregisteringGCM();
 		super.onDestroy();
 	}
 
@@ -272,6 +288,9 @@ public class BookshelfUserActivity extends Activity
 		Logs.showTrace("Device orientation = " + device.getOrientation());
 		Logs.showTrace("Device inches = " + device.getDisplayIncheSize());
 		Logs.showTrace("Device type = " + device.getDeviceType()); // 0:phone 1:tablet
+		Logs.showTrace("Android SDK Version = " + device.getAndroidSdkVersion());
+		Logs.showTrace("Android Release Version = " + device.getAndroidReleaseVersion());
+		Logs.showTrace("=======================================================");
 		device = null;
 	}
 
@@ -332,7 +351,27 @@ public class BookshelfUserActivity extends Activity
 													break;
 												}
 											}
-
 										};
+
+	public void setRegisteringGCM()
+	{
+		//註冊
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		String regId = GCMRegistrar.getRegistrationId(this);
+		Logs.showTrace("Registering GCM Id=" + regId);
+		if (regId.equals(""))
+		{
+			GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
+		}
+	}
+
+	public void setUnregisteringGCM()
+	{
+		//取消註冊
+		Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
+		unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+		startService(unregIntent);
+	}
 
 }

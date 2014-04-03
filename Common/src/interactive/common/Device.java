@@ -155,4 +155,14 @@ public class Device
 		activity.startActivity(it);
 	}
 
+	public int getAndroidSdkVersion()
+	{
+		return android.os.Build.VERSION.SDK_INT;
+	}
+
+	public String getAndroidReleaseVersion()
+	{
+		return android.os.Build.VERSION.RELEASE;
+	}
+
 }
