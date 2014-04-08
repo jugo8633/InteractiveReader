@@ -15,9 +15,6 @@
     <permission
         android:name=".permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <permission
-        android:name=".permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
 
     <!-- CAMERA -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -29,14 +26,23 @@
         android:required="false" />
 
     <!-- App receives GCM messages. -->
+    <permission
+        android:name=".permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name=".permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name=".permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.javapapers.android.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <!-- other permissing -->
+    <uses-permission android:name=".permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
@@ -47,11 +53,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="false"
@@ -90,10 +91,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".GCMIntentService" />
-
         <receiver
-            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:name="interactive.gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -102,6 +101,8 @@
                 <category android:name="interactive.bookshelfuser" />
             </intent-filter>
         </receiver>
+
+        <service android:name="interactive.gcm.GCMNotificationIntentService" />
     </application>
 
 </manifest>

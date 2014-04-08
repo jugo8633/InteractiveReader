@@ -2,12 +2,11 @@ package interactive.bookshelfuser;
 
 import java.util.Calendar;
 
-import com.google.android.gcm.GCMRegistrar;
-
 import interactive.common.Device;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.gcm.GcmRegister;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
@@ -53,6 +52,7 @@ public class BookshelfUserActivity extends Activity
 	private MenuOptionHandler		menuOptionHandler		= null;
 	private BookListHandler			bookListHandler			= null;
 	private BillingHandler			billingHandler			= null;
+	public static int				ICON_ID					= Type.INVALID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -67,6 +67,7 @@ public class BookshelfUserActivity extends Activity
 		/** init global*/
 		Global.theActivity = this;
 		Global.handlerActivity = selfHandler;
+		ICON_ID = Global.getResourceId(this, "ic_launcher", "drawable");
 
 		/** show welcome page */
 		welcomePage = new WelcomePage(this);
@@ -236,7 +237,7 @@ public class BookshelfUserActivity extends Activity
 	{
 		billingHandler.closeService();
 		billingHandler = null;
-		//	setUnregisteringGCM();
+		setUnregisteringGCM();
 		super.onDestroy();
 	}
 
@@ -355,23 +356,29 @@ public class BookshelfUserActivity extends Activity
 
 	public void setRegisteringGCM()
 	{
-		//註冊
-		GCMRegistrar.checkDevice(this);
-		GCMRegistrar.checkManifest(this);
-		String regId = GCMRegistrar.getRegistrationId(this);
-		Logs.showTrace("Registering GCM Id=" + regId);
-		if (regId.equals(""))
-		{
-			GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
-		}
+		//註冊推播
+		GcmRegister gcmReg = new GcmRegister(this);
+		gcmReg.register();
+		gcmReg = null;
+		//			GCMRegistrar.checkDevice(this);
+		//			GCMRegistrar.checkManifest(this);
+		//			String regId = GCMRegistrar.getRegistrationId(this);
+		//			Logs.showTrace("Registering GCM Id=" + regId);
+		//			if (regId.equals(""))
+		//			{
+		//				GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
+		//			}
 	}
 
 	public void setUnregisteringGCM()
 	{
-		//取消註冊
-		Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
-		unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
-		startService(unregIntent);
+		//取消註冊推播
+		GcmRegister gcmReg = new GcmRegister(this);
+		gcmReg.unregister();
+		gcmReg = null;
+		//		Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
+		//		unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+		//		startService(unregIntent);
 	}
 
 }
