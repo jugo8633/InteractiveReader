@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 
 public class NotifycationHandler
 {

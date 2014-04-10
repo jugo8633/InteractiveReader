@@ -11,13 +11,26 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmRegister
 {
-	private GoogleCloudMessaging	gcm		= null;
-	private String					regId	= null;
+	private GoogleCloudMessaging		gcm							= null;
+	private OnRegisterFinishedListener	mOnRegisterFinishedListener	= null;
 
 	public GcmRegister(Context context)
 	{
 		super();
 		gcm = GoogleCloudMessaging.getInstance(context.getApplicationContext());
+	}
+
+	public static interface OnRegisterFinishedListener
+	{
+		public void onRegisterFinished(String strRegId);
+	}
+
+	public void setOnRegisterFinishedListener(GcmRegister.OnRegisterFinishedListener listener)
+	{
+		if (null != listener)
+		{
+			mOnRegisterFinishedListener = listener;
+		}
 	}
 
 	@Override
@@ -26,15 +39,9 @@ public class GcmRegister
 		super.finalize();
 	}
 
-	public String register()
+	public void register()
 	{
 		registerInBackground();
-
-		if (!TextUtils.isEmpty(regId))
-		{
-			Logs.showTrace("registerGCM - successfully registered with GCM server - regId: " + regId);
-		}
-		return regId;
 	}
 
 	public void unregister()
@@ -68,25 +75,24 @@ public class GcmRegister
 			@Override
 			protected String doInBackground(Void... params)
 			{
-				String msg = "";
+				String strRegId = null;
 				try
 				{
-					regId = gcm.register(Config.GOOGLE_PROJECT_ID);
-					Logs.showTrace("registerGCM - successfully registered with GCM server - regId: " + regId);
-					msg = "Device registered, registration ID=" + regId;
+					strRegId = gcm.register(Config.GOOGLE_PROJECT_ID);
+
 				}
 				catch (IOException ex)
 				{
-					msg = "Error :" + ex.getMessage();
-					Logs.showTrace(msg);
+					Logs.showTrace("Error :" + ex.getMessage());
 				}
-				return msg;
+				return strRegId;
 			}
 
 			@Override
 			protected void onPostExecute(String msg)
 			{
-
+				Logs.showTrace("registerGCM - register finish with GCM server - regId: " + msg);
+				mOnRegisterFinishedListener.onRegisterFinished(msg);
 			}
 		}.execute(null, null, null);
 	}

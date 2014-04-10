@@ -3,10 +3,13 @@ package interactive.bookshelfuser;
 import java.util.Calendar;
 
 import interactive.common.Device;
+import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.gcm.GCMNotificationIntentService;
 import interactive.gcm.GcmRegister;
+import interactive.gcm.ShareExternalServer;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
@@ -25,11 +28,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -348,7 +353,13 @@ public class BookshelfUserActivity extends Activity
 													pullRefreshList.clearSelected();
 													break;
 												case BookListHandler.MSG_SUBSCRIBT:
-													billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
+													//billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
+													
+													break;
+												case EventMessage.MSG_GCM_REGISTERED:
+													Logs.showTrace("Share GCM Register Id " + msg.obj
+															+ " with application server.");
+													shareRegIdWithAppServer((String) msg.obj);
 													break;
 												}
 											}
@@ -358,16 +369,19 @@ public class BookshelfUserActivity extends Activity
 	{
 		//註冊推播
 		GcmRegister gcmReg = new GcmRegister(this);
+		gcmReg.setOnRegisterFinishedListener(new GcmRegister.OnRegisterFinishedListener()
+		{
+			@Override
+			public void onRegisterFinished(String strRegId)
+			{
+				if (null != strRegId)
+				{
+					EventHandler.notify(selfHandler, EventMessage.MSG_GCM_REGISTERED, 0, 0, strRegId);
+				}
+			}
+		});
 		gcmReg.register();
 		gcmReg = null;
-		//			GCMRegistrar.checkDevice(this);
-		//			GCMRegistrar.checkManifest(this);
-		//			String regId = GCMRegistrar.getRegistrationId(this);
-		//			Logs.showTrace("Registering GCM Id=" + regId);
-		//			if (regId.equals(""))
-		//			{
-		//				GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
-		//			}
 	}
 
 	public void setUnregisteringGCM()
@@ -376,9 +390,31 @@ public class BookshelfUserActivity extends Activity
 		GcmRegister gcmReg = new GcmRegister(this);
 		gcmReg.unregister();
 		gcmReg = null;
-		//		Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
-		//		unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
-		//		startService(unregIntent);
+	}
+
+	private void shareRegIdWithAppServer(final String strRegId)
+	{
+		AsyncTask<Void, Void, String> shareRegidTask = new AsyncTask<Void, Void, String>()
+		{
+			@Override
+			protected String doInBackground(Void... params)
+			{
+				ShareExternalServer appServer = new ShareExternalServer();
+				String strResult = appServer.shareRegIdWithAppServer(BookshelfUserActivity.this, strRegId);
+				appServer = null;
+
+				Logs.showTrace("GCM share register id with application server result: " + strResult);
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+
+			}
+
+		};
+		shareRegidTask.execute(null, null, null);
 	}
 
 }

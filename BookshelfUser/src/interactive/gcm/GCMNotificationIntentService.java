@@ -1,17 +1,11 @@
 package interactive.gcm;
 
 import interactive.bookshelfuser.BookshelfUserActivity;
-import interactive.view.global.Global;
+import interactive.bookshelfuser.NotifycationHandler;
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -19,9 +13,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 public class GCMNotificationIntentService extends IntentService
 {
 
-	public static final int		NOTIFICATION_ID	= 1;
-	private NotificationManager	mNotificationManager;
-	NotificationCompat.Builder	builder;
+	//public static final int	NOTIFICATION_ID	= 1;
+	//private NotificationManager	mNotificationManager;
+	//NotificationCompat.Builder	builder;
 
 	public GCMNotificationIntentService()
 	{
@@ -74,18 +68,20 @@ public class GCMNotificationIntentService extends IntentService
 
 	private void sendNotification(String msg)
 	{
-		Log.d(TAG, "Preparing to send notification...: " + msg);
-		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotifycationHandler.createNotification(this, SystemClock.elapsedRealtime(), "GCM Notification", msg, msg, BookshelfUserActivity.class);
 
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, BookshelfUserActivity.class),
-				0);
-
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-				.setSmallIcon(BookshelfUserActivity.ICON_ID).setContentTitle("GCM Notification")
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg)).setContentText(msg);
-
-		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-		Log.d(TAG, "Notification sent successfully.");
+		//		Log.d(TAG, "Preparing to send notification...: " + msg);
+		//		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		//
+		//		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, BookshelfUserActivity.class),
+		//				0);
+		//
+		//		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+		//				.setSmallIcon(BookshelfUserActivity.ICON_ID).setContentTitle("GCM Notification")
+		//				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg)).setContentText(msg);
+		//
+		//		mBuilder.setContentIntent(contentIntent);
+		//		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		//		Log.d(TAG, "Notification sent successfully.");
 	}
 }
