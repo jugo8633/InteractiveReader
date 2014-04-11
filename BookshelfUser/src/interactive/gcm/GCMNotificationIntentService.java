@@ -68,7 +68,8 @@ public class GCMNotificationIntentService extends IntentService
 
 	private void sendNotification(String msg)
 	{
-		NotifycationHandler.createNotification(this, SystemClock.elapsedRealtime(), "GCM Notification", msg, msg, BookshelfUserActivity.class);
+		NotifycationHandler.createNotification(this, System.currentTimeMillis(), "GCM Notification", msg, msg,
+				BookshelfUserActivity.class);
 
 		//		Log.d(TAG, "Preparing to send notification...: " + msg);
 		//		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);

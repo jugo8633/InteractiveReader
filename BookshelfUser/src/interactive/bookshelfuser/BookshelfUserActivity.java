@@ -1,45 +1,41 @@
 package interactive.bookshelfuser;
 
-import java.util.Calendar;
-
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.gcm.GCMNotificationIntentService;
 import interactive.gcm.GcmRegister;
 import interactive.gcm.ShareExternalServer;
+import interactive.service.httpclient.CommuData;
+import interactive.service.httpclient.HttpClientService;
+import interactive.service.httpclient.HttpClientServiceAPI;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
-import android.support.v4.app.NotificationCompat;
+import android.os.RemoteException;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 public class BookshelfUserActivity extends Activity
 {
@@ -58,6 +54,7 @@ public class BookshelfUserActivity extends Activity
 	private BookListHandler			bookListHandler			= null;
 	private BillingHandler			billingHandler			= null;
 	public static int				ICON_ID					= Type.INVALID;
+	private HttpClientHandler		httpClientHandler		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -216,6 +213,10 @@ public class BookshelfUserActivity extends Activity
 
 		/** register GCM */
 		setRegisteringGCM();
+
+		/** init http client service */
+		httpClientHandler = new HttpClientHandler(this);
+
 	}
 
 	@Override
@@ -243,6 +244,9 @@ public class BookshelfUserActivity extends Activity
 		billingHandler.closeService();
 		billingHandler = null;
 		setUnregisteringGCM();
+		httpClientHandler.unBindService(this);
+		httpClientHandler = null;
+
 		super.onDestroy();
 	}
 
@@ -353,13 +357,20 @@ public class BookshelfUserActivity extends Activity
 													pullRefreshList.clearSelected();
 													break;
 												case BookListHandler.MSG_SUBSCRIBT:
-													//billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
-													
+													billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
+
 													break;
 												case EventMessage.MSG_GCM_REGISTERED:
 													Logs.showTrace("Share GCM Register Id " + msg.obj
 															+ " with application server.");
 													shareRegIdWithAppServer((String) msg.obj);
+													break;
+												case EventMessage.MSG_LOGIN:
+													if (null != msg.obj)
+													{
+														CommuData data = (CommuData) msg.obj;
+														httpClientHandler.login(data.mstrAccount, data.mstrPassword);
+													}
 													break;
 												}
 											}

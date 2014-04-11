@@ -47,6 +47,7 @@ public class EventMessage
 	public static final int	MSG_ANIMATION_MOVE			= MSG_CUSTOM + 37;
 	public static final int	MSG_JUMP_FADE				= MSG_CUSTOM + 38;
 	public static final int	MSG_GCM_REGISTERED			= MSG_CUSTOM + 39;
+	public static final int	MSG_LOGIN					= MSG_CUSTOM + 40;
 
 	/**
 	 * @author jugo

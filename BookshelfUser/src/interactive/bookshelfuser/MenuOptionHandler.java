@@ -1,7 +1,10 @@
 package interactive.bookshelfuser;
 
+import interactive.common.EventHandler;
+import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.service.httpclient.CommuData;
 import interactive.view.flip.FlipperView;
 import interactive.view.global.Global;
 import interactive.widget.ShapButton;
@@ -11,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,6 +26,7 @@ public class MenuOptionHandler
 	private RelativeLayout	loginMainLayout				= null;
 	private RelativeLayout	accountMainLayout			= null;
 	private RelativeLayout	forgetPasswordMainLayout	= null;
+	private Handler			notifyHandler				= null;
 
 	private class MenuID
 	{
@@ -82,6 +87,7 @@ public class MenuOptionHandler
 	public void setNotifyHandler(Handler handler)
 	{
 		flipperView.setNotifyHandler(handler);
+		notifyHandler = handler;
 	}
 
 	public void showLogin()
@@ -125,6 +131,34 @@ public class MenuOptionHandler
 				flipperView.showView(menuId.mnForgetPassword);
 			}
 		});
+
+		TextView loginBtn = (TextView) loginMainLayout
+				.findViewById(Global.getResourceId(activity, "start_login", "id"));
+		loginBtn.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				EditText editText = (EditText) loginMainLayout.findViewById(Global.getResourceId(activity,
+						"login_name", "id"));
+				String strName = editText.getText().toString();
+				editText = (EditText) loginMainLayout.findViewById(Global.getResourceId(activity, "login_password",
+						"id"));
+				String strPassword = editText.getText().toString();
+
+				if (null != strName && 0 < strName.length() && null != strPassword && 0 < strPassword.length())
+				{
+					CommuData data = new CommuData();
+					data.mstrAccount = strName;
+					data.mstrPassword = strPassword;
+					EventHandler.notify(notifyHandler, EventMessage.MSG_LOGIN, 0, 0, data);
+					data = null;
+					flipperView.close();
+				}
+
+			}
+		});
+
 	}
 
 	private void accountAddHandle(Activity activity)

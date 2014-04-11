@@ -57,7 +57,6 @@
     <application
         android:allowBackup="false"
         android:allowClearUserData="true"
-        android:debuggable="true"
         android:enabled="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
@@ -103,6 +102,13 @@
         </receiver>
 
         <service android:name="interactive.gcm.GCMNotificationIntentService" />
+        <service
+            android:name="interactive.service.httpclient.HttpClientService"
+            android:process="" >
+            <intent-filter>
+                <action android:name="interactive.service.httpclient.HttpClientService.REMOTE_SERVICE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

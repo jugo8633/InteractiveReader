@@ -100,30 +100,4 @@ public class DrawerMenuAdapter extends BaseAdapter
 		return view;
 	}
 
-	private OnClickListener	menuItemClick	= new OnClickListener()
-											{
-
-												@Override
-												public void onClick(View view)
-												{
-													String strTag = (String) view.getTag();
-													if (strTag.equals("login"))
-													{
-
-													}
-													else if (strTag.equals("config"))
-													{
-
-													}
-													else if (strTag.equals("news"))
-													{
-
-													}
-													else if (strTag.equals("subscript"))
-													{
-
-													}
-												}
-
-											};
 }
