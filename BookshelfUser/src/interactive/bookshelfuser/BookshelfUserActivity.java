@@ -7,9 +7,7 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.gcm.GcmRegister;
 import interactive.gcm.ShareExternalServer;
-import interactive.service.httpclient.CommuData;
-import interactive.service.httpclient.HttpClientService;
-import interactive.service.httpclient.HttpClientServiceAPI;
+import interactive.service.httpclient.HttpClientHandler;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
 import interactive.widget.PullToRefreshListView;
@@ -18,23 +16,17 @@ import interactive.widget.TabButton;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 
 public class BookshelfUserActivity extends Activity
@@ -368,8 +360,8 @@ public class BookshelfUserActivity extends Activity
 												case EventMessage.MSG_LOGIN:
 													if (null != msg.obj)
 													{
-														CommuData data = (CommuData) msg.obj;
-														httpClientHandler.login(data.mstrAccount, data.mstrPassword);
+														MenuOptionHandler.LoginData data = (MenuOptionHandler.LoginData) msg.obj;
+														httpClientHandler.login(data.mstrName, data.mstrPassword);
 													}
 													break;
 												}

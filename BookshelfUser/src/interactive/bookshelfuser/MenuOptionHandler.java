@@ -4,7 +4,6 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.service.httpclient.CommuData;
 import interactive.view.flip.FlipperView;
 import interactive.view.global.Global;
 import interactive.widget.ShapButton;
@@ -27,6 +26,12 @@ public class MenuOptionHandler
 	private RelativeLayout	accountMainLayout			= null;
 	private RelativeLayout	forgetPasswordMainLayout	= null;
 	private Handler			notifyHandler				= null;
+
+	public class LoginData
+	{
+		public String	mstrName		= null;
+		public String	mstrPassword	= null;
+	}
 
 	private class MenuID
 	{
@@ -148,8 +153,8 @@ public class MenuOptionHandler
 
 				if (null != strName && 0 < strName.length() && null != strPassword && 0 < strPassword.length())
 				{
-					CommuData data = new CommuData();
-					data.mstrAccount = strName;
+					LoginData data = new LoginData();
+					data.mstrName = strName;
 					data.mstrPassword = strPassword;
 					EventHandler.notify(notifyHandler, EventMessage.MSG_LOGIN, 0, 0, data);
 					data = null;

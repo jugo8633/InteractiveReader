@@ -9,9 +9,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import interactive.bookshelfuser.BookshelfUserActivity;
+import org.apache.http.HttpStatus;
+
 import interactive.common.Logs;
-import interactive.gcm.ShareExternalServer;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,8 +20,8 @@ import android.os.RemoteException;
 
 public class HttpClientService extends Service
 {
-
-	private String						mstrAccount	= "jugo";
+	private HttpClientResponseAPI		responseAPI	= null;
+	private HttpClientResponseData		respData	= null;
 
 	private HttpClientServiceAPI.Stub	apiEndpoint	= new HttpClientServiceAPI.Stub()
 													{
@@ -29,11 +29,56 @@ public class HttpClientService extends Service
 														public void Login(String strAccount, String strPassword)
 																throws RemoteException
 														{
-															mstrAccount = strAccount;
-															Logs.showTrace("do Login account=" + mstrAccount
+
+															Logs.showTrace("do Login account=" + strAccount
 																	+ " password=" + strPassword);
-															doLogin(strAccount, strPassword);
+															HttpClientLogin login = new HttpClientLogin();
+															login.setOnLoginFinishListener(new HttpClientLogin.OnLoginFinishListener()
+															{
+																@Override
+																public void onLoginFinish(String strResult)
+																{
+																	int nStatusCode = HttpStatus.SC_OK;
+																	if (null == strResult)
+																	{
+																		nStatusCode = HttpStatus.SC_BAD_REQUEST;
+																	}
+
+																	respData = new HttpClientResponseData(strResult,
+																			nStatusCode);
+																	try
+																	{
+																		responseAPI.ResponseLogin(nStatusCode);
+																	}
+																	catch (RemoteException e)
+																	{
+																		e.printStackTrace();
+																	}
+																}
+															});
+
+															login.doLogin(strAccount, strPassword);
+															login = null;
+
 														}
+
+														@Override
+														public void addResponse(HttpClientResponseAPI response)
+																throws RemoteException
+														{
+															synchronized (response)
+															{
+																responseAPI = response;
+															}
+														}
+
+														@Override
+														public HttpClientResponseData getHttpClientResult()
+																throws RemoteException
+														{
+															return respData;
+														}
+
 													};
 
 	@Override
@@ -51,13 +96,6 @@ public class HttpClientService extends Service
 	}
 
 	@Override
-	public void onStart(Intent intent, int startId)
-	{
-		Logs.showTrace("Http client service start");
-		super.onStart(intent, startId);
-	}
-
-	@Override
 	public IBinder onBind(Intent intent)
 	{
 		Logs.showTrace("Bind AIDL ");
@@ -69,129 +107,5 @@ public class HttpClientService extends Service
 	{
 		super.onUnbind(intent);
 		return true;
-	}
-
-	private void doLogin(final String strName, final String strPasswd)
-	{
-		AsyncTask<Void, Void, String> shareRegidTask = new AsyncTask<Void, Void, String>()
-		{
-			@Override
-			protected String doInBackground(Void... params)
-			{
-				HttpURLConnection conn = null;
-				String strUrl = "http://appcross.ideas.iii.org.tw:2196/auth/login?username=" + strName + "&password="
-						+ strPasswd;
-				Logs.showTrace("GCM application server connect: " + strUrl);
-				URL url = null;
-				try
-				{
-					url = new URL(strUrl);
-				}
-				catch (MalformedURLException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				try
-				{
-					conn = (HttpURLConnection) url.openConnection();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				conn.setReadTimeout(10000);
-				conn.setConnectTimeout(15000);
-				try
-				{
-					conn.setRequestMethod("POST");
-				}
-				catch (ProtocolException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try
-				{
-					conn.connect();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				// 讀取資料
-				BufferedReader reader = null;
-				try
-				{
-					reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-				}
-				catch (UnsupportedEncodingException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String result = null;
-
-				try
-				{
-					if (null != reader)
-					{
-						result = reader.readLine();
-						String line;
-						while ((line = reader.readLine()) != null)
-						{
-							result += line;
-						}
-						reader.close();
-					}
-
-				}
-				catch (IOException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				Logs.showTrace("result=" + result + " ##########################################");
-				// 讀取結果
-				int status = 0;
-				try
-				{
-					status = conn.getResponseCode();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (200 == status)
-				{
-					result = "RegId shared with Application Server. RegId: ";
-
-				}
-				else
-				{
-					result = "Post Failure." + " Status: " + status;
-				}
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(String result)
-			{
-
-			}
-
-		};
-		shareRegidTask.execute(null, null, null);
 	}
 }
