@@ -112,6 +112,25 @@ public class FootbarHandler
 		}
 	}
 
+	public void setSelectItem(int nIndex)
+	{
+		int nResId = 0;
+		switch (nIndex)
+		{
+		case 0:
+			nResId = footbar.mnBookCityId;
+			break;
+		case 1:
+			nResId = footbar.mnBookshelfId;
+			break;
+		case 2:
+			nResId = footbar.mnReaderId;
+			break;
+		}
+		objectFactory.setImgBtnTouchUp(nResId);
+		notifyItemSelected(nResId);
+	}
+
 	private OnTouchListener	optionTouchListener	= new OnTouchListener()
 												{
 

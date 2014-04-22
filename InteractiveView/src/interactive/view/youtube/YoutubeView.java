@@ -103,7 +103,7 @@ public class YoutubeView extends RelativeLayout implements YouTubePlayer.OnIniti
 			{
 				player.setPlayerStyle(PlayerStyle.CHROMELESS);
 			}
-
+			
 			mnStart = nStart;
 
 			//			if (0 < nEnd)

@@ -89,6 +89,71 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="interactive.reader.ReaderActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:screenOrientation="sensor"
+            android:taskAffinity=":activity" >
+            <intent-filter>
+                <action android:name="interactive.reader.ReaderActivity.LAUNCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="interactive.view.map.GoogleMapActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:taskAffinity=":activity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="interactive.view.map.GoogleMapActivity.LAUNCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="interactive.view.slideshow.SlideshowViewActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:taskAffinity=":activity" >
+            <intent-filter>
+                <action android:name="interactive.view.slideshow.SlideshowViewActivity.LAUNCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="interactive.view.webview.WebBrowserActivity"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:multiprocess="true"
+            android:noHistory="false"
+            android:taskAffinity=":activity" >
+            <intent-filter>
+                <action android:name="interactive.view.webview.WebBrowserActivity.LAUNCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="interactive.view.youtube.YouTubePlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensor"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
+        </activity>
 
         <receiver
             android:name="interactive.gcm.GcmBroadcastReceiver"

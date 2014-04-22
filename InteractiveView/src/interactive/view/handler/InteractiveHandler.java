@@ -227,6 +227,7 @@ public class InteractiveHandler
 	public void releaseAllAudio()
 	{
 		audioHandler.releaseAllAudio();
+		mediaHandler.stopMedia();
 	}
 
 	/********************************************************************************/

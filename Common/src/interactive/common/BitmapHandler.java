@@ -21,7 +21,7 @@ import android.view.View.MeasureSpec;
 public class BitmapHandler
 {
 
-	private static final int	msMaxTexture	= getMaxTexDim();
+	private static int	msMaxTexture	= getMaxTexDim();
 
 	public BitmapHandler()
 	{
@@ -79,6 +79,15 @@ public class BitmapHandler
 		}
 		try
 		{
+			
+			if (0 >= msMaxTexture)
+			{
+				msMaxTexture = getMaxTexDim();
+				if (0 >= msMaxTexture)
+				{
+					msMaxTexture = 4096;
+				}
+			}
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = true;
 			options.inPurgeable = true;

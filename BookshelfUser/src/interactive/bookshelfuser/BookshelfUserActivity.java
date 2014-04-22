@@ -1,5 +1,6 @@
 package interactive.bookshelfuser;
 
+import interactive.common.ClearCache;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
@@ -7,9 +8,12 @@ import interactive.common.Logs;
 import interactive.common.Type;
 import interactive.gcm.GcmRegister;
 import interactive.gcm.ShareExternalServer;
+import interactive.reader.ReaderActivity;
+import interactive.reader.ReaderHandler;
 import interactive.service.httpclient.HttpClientHandler;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
+import interactive.view.slideshow.SlideshowViewActivity;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
@@ -26,6 +30,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 
@@ -47,6 +52,10 @@ public class BookshelfUserActivity extends Activity
 	private BillingHandler			billingHandler			= null;
 	public static int				ICON_ID					= Type.INVALID;
 	private HttpClientHandler		httpClientHandler		= null;
+	private final int				READER_RESULT_CODE		= 20140422;
+	private ProgressDialog			progressDialog			= null;
+
+	//private ReaderHandler			readerHandler			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -209,12 +218,41 @@ public class BookshelfUserActivity extends Activity
 		/** init http client service */
 		httpClientHandler = new HttpClientHandler(this);
 
+		/** init reader */
+		//readerHandler = new ReaderHandler(this);
+		// test load book
+		//readerHandler.initBook("/sdcard/Download/android_test/");
+
+	}
+
+	@Override
+	protected void onResume()
+	{
+		Global.theActivity = this;
+		Global.interactiveHandler.initMediaView(this);
+		//readerHandler.Resume();
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		closeProgressDialog();
+		//readerHandler.pause();
+		super.onPause();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Logs.showTrace("onActivityResult(" + requestCode + "," + resultCode + "," + data);
+
+		if (READER_RESULT_CODE == requestCode && RESULT_OK == resultCode && null != data)
+		{
+			Bundle bundle = data.getExtras();
+			footbar.setSelectItem(bundle.getInt("FOOT_SELECT"));
+			return;
+		}
 
 		// Pass on the activity result to the helper for handling
 		if (!billingHandler.handleActivityResult(requestCode, resultCode, data))
@@ -223,6 +261,7 @@ public class BookshelfUserActivity extends Activity
 			// perform any handling of activity results not related to in-app
 			// billing...
 			super.onActivityResult(requestCode, resultCode, data);
+			//readerHandler.ActivityResult(requestCode, resultCode, data);
 		}
 		else
 		{
@@ -238,6 +277,11 @@ public class BookshelfUserActivity extends Activity
 		setUnregisteringGCM();
 		httpClientHandler.unBindService(this);
 		httpClientHandler = null;
+
+		Global.interactiveHandler.releaseAllAudio();
+		ClearCache clearCache = new ClearCache();
+		clearCache.clearApplicationData(this);
+		clearCache = null;
 
 		super.onDestroy();
 	}
@@ -304,9 +348,40 @@ public class BookshelfUserActivity extends Activity
 		}
 
 		mnCurrentFootbarItem = nIndex;
-		flipper.setDisplayedChild(mnCurrentFootbarItem);
+		if (2 == mnCurrentFootbarItem)
+		{
+			/**
+			 * show reader activity
+			 */
+			int nResId = Global.getResourceId(this, "loading_book", "string");
+			String strTmp = getString(nResId);
+			showProgreeDialog(strTmp);
+			Intent intent = new Intent(this, ReaderActivity.class);
+			intent.putExtra(ReaderActivity.BOOK_PATH, "/sdcard/Download/android_test/");
+			startActivityForResult(intent, READER_RESULT_CODE);
+		}
+		else
+		{
+			flipper.setDisplayedChild(mnCurrentFootbarItem);
+		}
 
 		Logs.showTrace("Flipper show child index=" + nIndex);
+	}
+
+	private void showProgreeDialog(final String strMsg)
+	{
+		closeProgressDialog();
+		progressDialog = ProgressDialog.show(this, "", strMsg, true, false);
+		Logs.showTrace("show progress dialog :" + strMsg);
+	}
+
+	private void closeProgressDialog()
+	{
+		if (null != progressDialog)
+		{
+			progressDialog.dismiss();
+			progressDialog = null;
+		}
 	}
 
 	private void switchBookCityBookList(int nIndex)
