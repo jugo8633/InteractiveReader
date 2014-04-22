@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayoutChapMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutChapBG"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="44dp"
+        android:background="@color/chap_background" >
+    </RelativeLayout>
+
+    <interactive.view.gallery.GalleryView
+        android:id="@+id/galleryViewChap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </interactive.view.gallery.GalleryView>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutInfoBar"
+        android:layout_width="match_parent"
+        android:layout_height="135dp"
+        android:layout_alignParentBottom="true"
+        android:alpha=".95"
+        android:background="@color/White" >
+
+        <TextView
+            android:id="@+id/textViewChapTitle"
+            style="@style/PageInfoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="140dp"
+            android:layout_marginTop="35dp"
+            android:text="Title" />
+
+        <TextView
+            android:id="@+id/textViewChapDescript"
+            style="@style/PageInfoDescript"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewChapTitle"
+            android:layout_below="@+id/textViewChapTitle"
+            android:text="Descript" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageViewChapArrow"
+        android:layout_width="37dp"
+        android:layout_height="13dp"
+        android:layout_above="@id/relativeLayoutInfoBar"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/arrow" />
+
+</RelativeLayout>

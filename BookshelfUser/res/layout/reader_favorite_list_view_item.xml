@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayoutFavoriteItem"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/imageViewFavoriteItem"
+        android:layout_width="145dp"
+        android:layout_height="194dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="18dp"
+        android:contentDescription="@string/content_descript"
+        android:src="@drawable/ebook" />
+
+    <TextView
+        android:id="@+id/textViewFavoriteItemTitle"
+        style="@style/PageInfoTitle"
+        android:layout_alignTop="@+id/imageViewFavoriteItem"
+        android:layout_toRightOf="@+id/imageViewFavoriteItem" />
+
+    <TextView
+        android:id="@+id/textViewFavoriteDescript"
+        style="@style/PageInfoDescript"
+        android:layout_below="@id/textViewFavoriteItemTitle"
+        android:layout_toRightOf="@id/imageViewFavoriteItem" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/imageViewFavoriteItem"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:background="@color/border_line" />
+
+</RelativeLayout>

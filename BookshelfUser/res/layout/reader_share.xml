@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="525dp"
+        android:layout_height="695dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/reader_option" >
+
+        <TextView
+            android:id="@+id/textViewCategoryTitle"
+            style="@style/ReaderOptionTitle"
+            android:text="@string/share_title" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_below="@id/textViewCategoryTitle"
+            android:background="@color/border_line" />
+
+        <ImageView
+            android:id="@+id/imageViewSharePage"
+            android:layout_width="145dp"
+            android:layout_height="194dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textViewCategoryTitle"
+            android:layout_marginBottom="25dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="25dp"
+            android:contentDescription="@string/content_descript"
+            android:scaleType="centerInside"
+            android:src="@drawable/ebook" />
+
+        <EditText
+            android:id="@+id/editTextShareText"
+            android:layout_width="455dp"
+            android:layout_height="205dp"
+            android:layout_below="@id/imageViewSharePage"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:background="@color/White"
+            android:ems="10"
+            android:gravity="top"
+            android:hint="@string/share_Hint_word"
+            android:inputType="textMultiLine"
+            android:textColor="@color/Black"
+            android:textSize="20sp" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/imageViewShareMail"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/editTextShareText"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="35dp"
+            android:contentDescription="@string/content_descript"
+            android:scaleType="centerInside"
+            android:src="@drawable/email_normal" />
+
+        <ImageView
+            android:id="@+id/imageViewShareFb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignTop="@+id/imageViewShareMail"
+            android:layout_toLeftOf="@+id/imageViewShareMail"
+            android:contentDescription="@string/content_descript"
+            android:scaleType="centerInside"
+            android:src="@drawable/fb_normal" />
+    </RelativeLayout>
+
+</RelativeLayout>
