@@ -134,24 +134,6 @@ public class InteractiveWebView extends WebView
 
 	private class myWebViewClient extends WebViewClient
 	{
-
-		//		@Override
-		//		public void onLoadResource(WebView view, String url)
-		//		{
-		//			/**  for AD */
-		//			if (null == view || null == url)
-		//			{
-		//				return;
-		//			}
-		//			if (null != view.getHitTestResult() && view.getHitTestResult().getType() > 0)
-		//			{
-		//				view.stopLoading();
-		//				Intent intent = new Intent(getContext(), WebBrowserActivity.class);
-		//				intent.putExtra(EXTRA_URL, url);
-		//				getContext().startActivity(intent);
-		//			}
-		//		}
-
 		public boolean shouldOverrideUrlLoading(WebView view, String url)
 		{
 			/** 跳頁 */
@@ -185,7 +167,7 @@ public class InteractiveWebView extends WebView
 				Global.theActivity.startActivity(i);
 			}
 
-			return mbOverLoadUrl;
+			return false;
 		}
 
 		@Override

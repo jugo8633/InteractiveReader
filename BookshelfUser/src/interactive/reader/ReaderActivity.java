@@ -60,8 +60,8 @@ public class ReaderActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 
-		/** show device information */
-		getDeviceInfo(this);
+		/** set cache clean */
+		ClearCache.setCacheClean(false);
 
 		/** init global*/
 		Global.theActivity = this;
@@ -71,35 +71,71 @@ public class ReaderActivity extends Activity
 		int nResId = Global.getResourceId(this, "reader", "layout");
 		this.setContentView(nResId);
 
-		/** initialize header bar */
-		initHeader();
-
-		/** initialize page reader from reader layout*/
-		initPageReader();
-
-		/** init option handler */
-		optionHandler = new OptionHandler(this);
-
 		/** get book information and path */
-		//		nResId = Global.getResourceId(this, "loading_book", "string");
-		//		String strTmp = getString(nResId);
-		//		showProgreeDialog(strTmp);
 		bookHandler = new BookHandler();
 		bookHandler.setNotifyHandler(selfHandler);
-		//		bookHandler.startBookCheck(this);
 
-		/** init footbar handler */
-
-		initFootbar();
-
+		initLayout();
 		Intent intent = getIntent();
 		mstrBookPath = intent.getStringExtra(BOOK_PATH);
 		if (null == mstrBookPath)
 		{
 			finish();
 		}
-		initBook(mstrBookPath);
+		loadBook();
 		Logs.showTrace("Reader Activity Create");
+	}
+
+	private void initLayout()
+	{
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//do loading data or whatever hard here
+
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/** initialize header bar */
+						initHeader();
+
+						/** initialize page reader from reader layout*/
+						initPageReader();
+
+						/** init option handler */
+						optionHandler = new OptionHandler(ReaderActivity.this);
+
+						/** init footbar handler */
+						initFootbar();
+					}
+				});
+			}
+		}).start();
+	}
+
+	private void loadBook()
+	{
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//do loading data or whatever hard here
+
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						initBook(mstrBookPath);
+					}
+				});
+			}
+		}).start();
 	}
 
 	@Override
@@ -119,7 +155,10 @@ public class ReaderActivity extends Activity
 		Logs.showTrace("Reader activity resume");
 		Global.theActivity = this;
 		Global.interactiveHandler.initMediaView(this);
-		optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+		if (null != optionHandler)
+		{
+			optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+		}
 		super.onResume();
 	}
 
@@ -148,9 +187,7 @@ public class ReaderActivity extends Activity
 	protected void onDestroy()
 	{
 		Global.interactiveHandler.releaseAllAudio();
-		ClearCache clearCache = new ClearCache();
-		clearCache.clearApplicationData(this);
-		clearCache = null;
+		Logs.showTrace("Redaer activity destory");
 		super.onDestroy();
 	}
 

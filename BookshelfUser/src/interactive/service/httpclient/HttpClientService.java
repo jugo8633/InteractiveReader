@@ -79,6 +79,13 @@ public class HttpClientService extends Service
 															return respData;
 														}
 
+														@Override
+														public void getBook(int nBookId) throws RemoteException
+														{
+															// TODO Auto-generated method stub
+															
+														}
+
 													};
 
 	@Override

@@ -7,5 +7,6 @@ interface HttpClientServiceAPI
 {
     void addResponse(HttpClientResponseAPI response);
 	void Login(String strAccount, String strPassword);
+	void getBook(int nBookId);
 	HttpClientResponseData getHttpClientResult();
 }

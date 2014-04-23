@@ -7,13 +7,24 @@ import android.content.Context;
 public class ClearCache
 {
 
+	private static boolean	stmCleanCache	= true;
+
 	public ClearCache()
 	{
 		super();
 	}
 
+	public static void setCacheClean(boolean bClean)
+	{
+		stmCleanCache = bClean;
+	}
+
 	public void clearApplicationData(Context context)
 	{
+		if (!stmCleanCache)
+		{
+			return;
+		}
 		File cache = context.getCacheDir();
 		File appDir = new File(cache.getParent());
 		if (appDir.exists())
@@ -31,6 +42,10 @@ public class ClearCache
 
 	public void trimCache(Context context)
 	{
+		if (!stmCleanCache)
+		{
+			return;
+		}
 		try
 		{
 			File dir = context.getCacheDir();

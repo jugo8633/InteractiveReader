@@ -111,7 +111,6 @@ public class ScrollableImageHandler
 		{
 			Bitmap bitmapBack = Bitmap.createBitmap(imageSet.mnWidth + (0 - imageSet.mnOffsetX), imageSet.mnHeight,
 					Config.ARGB_8888);
-			Logs.showTrace("load image=" + imageSet.mstrImagePath + " #######################################");
 			Bitmap bitmapFront = BitmapHandler.readBitmap(imageSet.mstrImagePath, imageSet.mnWidth, imageSet.mnHeight,
 					true);
 			mBmpImage = BitmapHandler.combineBitmap(bitmapBack, bitmapFront, (0 - imageSet.mnOffsetX), 0f);

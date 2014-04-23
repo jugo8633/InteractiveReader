@@ -61,153 +61,240 @@ public class BookshelfUserActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
 		/** init orientation*/
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-		/** show device information */
-		getDeviceInfo(this);
-
-		/** init global*/
-		Global.theActivity = this;
-		Global.handlerActivity = selfHandler;
-		ICON_ID = Global.getResourceId(this, "ic_launcher", "drawable");
-
-		/** show welcome page */
-		welcomePage = new WelcomePage(this);
-		welcomePage.show();
 
 		/** load book layout */
 		int nResId = Global.getResourceId(this, "activity_main", "layout");
 		this.setContentView(nResId);
 
-		/** init flip */
-		flipper = (ViewFlipper) this.findViewById(Global.getResourceId(this, "book_list_flipper", "id"));
-		AnimationType animationType = new AnimationType();
-		flipper.setOutAnimation(animationType.outToLeftAnimation(200));
-		flipper.setInAnimation(animationType.inFromRightAnimation(500));
-
-		/** init footbar handler */
-		footbar = new FootbarHandler(this);
-		footbar.setDefaultSelected(Global.getResourceId(this, "bookCityBtn", "id"));
-		footbar.setOnItemSelectedListener(new FootbarHandler.OnItemSelectedListener()
+		new Thread(new Runnable()
 		{
 			@Override
-			public void OnItemSelected(int nIndexSelected)
+			public void run()
 			{
-				switchMode(nIndexSelected);
-				Logs.showTrace("Footbar item selected index=" + nIndexSelected);
-			}
-		});
-
-		/** init book city book list */
-		flipperBookCityBookList = (ViewFlipper) this
-				.findViewById(Global.getResourceId(this, "book_city_flipper", "id"));
-		flipperBookCityBookList.setOutAnimation(animationType.outToLeftAnimation(200));
-		flipperBookCityBookList.setInAnimation(animationType.inFromRightAnimation(500));
-		animationType = null;
-
-		/** init list menu button */
-		mnListMenuBtnId = Global.getResourceId(this, "listMenuBtn", "id");
-		listMenuBtn = (ImageView) this.findViewById(mnListMenuBtnId);
-		listMenuBtn.setOnClickListener(buttonClick);
-
-		/** init drawer layout */
-		drawerLayout = (DrawerLayout) this.findViewById(Global.getResourceId(this, "drawer_layout", "id"));
-		drawerLayout.setDrawerShadow(Global.getResourceId(this, "drawer_shadow", "drawable"), GravityCompat.START);
-		drawerLayout.setDrawerListener(new DrawerListener()
-		{
-			@Override
-			public void onDrawerClosed(View arg0)
-			{
-				drawerHandler(false);
-			}
-
-			@Override
-			public void onDrawerOpened(View arg0)
-			{
-				drawerHandler(true);
-			}
-
-			@Override
-			public void onDrawerSlide(View arg0, float arg1)
-			{
-
-			}
-
-			@Override
-			public void onDrawerStateChanged(int arg0)
-			{
-
-			}
-		});
-
-		/** init menu option */
-		menuOptionHandler = new MenuOptionHandler(this);
-		menuOptionHandler.setNotifyHandler(selfHandler);
-
-		/** init pull to refresh listview */
-		pullRefreshList = (PullToRefreshListView) this.findViewById(Global.getResourceId(this, "pull_to_refresh_list",
-				"id"));
-		DrawerMenuAdapter menuAdapter = new DrawerMenuAdapter(this);
-		pullRefreshList.setAdapter(menuAdapter);
-		menuAdapter = null;
-		pullRefreshList.setOnRefreshListener(new OnRefreshListener()
-		{
-			@Override
-			public void onRefresh()
-			{
-				Logs.showTrace("Refresh.......");
-				new GetDataTask().execute();
-			}
-		});
-
-		pullRefreshList.setOnItemSelectedListener(new PullToRefreshListView.OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(int nIndex)
-			{
-				Logs.showTrace("Menu item selected index=" + nIndex);
-				switch (nIndex)
+				runOnUiThread(new Runnable()
 				{
-				case DrawerMenuAdapter.INDEX_LOGIN:
-					menuOptionHandler.showLogin();
-					break;
-				case DrawerMenuAdapter.INDEX_SETTING:
-					menuOptionHandler.showSetting();
-					break;
-				case DrawerMenuAdapter.INDEX_NEWS:
-					menuOptionHandler.showNews();
-					break;
-				case DrawerMenuAdapter.INDEX_SUBSCRIPT:
-					break;
-				}
-			}
-		});
+					@Override
+					public void run()
+					{
+						/** show device information */
+						getDeviceInfo(BookshelfUserActivity.this);
 
-		/** init tab button */
-		tabButton = (TabButton) this.findViewById(Global.getResourceId(this, "tabButton", "id"));
-		tabButton.addTextButton(this.getString(Global.getResourceId(this, "all_book", "string")));
-		tabButton.addTextButton(this.getString(Global.getResourceId(this, "free_book", "string")));
-		tabButton.addTextButton(this.getString(Global.getResourceId(this, "special_book", "string")));
-		tabButton.addTextButton(this.getString(Global.getResourceId(this, "previous_book", "string")));
-		tabButton.setItemSelect(0);
-		tabButton.setOnItemSwitchedListener(new TabButton.OnItemSwitchedListener()
+						/** show welcome page */
+						welcomePage = new WelcomePage(BookshelfUserActivity.this);
+						welcomePage.show();
+
+						/** init flip */
+						flipper = (ViewFlipper) BookshelfUserActivity.this.findViewById(Global.getResourceId(
+								BookshelfUserActivity.this, "book_list_flipper", "id"));
+						AnimationType animationType = new AnimationType();
+						flipper.setOutAnimation(animationType.outToLeftAnimation(200));
+						flipper.setInAnimation(animationType.inFromRightAnimation(500));
+
+						/** init footbar handler */
+						footbar = new FootbarHandler(BookshelfUserActivity.this);
+						footbar.setDefaultSelected(Global
+								.getResourceId(BookshelfUserActivity.this, "bookCityBtn", "id"));
+						footbar.setOnItemSelectedListener(new FootbarHandler.OnItemSelectedListener()
+						{
+							@Override
+							public void OnItemSelected(int nIndexSelected)
+							{
+								switchMode(nIndexSelected);
+								Logs.showTrace("Footbar item selected index=" + nIndexSelected);
+							}
+						});
+
+						/** init book city book list */
+						flipperBookCityBookList = (ViewFlipper) BookshelfUserActivity.this.findViewById(Global
+								.getResourceId(BookshelfUserActivity.this, "book_city_flipper", "id"));
+						flipperBookCityBookList.setOutAnimation(animationType.outToLeftAnimation(200));
+						flipperBookCityBookList.setInAnimation(animationType.inFromRightAnimation(500));
+						animationType = null;
+
+						/** init list menu button */
+						mnListMenuBtnId = Global.getResourceId(BookshelfUserActivity.this, "listMenuBtn", "id");
+						listMenuBtn = (ImageView) BookshelfUserActivity.this.findViewById(mnListMenuBtnId);
+						listMenuBtn.setOnClickListener(buttonClick);
+					}
+				});
+			}
+		}).start();
+
+		new Thread(new Runnable()
 		{
 			@Override
-			public void onItemSwitched(int nIndex)
+			public void run()
 			{
-				switchBookCityBookList(nIndex);
-				Logs.showTrace("tab button item switch index=" + nIndex);
-			}
-		});
+				//do loading data or whatever hard here
 
-		/** init book city book gallery */
-		bookListHandler = new BookListHandler();
-		bookListHandler.setNotifyHandler(selfHandler);
-		bookListHandler.initAllBookList(this);
-		bookListHandler.initFreeBookList(this);
-		bookListHandler.initSpecialBookList(this);
-		bookListHandler.initPreviousBookList(this);
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/** init global*/
+						Global.theActivity = BookshelfUserActivity.this;
+						Global.handlerActivity = selfHandler;
+						ICON_ID = Global.getResourceId(BookshelfUserActivity.this, "ic_launcher", "drawable");
+
+						/** init drawer layout */
+						drawerLayout = (DrawerLayout) BookshelfUserActivity.this.findViewById(Global.getResourceId(
+								BookshelfUserActivity.this, "drawer_layout", "id"));
+						drawerLayout.setDrawerShadow(
+								Global.getResourceId(BookshelfUserActivity.this, "drawer_shadow", "drawable"),
+								GravityCompat.START);
+						drawerLayout.setDrawerListener(new DrawerListener()
+						{
+							@Override
+							public void onDrawerClosed(View arg0)
+							{
+								drawerHandler(false);
+							}
+
+							@Override
+							public void onDrawerOpened(View arg0)
+							{
+								drawerHandler(true);
+							}
+
+							@Override
+							public void onDrawerSlide(View arg0, float arg1)
+							{
+
+							}
+
+							@Override
+							public void onDrawerStateChanged(int arg0)
+							{
+
+							}
+						});
+					}
+				});
+			}
+		}).start();
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/** init menu option */
+						menuOptionHandler = new MenuOptionHandler(BookshelfUserActivity.this);
+						menuOptionHandler.setNotifyHandler(selfHandler);
+
+						/** init pull to refresh listview */
+						pullRefreshList = (PullToRefreshListView) BookshelfUserActivity.this.findViewById(Global
+								.getResourceId(BookshelfUserActivity.this, "pull_to_refresh_list", "id"));
+						DrawerMenuAdapter menuAdapter = new DrawerMenuAdapter(BookshelfUserActivity.this);
+						pullRefreshList.setAdapter(menuAdapter);
+						menuAdapter = null;
+						pullRefreshList.setOnRefreshListener(new OnRefreshListener()
+						{
+							@Override
+							public void onRefresh()
+							{
+								Logs.showTrace("Refresh.......");
+								new GetDataTask().execute();
+							}
+						});
+
+						pullRefreshList.setOnItemSelectedListener(new PullToRefreshListView.OnItemSelectedListener()
+						{
+							@Override
+							public void onItemSelected(int nIndex)
+							{
+								Logs.showTrace("Menu item selected index=" + nIndex);
+								switch (nIndex)
+								{
+								case DrawerMenuAdapter.INDEX_LOGIN:
+									menuOptionHandler.showLogin();
+									break;
+								case DrawerMenuAdapter.INDEX_SETTING:
+									menuOptionHandler.showSetting();
+									break;
+								case DrawerMenuAdapter.INDEX_NEWS:
+									menuOptionHandler.showNews();
+									break;
+								case DrawerMenuAdapter.INDEX_SUBSCRIPT:
+									break;
+								}
+							}
+						});
+					}
+				});
+			}
+		}).start();
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//do loading data or whatever hard here
+
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/** init tab button */
+						tabButton = (TabButton) BookshelfUserActivity.this.findViewById(Global.getResourceId(
+								BookshelfUserActivity.this, "tabButton", "id"));
+						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
+								BookshelfUserActivity.this, "all_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
+								BookshelfUserActivity.this, "free_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
+								BookshelfUserActivity.this, "special_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
+								BookshelfUserActivity.this, "previous_book", "string")));
+						tabButton.setItemSelect(0);
+						tabButton.setOnItemSwitchedListener(new TabButton.OnItemSwitchedListener()
+						{
+							@Override
+							public void onItemSwitched(int nIndex)
+							{
+								switchBookCityBookList(nIndex);
+								Logs.showTrace("tab button item switch index=" + nIndex);
+							}
+						});
+					}
+				});
+			}
+		}).start();
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//do loading data or whatever hard here
+
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/** init book city book gallery */
+						bookListHandler = new BookListHandler();
+						bookListHandler.setNotifyHandler(selfHandler);
+						bookListHandler.initAllBookList(BookshelfUserActivity.this);
+						bookListHandler.initFreeBookList(BookshelfUserActivity.this);
+						bookListHandler.initSpecialBookList(BookshelfUserActivity.this);
+						bookListHandler.initPreviousBookList(BookshelfUserActivity.this);
+					}
+				});
+			}
+		}).start();
 
 		/** init billing handler */
 		billingHandler = new BillingHandler(this);
@@ -228,8 +315,8 @@ public class BookshelfUserActivity extends Activity
 	@Override
 	protected void onResume()
 	{
-		Global.theActivity = this;
-		Global.interactiveHandler.initMediaView(this);
+		//Global.theActivity = this;
+		//Global.interactiveHandler.initMediaView(this);
 		//readerHandler.Resume();
 		super.onResume();
 	}
@@ -277,12 +364,6 @@ public class BookshelfUserActivity extends Activity
 		setUnregisteringGCM();
 		httpClientHandler.unBindService(this);
 		httpClientHandler = null;
-
-		Global.interactiveHandler.releaseAllAudio();
-		ClearCache clearCache = new ClearCache();
-		clearCache.clearApplicationData(this);
-		clearCache = null;
-
 		super.onDestroy();
 	}
 

@@ -34,6 +34,14 @@ public class HttpClientHandler
 																	}
 																}
 
+																@Override
+																public void ResponseBook(int nHttpCode)
+																		throws RemoteException
+																{
+																	// TODO Auto-generated method stub
+																	
+																}
+
 															};
 
 	public HttpClientHandler(Activity activity)
