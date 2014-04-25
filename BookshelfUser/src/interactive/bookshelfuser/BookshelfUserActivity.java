@@ -1,19 +1,17 @@
 package interactive.bookshelfuser;
 
-import interactive.common.ClearCache;
 import interactive.common.Device;
 import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
+import interactive.facebook.Facebook;
 import interactive.gcm.GcmRegister;
 import interactive.gcm.ShareExternalServer;
 import interactive.reader.ReaderActivity;
-import interactive.reader.ReaderHandler;
 import interactive.service.httpclient.HttpClientHandler;
 import interactive.view.flip.AnimationType;
 import interactive.view.global.Global;
-import interactive.view.slideshow.SlideshowViewActivity;
 import interactive.widget.PullToRefreshListView;
 import interactive.widget.PullToRefreshListView.OnRefreshListener;
 import interactive.widget.TabButton;
@@ -54,8 +52,7 @@ public class BookshelfUserActivity extends Activity
 	private HttpClientHandler		httpClientHandler		= null;
 	private final int				READER_RESULT_CODE		= 20140422;
 	private ProgressDialog			progressDialog			= null;
-
-	//private ReaderHandler			readerHandler			= null;
+	private Facebook				facebook				= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -69,6 +66,9 @@ public class BookshelfUserActivity extends Activity
 		int nResId = Global.getResourceId(this, "activity_main", "layout");
 		this.setContentView(nResId);
 
+		/** show device information */
+		getDeviceInfo(this);
+
 		new Thread(new Runnable()
 		{
 			@Override
@@ -79,8 +79,6 @@ public class BookshelfUserActivity extends Activity
 					@Override
 					public void run()
 					{
-						/** show device information */
-						getDeviceInfo(BookshelfUserActivity.this);
 
 						/** show welcome page */
 						welcomePage = new WelcomePage(BookshelfUserActivity.this);
@@ -305,19 +303,15 @@ public class BookshelfUserActivity extends Activity
 		/** init http client service */
 		httpClientHandler = new HttpClientHandler(this);
 
-		/** init reader */
-		//readerHandler = new ReaderHandler(this);
-		// test load book
-		//readerHandler.initBook("/sdcard/Download/android_test/");
+		/** init facebook api */
+		facebook = new Facebook(this);
+		facebook.init();
 
 	}
 
 	@Override
 	protected void onResume()
 	{
-		//Global.theActivity = this;
-		//Global.interactiveHandler.initMediaView(this);
-		//readerHandler.Resume();
 		super.onResume();
 	}
 
@@ -325,7 +319,6 @@ public class BookshelfUserActivity extends Activity
 	protected void onPause()
 	{
 		closeProgressDialog();
-		//readerHandler.pause();
 		super.onPause();
 	}
 
@@ -333,6 +326,12 @@ public class BookshelfUserActivity extends Activity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Logs.showTrace("onActivityResult(" + requestCode + "," + resultCode + "," + data);
+
+		if (requestCode == 64206)
+		{
+			facebook.ActivityResult(requestCode, resultCode, data);
+			return;
+		}
 
 		if (READER_RESULT_CODE == requestCode && RESULT_OK == resultCode && null != data)
 		{
@@ -348,7 +347,7 @@ public class BookshelfUserActivity extends Activity
 			// perform any handling of activity results not related to in-app
 			// billing...
 			super.onActivityResult(requestCode, resultCode, data);
-			//readerHandler.ActivityResult(requestCode, resultCode, data);
+
 		}
 		else
 		{
@@ -359,6 +358,7 @@ public class BookshelfUserActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
+		facebook.stop();
 		billingHandler.closeService();
 		billingHandler = null;
 		setUnregisteringGCM();
@@ -514,10 +514,18 @@ public class BookshelfUserActivity extends Activity
 													shareRegIdWithAppServer((String) msg.obj);
 													break;
 												case EventMessage.MSG_LOGIN:
-													if (null != msg.obj)
+													if (0 == msg.arg1) // normal login
 													{
-														MenuOptionHandler.LoginData data = (MenuOptionHandler.LoginData) msg.obj;
-														httpClientHandler.login(data.mstrName, data.mstrPassword);
+														if (null != msg.obj)
+														{
+															MenuOptionHandler.LoginData data = (MenuOptionHandler.LoginData) msg.obj;
+															httpClientHandler.login(data.mstrName, data.mstrPassword);
+														}
+													}
+
+													if (1 == msg.arg1) // facebook login
+													{
+														facebook.login();
 													}
 													break;
 												}

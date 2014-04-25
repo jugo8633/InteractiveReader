@@ -72,6 +72,9 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBJtaoytiKuOSiqieXoYjPuDEC4BK05Ehs" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
 
         <activity
             android:name="interactive.bookshelfuser.BookshelfUserActivity"
@@ -154,6 +157,7 @@
             android:screenOrientation="sensor"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
         </activity>
+        <activity android:name="com.facebook.LoginActivity" />
 
         <receiver
             android:name="interactive.gcm.GcmBroadcastReceiver"

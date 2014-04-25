@@ -164,6 +164,17 @@ public class MenuOptionHandler
 			}
 		});
 
+		TextView facebookloginBtn = (TextView) loginMainLayout.findViewById(Global.getResourceId(activity,
+				"facebook_login", "id"));
+		facebookloginBtn.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				EventHandler.notify(notifyHandler, EventMessage.MSG_LOGIN, 1, 0, null);
+			}
+		});
+
 	}
 
 	private void accountAddHandle(Activity activity)
