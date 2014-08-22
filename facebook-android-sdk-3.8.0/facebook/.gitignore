@@ -218,9 +218,6 @@ pip-log.txt
 ## Android
 #############
 /gen
-<<<<<<< HEAD
-/bin
-=======
 /bin
 
 
@@ -228,4 +225,3 @@ pip-log.txt
 ## FreeFileSync
 #############
 /sync.ffs_db
->>>>>>> a2035e250812482f1b0631f14d91e7acbe6d09c4

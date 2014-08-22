@@ -20,9 +20,12 @@ public class Device
 
 	public Device(Context context)
 	{
-		theContext = context;
-		windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		config = context.getResources().getConfiguration();
+		if (null != context)
+		{
+			theContext = context;
+			windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+			config = context.getResources().getConfiguration();
+		}
 	}
 
 	protected void finalize()
@@ -101,8 +104,7 @@ public class Device
 	}
 
 	/**
-	 * get device physic size
-	 * phone inche is less 6 inches
+	 * get device physic size phone inche is less 6 inches
 	 */
 	public double getDisplayIncheSize()
 	{
@@ -127,9 +129,11 @@ public class Device
 		return Type.DEVICE_PHONE;
 	}
 
-	/** 
-	 * 判断是否安装指定的應用程式 
-	 * @param packageName 應用程式的包名 
+	/**
+	 * 判断是否安装指定的應用程式
+	 * 
+	 * @param packageName
+	 *            應用程式的包名
 	 */
 	public boolean checkInstallation(String packageName)
 	{
@@ -137,8 +141,7 @@ public class Device
 		{
 			theContext.getPackageManager().getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
 			return true;
-		}
-		catch (NameNotFoundException e)
+		} catch (NameNotFoundException e)
 		{
 			return false;
 		}
@@ -146,6 +149,7 @@ public class Device
 
 	/**
 	 * 引導跳轉去Google Play上某個應用的詳細頁面
+	 * 
 	 * @param strAppPackageName
 	 */
 	public void installApp(Activity activity, String strAppPackageName)
