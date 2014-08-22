@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Global
+public abstract class Global
 {
 	public static Activity					theActivity			= null;
 	public static InteractiveHandler		interactiveHandler	= new InteractiveHandler();

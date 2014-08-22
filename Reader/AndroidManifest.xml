@@ -50,7 +50,7 @@
     <application
         android:allowBackup="false"
         android:allowClearUserData="true"
-        android:debuggable="true"
+      
         android:enabled="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
