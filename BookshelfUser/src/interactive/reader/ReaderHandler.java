@@ -55,12 +55,12 @@ public class ReaderHandler
 		/** initialize header bar */
 		initHeader();
 
-		/** initialize page reader from reader layout*/
+		/** initialize page reader from reader layout */
 		initPageReader();
 
 		/** init option handler */
 		optionHandler = new OptionHandler(activity);
-		
+
 		/** init book handler */
 		bookHandler = new BookHandler();
 		bookHandler.setNotifyHandler(selfHandler);
@@ -160,14 +160,16 @@ public class ReaderHandler
 	}
 
 	/**
-	 * 載入書籍
-	 * @param strBookPath :書籍路徑
+	 * 頛�貊�
+	 * 
+	 * @param strBookPath
+	 *            :�貊�頝臬�
 	 */
 	public void initBook(String strBookPath)
 	{
 		if (null == strBookPath)
 		{
-			Global.showToast("未找到書籍");
+			Global.showToast("Book Path Invalid");
 			return;
 		}
 		mstrBookPath = strBookPath;
@@ -188,13 +190,14 @@ public class ReaderHandler
 		}
 		else
 		{
-			Global.showToast("書籍解析失敗");
+			Global.showToast("�貊�閫��憭望�");
 		}
 		closeProgressDialog();
 	}
 
 	/**
-	 * 如過checkOrientation return false, 則由configure change去load display
+	 * 憒�checkOrientation return false, �configure change�蜷oad display
+	 * 
 	 * @param configData
 	 * @return
 	 */
@@ -252,8 +255,8 @@ public class ReaderHandler
 
 	private void setHeaderBookName(String strBookName)
 	{
-		TextView txBookName = (TextView) theActivity.findViewById(Global.getResourceId(theActivity, "textViewBookName",
-				"id"));
+		TextView txBookName = (TextView) theActivity
+				.findViewById(Global.getResourceId(theActivity, "textViewBookName", "id"));
 		txBookName.setText(strBookName);
 		txBookName.setOnLongClickListener(new OnLongClickListener()
 		{
@@ -367,7 +370,7 @@ public class ReaderHandler
 				}
 				else
 				{
-					Global.showToast("開啟書本失敗");
+					Global.showToast("���豢憭望�");
 					return Type.INVALID;
 				}
 				data = null;
@@ -390,7 +393,7 @@ public class ReaderHandler
 		ConfigData.Item item = null;
 
 		Device device = new Device(theActivity);
-		switch (device.getOrientation())
+		switch(device.getOrientation())
 		{
 		case Configuration.ORIENTATION_PORTRAIT:
 			strPref = configData.thePackage.flow.chapters.get(nChapter).pages.get(nPage).mstrPref;
@@ -439,7 +442,7 @@ public class ReaderHandler
 	public void ActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Logs.showTrace("onActivityResult : requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
-		
+
 		IntentHandler intentHandler = new IntentHandler();
 		Bitmap bitmap = intentHandler.activityResult(theActivity, requestCode, resultCode, data);
 		if (null != bitmap)
@@ -448,61 +451,60 @@ public class ReaderHandler
 		}
 	}
 
-	private Handler	selfHandler	= new Handler()
-								{
-									@Override
-									public void handleMessage(Message msg)
-									{
-										switch (msg.what)
-										{
-										case EventMessage.MSG_DOUBLE_CLICK:
-											showOption();
-											Logs.showTrace("Activity receive double click");
-											break;
-										case EventMessage.MSG_FLIPPER_CLOSE:
-											optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(),
-													pageReader.getCurrentPage());
-											break;
-										case EventMessage.MSG_GO_FORWARD:
-											pageReader.goForward();
-											break;
-										case EventMessage.MSG_OPTION_ITEM_SELECTED:
-											showOption();
-											pageReader.jumpPage(msg.arg1, msg.arg2, true);
-											break;
-										case GalleryView.MSG_WND_CLICK:
-											optionHandler.closeFlipView();
-											break;
-										case GalleryView.MSG_IMAGE_CLICK:
-											showOption();
-											pageReader.jumpPage(msg.arg1, msg.arg2, true);
-											break;
-										case EventMessage.MSG_LOCK_PAGE:
-											pageReader.lockScroll(true);
-											break;
-										case EventMessage.MSG_UNLOCK_PAGE:
-											pageReader.lockScroll(false);
-											break;
-										case EventMessage.MSG_LOCK_HORIZON:
-											pageReader.lockHorizonScroll(true);
-											break;
-										case EventMessage.MSG_UNLOCK_HORIZON:
-											pageReader.lockHorizonScroll(false);
-											break;
-										case EventMessage.MSG_LOCK_VERTICAL:
-											pageReader.lockVerticalScroll(true);
-											break;
-										case EventMessage.MSG_UNLOCK_VERTICAL:
-											pageReader.lockVerticalScroll(false);
-											break;
-										case EventMessage.MSG_JUMP:
-											pageReader.jumpPage(msg.arg1, msg.arg2, false);
-											break;
-										case EventMessage.MSG_JUMP_FADE:
-											pageReader.jumpPage(msg.arg1, msg.arg2, true);
-											break;
-										}
-										super.handleMessage(msg);
-									}
-								};
+	private Handler selfHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			switch(msg.what)
+			{
+			case EventMessage.MSG_DOUBLE_CLICK:
+				showOption();
+				Logs.showTrace("Activity receive double click");
+				break;
+			case EventMessage.MSG_FLIPPER_CLOSE:
+				optionHandler.clearHeaderSelected(pageReader.getCurrentChapter(), pageReader.getCurrentPage());
+				break;
+			case EventMessage.MSG_GO_FORWARD:
+				pageReader.goForward();
+				break;
+			case EventMessage.MSG_OPTION_ITEM_SELECTED:
+				showOption();
+				pageReader.jumpPage(msg.arg1, msg.arg2, true);
+				break;
+			case GalleryView.MSG_WND_CLICK:
+				optionHandler.closeFlipView();
+				break;
+			case GalleryView.MSG_IMAGE_CLICK:
+				showOption();
+				pageReader.jumpPage(msg.arg1, msg.arg2, true);
+				break;
+			case EventMessage.MSG_LOCK_PAGE:
+				pageReader.lockScroll(true);
+				break;
+			case EventMessage.MSG_UNLOCK_PAGE:
+				pageReader.lockScroll(false);
+				break;
+			case EventMessage.MSG_LOCK_HORIZON:
+				pageReader.lockHorizonScroll(true);
+				break;
+			case EventMessage.MSG_UNLOCK_HORIZON:
+				pageReader.lockHorizonScroll(false);
+				break;
+			case EventMessage.MSG_LOCK_VERTICAL:
+				pageReader.lockVerticalScroll(true);
+				break;
+			case EventMessage.MSG_UNLOCK_VERTICAL:
+				pageReader.lockVerticalScroll(false);
+				break;
+			case EventMessage.MSG_JUMP:
+				pageReader.jumpPage(msg.arg1, msg.arg2, false);
+				break;
+			case EventMessage.MSG_JUMP_FADE:
+				pageReader.jumpPage(msg.arg1, msg.arg2, true);
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
 }

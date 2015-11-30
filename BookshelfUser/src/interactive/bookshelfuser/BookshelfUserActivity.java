@@ -5,7 +5,6 @@ import interactive.common.EventHandler;
 import interactive.common.EventMessage;
 import interactive.common.Logs;
 import interactive.common.Type;
-import interactive.facebook.Facebook;
 import interactive.gcm.GcmRegister;
 import interactive.gcm.ShareExternalServer;
 import interactive.reader.ReaderActivity;
@@ -52,14 +51,13 @@ public class BookshelfUserActivity extends Activity
 	private HttpClientHandler		httpClientHandler		= null;
 	private final int				READER_RESULT_CODE		= 20140422;
 	private ProgressDialog			progressDialog			= null;
-	private Facebook				facebook				= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		/** init orientation*/
+		/** init orientation */
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		/** load book layout */
@@ -85,16 +83,16 @@ public class BookshelfUserActivity extends Activity
 						welcomePage.show();
 
 						/** init flip */
-						flipper = (ViewFlipper) BookshelfUserActivity.this.findViewById(Global.getResourceId(
-								BookshelfUserActivity.this, "book_list_flipper", "id"));
+						flipper = (ViewFlipper) BookshelfUserActivity.this.findViewById(
+								Global.getResourceId(BookshelfUserActivity.this, "book_list_flipper", "id"));
 						AnimationType animationType = new AnimationType();
 						flipper.setOutAnimation(animationType.outToLeftAnimation(200));
 						flipper.setInAnimation(animationType.inFromRightAnimation(500));
 
 						/** init footbar handler */
 						footbar = new FootbarHandler(BookshelfUserActivity.this);
-						footbar.setDefaultSelected(Global
-								.getResourceId(BookshelfUserActivity.this, "bookCityBtn", "id"));
+						footbar.setDefaultSelected(
+								Global.getResourceId(BookshelfUserActivity.this, "bookCityBtn", "id"));
 						footbar.setOnItemSelectedListener(new FootbarHandler.OnItemSelectedListener()
 						{
 							@Override
@@ -106,8 +104,8 @@ public class BookshelfUserActivity extends Activity
 						});
 
 						/** init book city book list */
-						flipperBookCityBookList = (ViewFlipper) BookshelfUserActivity.this.findViewById(Global
-								.getResourceId(BookshelfUserActivity.this, "book_city_flipper", "id"));
+						flipperBookCityBookList = (ViewFlipper) BookshelfUserActivity.this.findViewById(
+								Global.getResourceId(BookshelfUserActivity.this, "book_city_flipper", "id"));
 						flipperBookCityBookList.setOutAnimation(animationType.outToLeftAnimation(200));
 						flipperBookCityBookList.setInAnimation(animationType.inFromRightAnimation(500));
 						animationType = null;
@@ -126,21 +124,21 @@ public class BookshelfUserActivity extends Activity
 			@Override
 			public void run()
 			{
-				//do loading data or whatever hard here
+				// do loading data or whatever hard here
 
 				runOnUiThread(new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						/** init global*/
+						/** init global */
 						Global.theActivity = BookshelfUserActivity.this;
 						Global.handlerActivity = selfHandler;
 						ICON_ID = Global.getResourceId(BookshelfUserActivity.this, "ic_launcher", "drawable");
 
 						/** init drawer layout */
-						drawerLayout = (DrawerLayout) BookshelfUserActivity.this.findViewById(Global.getResourceId(
-								BookshelfUserActivity.this, "drawer_layout", "id"));
+						drawerLayout = (DrawerLayout) BookshelfUserActivity.this
+								.findViewById(Global.getResourceId(BookshelfUserActivity.this, "drawer_layout", "id"));
 						drawerLayout.setDrawerShadow(
 								Global.getResourceId(BookshelfUserActivity.this, "drawer_shadow", "drawable"),
 								GravityCompat.START);
@@ -190,8 +188,8 @@ public class BookshelfUserActivity extends Activity
 						menuOptionHandler.setNotifyHandler(selfHandler);
 
 						/** init pull to refresh listview */
-						pullRefreshList = (PullToRefreshListView) BookshelfUserActivity.this.findViewById(Global
-								.getResourceId(BookshelfUserActivity.this, "pull_to_refresh_list", "id"));
+						pullRefreshList = (PullToRefreshListView) BookshelfUserActivity.this.findViewById(
+								Global.getResourceId(BookshelfUserActivity.this, "pull_to_refresh_list", "id"));
 						DrawerMenuAdapter menuAdapter = new DrawerMenuAdapter(BookshelfUserActivity.this);
 						pullRefreshList.setAdapter(menuAdapter);
 						menuAdapter = null;
@@ -211,7 +209,7 @@ public class BookshelfUserActivity extends Activity
 							public void onItemSelected(int nIndex)
 							{
 								Logs.showTrace("Menu item selected index=" + nIndex);
-								switch (nIndex)
+								switch(nIndex)
 								{
 								case DrawerMenuAdapter.INDEX_LOGIN:
 									menuOptionHandler.showLogin();
@@ -237,7 +235,7 @@ public class BookshelfUserActivity extends Activity
 			@Override
 			public void run()
 			{
-				//do loading data or whatever hard here
+				// do loading data or whatever hard here
 
 				runOnUiThread(new Runnable()
 				{
@@ -245,16 +243,16 @@ public class BookshelfUserActivity extends Activity
 					public void run()
 					{
 						/** init tab button */
-						tabButton = (TabButton) BookshelfUserActivity.this.findViewById(Global.getResourceId(
-								BookshelfUserActivity.this, "tabButton", "id"));
-						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
-								BookshelfUserActivity.this, "all_book", "string")));
-						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
-								BookshelfUserActivity.this, "free_book", "string")));
-						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
-								BookshelfUserActivity.this, "special_book", "string")));
-						tabButton.addTextButton(BookshelfUserActivity.this.getString(Global.getResourceId(
-								BookshelfUserActivity.this, "previous_book", "string")));
+						tabButton = (TabButton) BookshelfUserActivity.this
+								.findViewById(Global.getResourceId(BookshelfUserActivity.this, "tabButton", "id"));
+						tabButton.addTextButton(BookshelfUserActivity.this
+								.getString(Global.getResourceId(BookshelfUserActivity.this, "all_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this
+								.getString(Global.getResourceId(BookshelfUserActivity.this, "free_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this
+								.getString(Global.getResourceId(BookshelfUserActivity.this, "special_book", "string")));
+						tabButton.addTextButton(BookshelfUserActivity.this.getString(
+								Global.getResourceId(BookshelfUserActivity.this, "previous_book", "string")));
 						tabButton.setItemSelect(0);
 						tabButton.setOnItemSwitchedListener(new TabButton.OnItemSwitchedListener()
 						{
@@ -275,7 +273,7 @@ public class BookshelfUserActivity extends Activity
 			@Override
 			public void run()
 			{
-				//do loading data or whatever hard here
+				// do loading data or whatever hard here
 
 				runOnUiThread(new Runnable()
 				{
@@ -302,11 +300,6 @@ public class BookshelfUserActivity extends Activity
 
 		/** init http client service */
 		httpClientHandler = new HttpClientHandler(this);
-
-		/** init facebook api */
-		facebook = new Facebook(this);
-		facebook.init();
-
 	}
 
 	@Override
@@ -326,12 +319,6 @@ public class BookshelfUserActivity extends Activity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Logs.showTrace("onActivityResult(" + requestCode + "," + resultCode + "," + data);
-
-		if (requestCode == 64206)
-		{
-			facebook.ActivityResult(requestCode, resultCode, data);
-			return;
-		}
 
 		if (READER_RESULT_CODE == requestCode && RESULT_OK == resultCode && null != data)
 		{
@@ -358,7 +345,6 @@ public class BookshelfUserActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
-		facebook.stop();
 		billingHandler.closeService();
 		billingHandler = null;
 		setUnregisteringGCM();
@@ -409,12 +395,14 @@ public class BookshelfUserActivity extends Activity
 	{
 		Device device = new Device(activity);
 		Logs.showTrace("==== Device Information ====");
-		Logs.showTrace("Display width = " + device.getDisplayWidth() + " Display height = " + device.getDisplayHeight());
+		Logs.showTrace(
+				"Display width = " + device.getDisplayWidth() + " Display height = " + device.getDisplayHeight());
 		Logs.showTrace("Device width = " + device.getDeviceWidth() + " Device height = " + device.getDeviceHeight());
 		Logs.showTrace("Display scale size = " + device.getScaleSize());
 		Logs.showTrace("Device orientation = " + device.getOrientation());
 		Logs.showTrace("Device inches = " + device.getDisplayIncheSize());
-		Logs.showTrace("Device type = " + device.getDeviceType()); // 0:phone 1:tablet
+		Logs.showTrace("Device type = " + device.getDeviceType()); // 0:phone
+																	// 1:tablet
 		Logs.showTrace("Android SDK Version = " + device.getAndroidSdkVersion());
 		Logs.showTrace("Android Release Version = " + device.getAndroidReleaseVersion());
 		Logs.showTrace("=======================================================");
@@ -485,56 +473,50 @@ public class BookshelfUserActivity extends Activity
 		}
 	}
 
-	private OnClickListener	buttonClick	= new OnClickListener()
-										{
-											@Override
-											public void onClick(View view)
-											{
-												handleButtonClick(view);
-											}
-										};
+	private OnClickListener buttonClick = new OnClickListener()
+	{
+		@Override
+		public void onClick(View view)
+		{
+			handleButtonClick(view);
+		}
+	};
 
-	private Handler			selfHandler	= new Handler()
-										{
-											@Override
-											public void handleMessage(Message msg)
-											{
-												switch (msg.what)
-												{
-												case EventMessage.MSG_FLIPPER_CLOSE:
-													pullRefreshList.clearSelected();
-													break;
-												case BookListHandler.MSG_SUBSCRIBT:
-													billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
+	private Handler selfHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			switch(msg.what)
+			{
+			case EventMessage.MSG_FLIPPER_CLOSE:
+				pullRefreshList.clearSelected();
+				break;
+			case BookListHandler.MSG_SUBSCRIBT:
+				billingHandler.launchPurchase(BookshelfUserActivity.this, "book");
 
-													break;
-												case EventMessage.MSG_GCM_REGISTERED:
-													Logs.showTrace("Share GCM Register Id " + msg.obj
-															+ " with application server.");
-													shareRegIdWithAppServer((String) msg.obj);
-													break;
-												case EventMessage.MSG_LOGIN:
-													if (0 == msg.arg1) // normal login
-													{
-														if (null != msg.obj)
-														{
-															MenuOptionHandler.LoginData data = (MenuOptionHandler.LoginData) msg.obj;
-															httpClientHandler.login(data.mstrName, data.mstrPassword);
-														}
-													}
-
-													if (1 == msg.arg1) // facebook login
-													{
-														facebook.login();
-													}
-													break;
-												}
-											}
-										};
+				break;
+			case EventMessage.MSG_GCM_REGISTERED:
+				Logs.showTrace("Share GCM Register Id " + msg.obj + " with application server.");
+				shareRegIdWithAppServer((String) msg.obj);
+				break;
+			case EventMessage.MSG_LOGIN:
+				if (0 == msg.arg1) // normal login
+				{
+					if (null != msg.obj)
+					{
+						MenuOptionHandler.LoginData data = (MenuOptionHandler.LoginData) msg.obj;
+						httpClientHandler.login(data.mstrName, data.mstrPassword);
+					}
+				}
+				break;
+			}
+		}
+	};
 
 	public void setRegisteringGCM()
 	{
-		//註冊推播
+		// 註冊推播
 		GcmRegister gcmReg = new GcmRegister(this);
 		gcmReg.setOnRegisterFinishedListener(new GcmRegister.OnRegisterFinishedListener()
 		{
@@ -553,7 +535,7 @@ public class BookshelfUserActivity extends Activity
 
 	public void setUnregisteringGCM()
 	{
-		//取消註冊推播
+		// 取消註冊推播
 		GcmRegister gcmReg = new GcmRegister(this);
 		gcmReg.unregister();
 		gcmReg = null;
